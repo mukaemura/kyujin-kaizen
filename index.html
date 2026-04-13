@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>求人改善クラウド｜求人票を診断して応募率を改善</title>
-<meta name="description" content="求人票を貼り付けるだけでAIが5軸スコアリング。改善ポイントと改善案まで即座に提示。株式会社Link Coreが提供する求人改善サービス。">
+<meta name="description" content="求人票を貼り付けるだけでAIが4軸スコアリング。改善ポイントと改善案まで即座に提示。株式会社Link Coreが提供する求人改善サービス。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -102,7 +102,6 @@
   .step-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
   .chip { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; padding: 6px 14px; font-size: 12px; color: rgba(255,255,255,0.7); }
 
-  /* DIAGNOSIS */
   .diag-section { padding: 100px 80px; background: white; border-top: 1.5px solid var(--border); }
   .diag-inner { max-width: 860px; margin: 0 auto; }
   .diag-form-wrap { background: var(--paper); border: 1.5px solid var(--border); border-radius: 8px; padding: 40px; }
@@ -399,37 +398,14 @@ async function runDiagnosis() {
   result.classList.remove('active');
   result.innerHTML = '';
 
-  const prompt = `あなたは採用・求人票の専門家です。以下の求人票を採点し、JSONのみを返してください。前置きや説明は不要です。
-
-採点基準：
-①タイトル訴求（0〜25点）：職種明確か/具体性(数字・内容)あるか/ベネフィットあるか/誰向けか明確か/検索ワードあるか（各5点）。減点：抽象ワードのみ-5、35文字以上-3、内容曖昧-5
-②わかりやすさ（0〜25点）：仕事内容具体的か/1日の流れイメージできるか/専門用語多すぎないか/読みやすい構成か/働く環境わかるか（各5点）
-③差別化（0〜25点）：他社と違う強みあるか/数字・実績あるか/なぜこの会社か説明できるか/独自の制度・特徴あるか/ここで働く理由あるか（各5点）
-④応募動機形成（0〜25点）：働くイメージできるか/成長・やりがいあるか/誰に向いてるか明確か/不安要素解消あるか/ワクワク要素あるか（各5点）
-
-評価ランク：80〜100=非常に良い（応募獲得期待大）、65〜79=良い（軽微な改善で伸びる）、50〜64=改善余地あり、35〜49=要改善、〜34=危険（応募来ない可能性高）
-改善優先度：どれか1つでも12点以下=高、複数が13〜17点=中、全て18点以上=低
-
-以下のJSONのみ返答：
-{"scores":{"title":数値,"clarity":数値,"differentiation":数値,"motivation":数値},"total":合計,"rank":"ランク文字列","priority":"高or中or低","issues":["課題1","課題2","課題3"],"proposals":["改善提案1","改善提案2","改善提案3"],"titleSuggestions":["タイトル案1","タイトル案2","タイトル案3"]}
-
-求人票：
-${text}`;
-
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        messages: [{ role: "user", content: prompt }]
-      })
+    // ↓ Netlify Functionを経由してAPIを呼び出す（APIキーはサーバー側で管理）
+    const response = await fetch('/.netlify/functions/diagnose', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jobText: text })
     });
-    const data = await response.json();
-    const raw = data.content.map(i => i.text || "").join("");
-    const clean = raw.replace(/```json|```/g, "").trim();
-    const parsed = JSON.parse(clean);
+    const parsed = await response.json();
     renderResult(parsed);
   } catch(err) {
     result.innerHTML = `<div style="padding:24px;background:#fff8f6;border:1px solid #f0c4b8;border-radius:8px;color:var(--score-red);font-size:14px;">診断中にエラーが発生しました。しばらくしてから再度お試しください。</div>`;
@@ -445,7 +421,6 @@ function col(score, max) {
   const p = score / max;
   return p >= 0.72 ? 'var(--score-green)' : p >= 0.52 ? 'var(--score-yellow)' : 'var(--score-red)';
 }
-
 function rankColor(t) {
   if (t >= 80) return { bg:'#e4f5eb', fg:'#1a7a3c' };
   if (t >= 65) return { bg:'#e8f0ff', fg:'#1a4fd4' };
@@ -453,7 +428,6 @@ function rankColor(t) {
   if (t >= 35) return { bg:'#ffe4e4', fg:'#c93030' };
   return { bg:'#c93030', fg:'#fff' };
 }
-
 function badge(score) {
   if (score <= 12) return '<span class="priority-badge badge-high">要対応</span>';
   if (score <= 17) return '<span class="priority-badge badge-mid">改善推奨</span>';
