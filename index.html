@@ -7,6 +7,7 @@
 <meta name="description" content="求人票を貼り付けるだけでAIが4軸スコアリング。改善ポイントと改善案まで即座に提示。株式会社Link Coreが提供する求人改善サービス。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
   :root {
     --ink: #0f0f0f;
@@ -64,7 +65,7 @@
   .score-circle { width: 72px; height: 72px; border-radius: 50%; border: 3px solid var(--score-red); display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
   .score-circle .num { font-family: 'Space Mono', monospace; font-size: 24px; font-weight: 700; color: var(--score-red); line-height: 1; }
   .score-circle .den { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); }
-  .score-label { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .score-label { font-size: 13px; color: #6b6560; line-height: 1.6; }
   .score-label strong { display: block; font-size: 15px; color: var(--ink); margin-bottom: 2px; }
   .score-bars { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
   .score-bar-row { display: flex; align-items: center; gap: 10px; }
@@ -102,14 +103,40 @@
   .step-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
   .chip { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; padding: 6px 14px; font-size: 12px; color: rgba(255,255,255,0.7); }
 
+  /* ── DIAGNOSIS ── */
   .diag-section { padding: 100px 80px; background: white; border-top: 1.5px solid var(--border); }
   .diag-inner { max-width: 860px; margin: 0 auto; }
   .diag-form-wrap { background: var(--paper); border: 1.5px solid var(--border); border-radius: 8px; padding: 40px; }
-  .diag-label { font-size: 14px; font-weight: 700; margin-bottom: 10px; display: block; }
-  .diag-textarea { width: 100%; min-height: 200px; padding: 16px; border: 1.5px solid var(--border); border-radius: 6px; font-family: 'Noto Sans JP', sans-serif; font-size: 14px; line-height: 1.8; background: white; resize: vertical; outline: none; transition: border-color .2s; }
+
+  /* 3分割入力フィールド */
+  .input-fields { display: flex; flex-direction: column; gap: 24px; }
+  .input-field-group { display: flex; flex-direction: column; gap: 8px; }
+  .input-field-label {
+    font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .input-field-label .field-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; font-weight: 700;
+    background: var(--accent); color: white;
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .input-field-hint { font-size: 12px; color: var(--muted); line-height: 1.6; padding-left: 28px; }
+  .diag-textarea {
+    width: 100%; padding: 14px 16px;
+    border: 1.5px solid var(--border); border-radius: 6px;
+    font-family: 'Noto Sans JP', sans-serif; font-size: 14px; line-height: 1.8;
+    background: white; resize: vertical; outline: none; transition: border-color .2s;
+  }
   .diag-textarea:focus { border-color: var(--accent); }
-  .diag-textarea::placeholder { color: #aaa; }
-  .diag-note { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.6; }
+  .diag-textarea::placeholder { color: #bbb; font-size: 13px; }
+  .ta-title { min-height: 80px; }
+  .ta-content { min-height: 160px; }
+  .ta-other { min-height: 120px; }
+
+  .diag-note { font-size: 12px; color: var(--muted); margin-top: 16px; line-height: 1.6; padding: 12px 16px; background: rgba(0,0,0,0.03); border-radius: 4px; }
   .diag-submit { width: 100%; margin-top: 20px; padding: 18px; background: var(--accent); color: white; border: none; border-radius: 4px; font-family: 'Noto Sans JP', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; letter-spacing: 0.04em; box-shadow: 4px 4px 0 var(--ink); transition: transform .2s, box-shadow .2s; }
   .diag-submit:hover:not(:disabled) { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
   .diag-submit:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -123,13 +150,25 @@
   .diag-result { display: none; margin-top: 40px; }
   .diag-result.active { display: block; }
 
+  /* PDF download btn */
+  .pdf-btn-wrap { display: flex; justify-content: flex-end; margin-bottom: 16px; }
+  .pdf-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: white; color: var(--ink);
+    border: 1.5px solid var(--border); border-radius: 4px;
+    padding: 10px 20px; font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: border-color .2s, background .2s;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .pdf-btn:hover { border-color: var(--ink); background: var(--paper); }
+
   .result-header { background: var(--ink); color: white; border-radius: 8px 8px 0 0; padding: 28px 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
   .result-title-label { font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 0.12em; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
   .result-score-big { font-family: 'DM Serif Display', serif; font-size: 64px; color: white; line-height: 1; }
   .result-score-big span { font-size: 20px; color: rgba(255,255,255,0.4); }
   .result-rank-badge { padding: 10px 20px; border-radius: 4px; font-weight: 700; font-size: 14px; display: inline-block; }
 
-  .result-body { border: 1.5px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; overflow: hidden; }
+  .result-body { border: 1.5px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; overflow: hidden; background: white; }
   .result-section { padding: 28px 32px; border-bottom: 1px solid var(--border); }
   .result-section:last-child { border-bottom: none; }
   .result-section-title { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: var(--accent); font-weight: 700; margin-bottom: 20px; }
@@ -156,6 +195,13 @@
   .proposal-list { display: flex; flex-direction: column; gap: 12px; }
   .proposal-item { padding: 16px 20px; background: var(--paper); border: 1.5px solid var(--border); border-radius: 6px; font-size: 13px; line-height: 1.8; }
   .proposal-label { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--accent); font-weight: 700; margin-bottom: 6px; }
+
+  /* 元の求人票表示 */
+  .original-section { background: var(--paper); }
+  .original-content { display: flex; flex-direction: column; gap: 16px; }
+  .original-block { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 16px; }
+  .original-block-label { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--muted); font-weight: 700; margin-bottom: 8px; }
+  .original-block-text { font-size: 13px; line-height: 1.9; white-space: pre-wrap; color: var(--ink); }
 
   .result-cta { margin-top: 32px; padding: 28px 32px; background: var(--ink); border-radius: 8px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
   .result-cta-text { color: white; }
@@ -227,6 +273,12 @@
     .result-header { flex-direction: column; } .result-cta { flex-direction: column; }
     .diag-form-wrap { padding: 24px; }
   }
+
+  /* PDF用スタイル（印刷時） */
+  @media print {
+    nav, .diag-form-wrap, .diag-loading, .pdf-btn-wrap, .result-cta, .hero, .section, .how-section, .plans-section, .why-section, .cta-section, footer { display: none !important; }
+    .diag-result { display: block !important; margin: 0; }
+  }
 </style>
 </head>
 <body>
@@ -290,20 +342,45 @@
   <div class="section-label">HOW IT WORKS</div>
   <h2 class="section-h2" style="color:white;">貼り付けるだけで、<br>改善案まで届く。</h2>
   <div class="steps">
-    <div class="step fade-in"><div class="step-num">01</div><div class="step-content"><div class="step-tag">INPUT</div><div class="step-title">求人票を貼り付ける</div><div class="step-desc">現在掲載中の求人票をフォームに貼り付けるだけ。ログイン不要、1分で完了です。</div><div class="step-chips"><span class="chip">貼り付けるだけ</span><span class="chip">ログイン不要</span><span class="chip">1分で完了</span></div></div></div>
-    <div class="step fade-in"><div class="step-num">02</div><div class="step-content"><div class="step-tag">ANALYZE</div><div class="step-title">4項目をAIがスコア診断</div><div class="step-desc">タイトル訴求・わかりやすさ・差別化・応募動機形成の4軸・100点満点で採点。採用実務の知見をもとに設計した独自基準で評価します。</div><div class="step-chips"><span class="chip">タイトル訴求</span><span class="chip">わかりやすさ</span><span class="chip">差別化</span><span class="chip">応募動機形成</span></div></div></div>
-    <div class="step fade-in"><div class="step-num">03</div><div class="step-content"><div class="step-tag">REPORT</div><div class="step-title">改善案をその場で受け取る</div><div class="step-desc">主な課題・改善優先順位・具体的な改善提案をその場で表示。タイトル改善案も3つ提示します。</div><div class="step-chips"><span class="chip">課題3つ</span><span class="chip">優先順位</span><span class="chip">タイトル案3つ</span></div></div></div>
+    <div class="step fade-in"><div class="step-num">01</div><div class="step-content"><div class="step-tag">INPUT</div><div class="step-title">3項目に分けて入力する</div><div class="step-desc">タイトル・仕事内容・福利厚生＆PRの3項目に分けて貼り付けるだけ。より精度の高い診断が可能です。</div><div class="step-chips"><span class="chip">タイトル</span><span class="chip">仕事内容</span><span class="chip">福利厚生・PR</span></div></div></div>
+    <div class="step fade-in"><div class="step-num">02</div><div class="step-content"><div class="step-tag">ANALYZE</div><div class="step-title">4項目をAIがスコア診断</div><div class="step-desc">タイトル訴求・わかりやすさ・差別化・応募動機形成の4軸・100点満点で採点します。</div><div class="step-chips"><span class="chip">タイトル訴求</span><span class="chip">わかりやすさ</span><span class="chip">差別化</span><span class="chip">応募動機形成</span></div></div></div>
+    <div class="step fade-in"><div class="step-num">03</div><div class="step-content"><div class="step-tag">REPORT</div><div class="step-title">改善案をその場で受け取る</div><div class="step-desc">主な課題・改善優先順位・具体的な改善提案をその場で表示。PDFでダウンロードも可能です。</div><div class="step-chips"><span class="chip">課題3つ</span><span class="chip">優先順位</span><span class="chip">PDFダウンロード</span></div></div></div>
     <div class="step fade-in"><div class="step-num">04</div><div class="step-content"><div class="step-tag">OPTIONAL</div><div class="step-title">改善代行まで依頼できる</div><div class="step-desc">「実際の修正まで任せたい」方には改善代行サービスをご用意。原稿修正から媒体別最適化・月次レビューまで伴走します。</div><div class="step-chips"><span class="chip">原稿修正代行</span><span class="chip">媒体別最適化</span><span class="chip">月次レビュー</span></div></div></div>
   </div>
 </section>
 
+<!-- DIAGNOSIS -->
 <section class="diag-section" id="diagnosis">
   <div class="diag-inner">
     <div class="section-label">FREE DIAGNOSIS</div>
     <h2 class="section-h2">求人票を無料で診断する</h2>
     <div class="diag-form-wrap">
-      <label class="diag-label" for="jobText">求人票の本文を貼り付けてください</label>
-      <textarea class="diag-textarea" id="jobText" placeholder="タイトル、仕事内容、応募条件、会社の特徴など、求人票に記載している内容をそのまま貼り付けてください。&#10;&#10;例）&#10;【営業スタッフ募集】&#10;仕事内容：法人向けに〇〇サービスの提案営業をお任せします。&#10;給与：月給25万円〜..."></textarea>
+      <div class="input-fields">
+        <div class="input-field-group">
+          <div class="input-field-label">
+            <span class="field-num">1</span>
+            求人タイトル
+          </div>
+          <p class="input-field-hint">掲載している求人票のタイトルをそのまま貼り付けてください</p>
+          <textarea class="diag-textarea ta-title" id="jobTitle" placeholder="例）【未経験歓迎】営業スタッフ募集｜月給25万円〜｜転勤なし"></textarea>
+        </div>
+        <div class="input-field-group">
+          <div class="input-field-label">
+            <span class="field-num">2</span>
+            仕事内容
+          </div>
+          <p class="input-field-hint">仕事内容・業務詳細・1日の流れなど、仕事に関する記載をすべて貼り付けてください</p>
+          <textarea class="diag-textarea ta-content" id="jobContent" placeholder="例）【仕事内容】&#10;法人向けにSaaSサービスの提案営業をお任せします。&#10;既存顧客へのフォロー70％、新規開拓30％のバランスです。&#10;&#10;【1日の流れ】&#10;9:00 出社・メール確認..."></textarea>
+        </div>
+        <div class="input-field-group">
+          <div class="input-field-label">
+            <span class="field-num">3</span>
+            福利厚生・その他PR
+          </div>
+          <p class="input-field-hint">給与・待遇・福利厚生・会社の特徴・求める人物像など、上記以外の内容を貼り付けてください</p>
+          <textarea class="diag-textarea ta-other" id="jobOther" placeholder="例）【給与】月給25万円〜45万円（経験考慮）&#10;【福利厚生】社保完備、交通費全額支給、家族手当&#10;【特徴】設立20年、離職率5%以下の安定企業..."></textarea>
+        </div>
+      </div>
       <p class="diag-note">※ 入力内容はAI診断にのみ使用します。外部への送信・保存はされません。</p>
       <button class="diag-submit" id="diagBtn" onclick="runDiagnosis()">🔍 今すぐ無料診断する</button>
     </div>
@@ -322,7 +399,7 @@
     <div class="plan-card fade-in">
       <div class="plan-header"><div class="plan-type">FREE</div><div class="plan-name">無料診断</div><div class="plan-price"><strong>¥0</strong>まずは試してみる</div></div>
       <div class="plan-body">
-        <ul class="plan-features"><li>求人票1本の診断</li><li>4軸スコア表示（100点満点）</li><li>主な課題3つの提示</li><li>改善優先順位の表示</li><li>タイトル改善案3つ</li></ul>
+        <ul class="plan-features"><li>求人票1本の診断</li><li>4軸スコア表示（100点満点）</li><li>主な課題3つの提示</li><li>改善優先順位の表示</li><li>PDFレポートダウンロード</li></ul>
         <a href="#diagnosis" class="plan-btn plan-btn-outline" style="border:1.5px solid var(--border);">無料で診断する</a>
       </div>
     </div>
@@ -384,9 +461,21 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.fade-in:not(.visible)').forEach(el => observer.observe(el));
 
+// 入力内容を保持する変数
+let savedInputs = { title: '', content: '', other: '' };
+
 async function runDiagnosis() {
-  const text = document.getElementById('jobText').value.trim();
-  if (!text || text.length < 30) { alert('求人票の内容を入力してください（30文字以上）。'); return; }
+  const title   = document.getElementById('jobTitle').value.trim();
+  const content = document.getElementById('jobContent').value.trim();
+  const other   = document.getElementById('jobOther').value.trim();
+
+  if (!title && !content) {
+    alert('少なくとも「求人タイトル」と「仕事内容」を入力してください。');
+    return;
+  }
+
+  // 入力内容を保存
+  savedInputs = { title, content, other };
 
   const btn = document.getElementById('diagBtn');
   const loading = document.getElementById('diagLoading');
@@ -398,12 +487,13 @@ async function runDiagnosis() {
   result.classList.remove('active');
   result.innerHTML = '';
 
+  const jobText = `【求人タイトル】\n${title}\n\n【仕事内容】\n${content}\n\n【福利厚生・その他PR】\n${other}`;
+
   try {
-    // ↓ Netlify Functionを経由してAPIを呼び出す（APIキーはサーバー側で管理）
     const response = await fetch('/.netlify/functions/diagnose', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ jobText: text })
+      body: JSON.stringify({ jobText })
     });
     const parsed = await response.json();
     renderResult(parsed);
@@ -419,7 +509,7 @@ async function runDiagnosis() {
 
 function col(score, max) {
   const p = score / max;
-  return p >= 0.72 ? 'var(--score-green)' : p >= 0.52 ? 'var(--score-yellow)' : 'var(--score-red)';
+  return p >= 0.72 ? '#1a7a3c' : p >= 0.52 ? '#c89a00' : '#c93030';
 }
 function rankColor(t) {
   if (t >= 80) return { bg:'#e4f5eb', fg:'#1a7a3c' };
@@ -434,9 +524,25 @@ function badge(score) {
   return '<span class="priority-badge badge-low">良好</span>';
 }
 
+function downloadPDF() {
+  const el = document.getElementById('pdf-target');
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+  const opt = {
+    margin: [10, 10, 10, 10],
+    filename: `求人票診断レポート_${dateStr}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+  html2pdf().set(opt).from(el).save();
+}
+
 function renderResult(d) {
   const el = document.getElementById('diagResult');
   const rc = rankColor(d.total);
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日`;
   const sorted = [
     { label:'タイトル訴求', score: d.scores.title },
     { label:'わかりやすさ', score: d.scores.clarity },
@@ -445,61 +551,94 @@ function renderResult(d) {
   ].sort((a,b) => a.score - b.score);
 
   el.innerHTML = `
-    <div class="result-header">
-      <div>
-        <div class="result-title-label">DIAGNOSTIC REPORT</div>
-        <div class="result-score-big">${d.total}<span>/100</span></div>
+    <div class="pdf-btn-wrap">
+      <button class="pdf-btn" onclick="downloadPDF()">
+        📄 PDFでダウンロード
+      </button>
+    </div>
+
+    <div id="pdf-target" style="background:white;">
+      <!-- PDF用ヘッダー -->
+      <div style="padding:24px 32px 16px;border:1.5px solid #c8c2b8;border-radius:8px 8px 0 0;border-bottom:none;background:#f5f2ec;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-family:sans-serif;font-size:11px;color:#6b6560;letter-spacing:0.1em;margin-bottom:4px;">求人改善クラウド｜診断レポート</div>
+          <div style="font-family:sans-serif;font-size:13px;font-weight:700;color:#0f0f0f;">診断日：${dateStr}</div>
+        </div>
+        <div style="font-family:sans-serif;font-size:11px;color:#6b6560;">運営：株式会社Link Core</div>
       </div>
-      <div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:8px;">総合評価</div>
-        <div class="result-rank-badge" style="background:${rc.bg};color:${rc.fg};">${d.rank}</div>
-        <div style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.5);">改善優先度</div>
-        <div style="margin-top:4px;font-size:18px;font-weight:700;color:${d.priority==='高'?'#ff8080':d.priority==='中'?'#ffd080':'#80e0a0'};">${d.priority}</div>
+
+      <div class="result-header">
+        <div>
+          <div class="result-title-label">DIAGNOSTIC REPORT</div>
+          <div class="result-score-big">${d.total}<span>/100</span></div>
+        </div>
+        <div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:8px;">総合評価</div>
+          <div class="result-rank-badge" style="background:${rc.bg};color:${rc.fg};">${d.rank}</div>
+          <div style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.5);">改善優先度</div>
+          <div style="margin-top:4px;font-size:18px;font-weight:700;color:${d.priority==='高'?'#ff8080':d.priority==='中'?'#ffd080':'#80e0a0'};">${d.priority}</div>
+        </div>
+      </div>
+
+      <div class="result-body">
+        <div class="result-section">
+          <div class="result-section-title">■ 詳細スコア</div>
+          <div class="r-bars">
+            ${[{l:'タイトル訴求',s:d.scores.title},{l:'わかりやすさ',s:d.scores.clarity},{l:'差別化',s:d.scores.differentiation},{l:'応募動機形成',s:d.scores.motivation}].map(x=>`
+              <div class="r-bar-row">
+                <div class="r-bar-name">${x.l}</div>
+                <div class="r-bar-track"><div class="r-bar-fill" style="width:${x.s/25*100}%;background:${col(x.s,25)};"></div></div>
+                <div class="r-bar-score" style="color:${col(x.s,25)};">${x.s}</div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="result-section-title">■ 改善優先順位</div>
+          <div class="priority-list">
+            ${sorted.map((x,i)=>`
+              <div class="priority-item">
+                <div class="priority-rank">${i+1}</div>
+                <div class="priority-name">${x.label}</div>
+                <div class="priority-score" style="color:${col(x.score,25)};">${x.score}点</div>
+                ${badge(x.score)}
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="result-section-title">■ 主な課題</div>
+          <div class="issue-list">
+            ${d.issues.map(i=>`<div class="issue-item"><span>⚠️</span><span>${i}</span></div>`).join('')}
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="result-section-title">■ 改善提案</div>
+          <div class="proposal-list">
+            ${d.proposals.map((p,i)=>`<div class="proposal-item"><div class="proposal-label">PROPOSAL ${i+1}</div>${p}</div>`).join('')}
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="result-section-title">■ タイトル改善案</div>
+          <div class="proposal-list">
+            ${d.titleSuggestions.map((t,i)=>`<div class="proposal-item"><div class="proposal-label">タイトル案 ${i+1}</div>${t}</div>`).join('')}
+          </div>
+        </div>
+
+        <!-- 診断対象の元の求人票 -->
+        <div class="result-section original-section">
+          <div class="result-section-title">■ 診断対象の求人票（入力内容）</div>
+          <div class="original-content">
+            ${savedInputs.title ? `<div class="original-block"><div class="original-block-label">求人タイトル</div><div class="original-block-text">${savedInputs.title}</div></div>` : ''}
+            ${savedInputs.content ? `<div class="original-block"><div class="original-block-label">仕事内容</div><div class="original-block-text">${savedInputs.content}</div></div>` : ''}
+            ${savedInputs.other ? `<div class="original-block"><div class="original-block-label">福利厚生・その他PR</div><div class="original-block-text">${savedInputs.other}</div></div>` : ''}
+          </div>
+        </div>
       </div>
     </div>
-    <div class="result-body">
-      <div class="result-section">
-        <div class="result-section-title">■ 詳細スコア</div>
-        <div class="r-bars">
-          ${[{l:'タイトル訴求',s:d.scores.title},{l:'わかりやすさ',s:d.scores.clarity},{l:'差別化',s:d.scores.differentiation},{l:'応募動機形成',s:d.scores.motivation}].map(x=>`
-            <div class="r-bar-row">
-              <div class="r-bar-name">${x.l}</div>
-              <div class="r-bar-track"><div class="r-bar-fill" style="width:${x.s/25*100}%;background:${col(x.s,25)};"></div></div>
-              <div class="r-bar-score" style="color:${col(x.s,25)};">${x.s}</div>
-            </div>`).join('')}
-        </div>
-      </div>
-      <div class="result-section">
-        <div class="result-section-title">■ 改善優先順位</div>
-        <div class="priority-list">
-          ${sorted.map((x,i)=>`
-            <div class="priority-item">
-              <div class="priority-rank">${i+1}</div>
-              <div class="priority-name">${x.label}</div>
-              <div class="priority-score" style="color:${col(x.score,25)};">${x.score}点</div>
-              ${badge(x.score)}
-            </div>`).join('')}
-        </div>
-      </div>
-      <div class="result-section">
-        <div class="result-section-title">■ 主な課題</div>
-        <div class="issue-list">
-          ${d.issues.map(i=>`<div class="issue-item"><span>⚠️</span><span>${i}</span></div>`).join('')}
-        </div>
-      </div>
-      <div class="result-section">
-        <div class="result-section-title">■ 改善提案</div>
-        <div class="proposal-list">
-          ${d.proposals.map((p,i)=>`<div class="proposal-item"><div class="proposal-label">PROPOSAL ${i+1}</div>${p}</div>`).join('')}
-        </div>
-      </div>
-      <div class="result-section">
-        <div class="result-section-title">■ タイトル改善案</div>
-        <div class="proposal-list">
-          ${d.titleSuggestions.map((t,i)=>`<div class="proposal-item"><div class="proposal-label">タイトル案 ${i+1}</div>${t}</div>`).join('')}
-        </div>
-      </div>
-    </div>
+
     <div class="result-cta">
       <div class="result-cta-text">
         <strong>もっと詳しく改善したい方へ</strong>
