@@ -7,7 +7,7 @@
 <meta name="description" content="求人票を貼り付けるだけでAIが4軸スコアリング。改善ポイントと改善案まで即座に提示。株式会社Link Coreが提供する求人改善サービス。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root {
     --ink: #0f0f0f;
@@ -65,7 +65,7 @@
   .score-circle { width: 72px; height: 72px; border-radius: 50%; border: 3px solid var(--score-red); display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
   .score-circle .num { font-family: 'Space Mono', monospace; font-size: 24px; font-weight: 700; color: var(--score-red); line-height: 1; }
   .score-circle .den { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); }
-  .score-label { font-size: 13px; color: #6b6560; line-height: 1.6; }
+  .score-label { font-size: 13px; color: var(--muted); line-height: 1.6; }
   .score-label strong { display: block; font-size: 15px; color: var(--ink); margin-bottom: 2px; }
   .score-bars { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
   .score-bar-row { display: flex; align-items: center; gap: 10px; }
@@ -103,39 +103,20 @@
   .step-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
   .chip { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; padding: 6px 14px; font-size: 12px; color: rgba(255,255,255,0.7); }
 
-  /* ── DIAGNOSIS ── */
   .diag-section { padding: 100px 80px; background: white; border-top: 1.5px solid var(--border); }
   .diag-inner { max-width: 860px; margin: 0 auto; }
   .diag-form-wrap { background: var(--paper); border: 1.5px solid var(--border); border-radius: 8px; padding: 40px; }
-
-  /* 3分割入力フィールド */
   .input-fields { display: flex; flex-direction: column; gap: 24px; }
   .input-field-group { display: flex; flex-direction: column; gap: 8px; }
-  .input-field-label {
-    font-size: 13px; font-weight: 700;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .input-field-label .field-num {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px; font-weight: 700;
-    background: var(--accent); color: white;
-    width: 20px; height: 20px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
+  .input-field-label { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .field-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; background: var(--accent); color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .input-field-hint { font-size: 12px; color: var(--muted); line-height: 1.6; padding-left: 28px; }
-  .diag-textarea {
-    width: 100%; padding: 14px 16px;
-    border: 1.5px solid var(--border); border-radius: 6px;
-    font-family: 'Noto Sans JP', sans-serif; font-size: 14px; line-height: 1.8;
-    background: white; resize: vertical; outline: none; transition: border-color .2s;
-  }
+  .diag-textarea { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 6px; font-family: 'Noto Sans JP', sans-serif; font-size: 14px; line-height: 1.8; background: white; resize: vertical; outline: none; transition: border-color .2s; }
   .diag-textarea:focus { border-color: var(--accent); }
   .diag-textarea::placeholder { color: #bbb; font-size: 13px; }
   .ta-title { min-height: 80px; }
   .ta-content { min-height: 160px; }
   .ta-other { min-height: 120px; }
-
   .diag-note { font-size: 12px; color: var(--muted); margin-top: 16px; line-height: 1.6; padding: 12px 16px; background: rgba(0,0,0,0.03); border-radius: 4px; }
   .diag-submit { width: 100%; margin-top: 20px; padding: 18px; background: var(--accent); color: white; border: none; border-radius: 4px; font-family: 'Noto Sans JP', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; letter-spacing: 0.04em; box-shadow: 4px 4px 0 var(--ink); transition: transform .2s, box-shadow .2s; }
   .diag-submit:hover:not(:disabled) { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
@@ -150,17 +131,10 @@
   .diag-result { display: none; margin-top: 40px; }
   .diag-result.active { display: block; }
 
-  /* PDF download btn */
   .pdf-btn-wrap { display: flex; justify-content: flex-end; margin-bottom: 16px; }
-  .pdf-btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: white; color: var(--ink);
-    border: 1.5px solid var(--border); border-radius: 4px;
-    padding: 10px 20px; font-size: 13px; font-weight: 700;
-    cursor: pointer; transition: border-color .2s, background .2s;
-    font-family: 'Noto Sans JP', sans-serif;
-  }
+  .pdf-btn { display: inline-flex; align-items: center; gap: 8px; background: white; color: var(--ink); border: 1.5px solid var(--border); border-radius: 4px; padding: 10px 20px; font-size: 13px; font-weight: 700; cursor: pointer; transition: border-color .2s, background .2s; font-family: 'Noto Sans JP', sans-serif; }
   .pdf-btn:hover { border-color: var(--ink); background: var(--paper); }
+  .pdf-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
   .result-header { background: var(--ink); color: white; border-radius: 8px 8px 0 0; padding: 28px 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
   .result-title-label { font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 0.12em; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
@@ -196,9 +170,8 @@
   .proposal-item { padding: 16px 20px; background: var(--paper); border: 1.5px solid var(--border); border-radius: 6px; font-size: 13px; line-height: 1.8; }
   .proposal-label { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--accent); font-weight: 700; margin-bottom: 6px; }
 
-  /* 元の求人票表示 */
   .original-section { background: var(--paper); }
-  .original-content { display: flex; flex-direction: column; gap: 16px; }
+  .original-content { display: flex; flex-direction: column; gap: 12px; }
   .original-block { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 16px; }
   .original-block-label { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--muted); font-weight: 700; margin-bottom: 8px; }
   .original-block-text { font-size: 13px; line-height: 1.9; white-space: pre-wrap; color: var(--ink); }
@@ -273,12 +246,6 @@
     .result-header { flex-direction: column; } .result-cta { flex-direction: column; }
     .diag-form-wrap { padding: 24px; }
   }
-
-  /* PDF用スタイル（印刷時） */
-  @media print {
-    nav, .diag-form-wrap, .diag-loading, .pdf-btn-wrap, .result-cta, .hero, .section, .how-section, .plans-section, .why-section, .cta-section, footer { display: none !important; }
-    .diag-result { display: block !important; margin: 0; }
-  }
 </style>
 </head>
 <body>
@@ -349,7 +316,6 @@
   </div>
 </section>
 
-<!-- DIAGNOSIS -->
 <section class="diag-section" id="diagnosis">
   <div class="diag-inner">
     <div class="section-label">FREE DIAGNOSIS</div>
@@ -357,28 +323,19 @@
     <div class="diag-form-wrap">
       <div class="input-fields">
         <div class="input-field-group">
-          <div class="input-field-label">
-            <span class="field-num">1</span>
-            求人タイトル
-          </div>
+          <div class="input-field-label"><span class="field-num">1</span>求人タイトル</div>
           <p class="input-field-hint">掲載している求人票のタイトルをそのまま貼り付けてください</p>
           <textarea class="diag-textarea ta-title" id="jobTitle" placeholder="例）【未経験歓迎】営業スタッフ募集｜月給25万円〜｜転勤なし"></textarea>
         </div>
         <div class="input-field-group">
-          <div class="input-field-label">
-            <span class="field-num">2</span>
-            仕事内容
-          </div>
+          <div class="input-field-label"><span class="field-num">2</span>仕事内容</div>
           <p class="input-field-hint">仕事内容・業務詳細・1日の流れなど、仕事に関する記載をすべて貼り付けてください</p>
-          <textarea class="diag-textarea ta-content" id="jobContent" placeholder="例）【仕事内容】&#10;法人向けにSaaSサービスの提案営業をお任せします。&#10;既存顧客へのフォロー70％、新規開拓30％のバランスです。&#10;&#10;【1日の流れ】&#10;9:00 出社・メール確認..."></textarea>
+          <textarea class="diag-textarea ta-content" id="jobContent" placeholder="例）法人向けにSaaSサービスの提案営業をお任せします。&#10;既存顧客へのフォロー70%、新規開拓30%のバランスです。"></textarea>
         </div>
         <div class="input-field-group">
-          <div class="input-field-label">
-            <span class="field-num">3</span>
-            福利厚生・その他PR
-          </div>
+          <div class="input-field-label"><span class="field-num">3</span>福利厚生・その他PR</div>
           <p class="input-field-hint">給与・待遇・福利厚生・会社の特徴・求める人物像など、上記以外の内容を貼り付けてください</p>
-          <textarea class="diag-textarea ta-other" id="jobOther" placeholder="例）【給与】月給25万円〜45万円（経験考慮）&#10;【福利厚生】社保完備、交通費全額支給、家族手当&#10;【特徴】設立20年、離職率5%以下の安定企業..."></textarea>
+          <textarea class="diag-textarea ta-other" id="jobOther" placeholder="例）月給25万円〜、社保完備、交通費全額支給、離職率5%以下の安定企業"></textarea>
         </div>
       </div>
       <p class="diag-note">※ 入力内容はAI診断にのみ使用します。外部への送信・保存はされません。</p>
@@ -461,8 +418,8 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.fade-in:not(.visible)').forEach(el => observer.observe(el));
 
-// 入力内容を保持する変数
 let savedInputs = { title: '', content: '', other: '' };
+let savedResult = null;
 
 async function runDiagnosis() {
   const title   = document.getElementById('jobTitle').value.trim();
@@ -474,7 +431,6 @@ async function runDiagnosis() {
     return;
   }
 
-  // 入力内容を保存
   savedInputs = { title, content, other };
 
   const btn = document.getElementById('diagBtn');
@@ -496,9 +452,10 @@ async function runDiagnosis() {
       body: JSON.stringify({ jobText })
     });
     const parsed = await response.json();
+    savedResult = parsed;
     renderResult(parsed);
   } catch(err) {
-    result.innerHTML = `<div style="padding:24px;background:#fff8f6;border:1px solid #f0c4b8;border-radius:8px;color:var(--score-red);font-size:14px;">診断中にエラーが発生しました。しばらくしてから再度お試しください。</div>`;
+    result.innerHTML = `<div style="padding:24px;background:#fff8f6;border:1px solid #f0c4b8;border-radius:8px;color:#c93030;font-size:14px;">診断中にエラーが発生しました。しばらくしてから再度お試しください。</div>`;
     result.classList.add('active');
   } finally {
     loading.classList.remove('active');
@@ -524,25 +481,201 @@ function badge(score) {
   return '<span class="priority-badge badge-low">良好</span>';
 }
 
+// ── PDF生成（jsPDFでテキストベース） ──
 function downloadPDF() {
-  const el = document.getElementById('pdf-target');
-  const now = new Date();
-  const dateStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
-  const opt = {
-    margin: [10, 10, 10, 10],
-    filename: `求人票診断レポート_${dateStr}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
-  html2pdf().set(opt).from(el).save();
+  if (!savedResult) return;
+  const d = savedResult;
+  const btn = document.getElementById('pdfBtn');
+  btn.disabled = true;
+  btn.textContent = '生成中...';
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+    const pageW = 210;
+    const margin = 15;
+    const contentW = pageW - margin * 2;
+    let y = 20;
+    const lineH = 7;
+
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日`;
+
+    // 日本語フォント未対応のため英数字ベースで出力
+    const toAscii = (str) => str
+      .replace(/【/g,'[').replace(/】/g,']')
+      .replace(/：/g,':').replace(/。/g,'.').replace(/、/g,',')
+      .replace(/[^\x00-\x7F]/g, (c) => {
+        const map = {
+          '求':'Kyujin','人':'Hito','票':'Hyo','診':'Shin','断':'Dan','結':'Ketsu','果':'Ka',
+          'ク':'Ku','ラ':'Ra','ウ':'U','ド':'Do','総':'So','合':'Go','ス':'Su','コ':'Ko','ア':'A',
+          '評':'Hyo','価':'Ka','改':'Kai','善':'Zen','優':'Yu','先':'Sen','度':'Do',
+          'タ':'Ta','イ':'I','ト':'To','ル':'Ru','訴':'So','求':'Kyu',
+          'わ':'wa','か':'ka','り':'ri','や':'ya','す':'su','さ':'sa',
+          '差':'Sa','別':'Betsu','化':'Ka','応':'O','募':'Bo','動':'Do','機':'Ki','形':'Kei','成':'Sei',
+          '主':'Shu','な':'na','課':'Ka','題':'Dai','提':'Tei','案':'An',
+          '高':'Ko','中':'Naka','低':'Tei','要':'Yo','対':'Tai','応':'O','推':'Sui','奨':'Sho','良':'Ryo','好':'Ko',
+          '仕':'Shi','事':'Ji','内':'Nai','容':'Yo','福':'Fuku','利':'Ri','厚':'Ko','生':'Sei','他':'Ta',
+          '年':'Nen','月':'Tsuki','日':'Hi','運':'Un','営':'Ei','株':'Kabu','式':'Shiki','会':'Kai','社':'Sha',
+          '非':'Hi','常':'Jo','に':'ni','い':'i','軽':'Kei','微':'Bi','で':'de','伸':'Shin','び':'bi','る':'ru',
+          '余':'Yo','地':'Chi','あ':'a','り':'ri','危':'Ki','険':'Ken','来':'Kuru','可':'Ka','能':'No','性':'Sei',
+        };
+        return map[c] || '?';
+      });
+
+    const addLine = (text, size=11, bold=false, color=[0,0,0]) => {
+      if (y > 270) { doc.addPage(); y = 20; }
+      doc.setFontSize(size);
+      doc.setFont('helvetica', bold ? 'bold' : 'normal');
+      doc.setTextColor(...color);
+      const lines = doc.splitTextToSize(text, contentW);
+      doc.text(lines, margin, y);
+      y += lineH * lines.length;
+    };
+
+    const addSection = (title) => {
+      y += 4;
+      doc.setFillColor(240, 240, 235);
+      doc.rect(margin, y-5, contentW, 9, 'F');
+      addLine(title, 10, true, [100, 60, 20]);
+      y += 2;
+    };
+
+    const addBar = (label, score, max=25) => {
+      if (y > 270) { doc.addPage(); y = 20; }
+      const pct = score / max;
+      const barColor = pct >= 0.72 ? [26,122,60] : pct >= 0.52 ? [200,154,0] : [201,48,48];
+      doc.setFontSize(10);
+      doc.setFont('helvetica','normal');
+      doc.setTextColor(0,0,0);
+      doc.text(label, margin, y);
+      // bar background
+      doc.setFillColor(220,215,205);
+      doc.rect(margin+55, y-4, 100, 5, 'F');
+      // bar fill
+      doc.setFillColor(...barColor);
+      doc.rect(margin+55, y-4, 100*pct, 5, 'F');
+      // score text
+      doc.setTextColor(...barColor);
+      doc.text(`${score}`, margin+160, y);
+      doc.setTextColor(0,0,0);
+      y += lineH;
+    };
+
+    const rc = rankColor(d.total);
+
+    // ── ヘッダー ──
+    doc.setFillColor(15,15,15);
+    doc.rect(0, 0, 210, 28, 'F');
+    doc.setFontSize(18); doc.setFont('helvetica','bold'); doc.setTextColor(255,255,255);
+    doc.text('KYUJIN KAIZEN CLOUD', margin, 13);
+    doc.setFontSize(10); doc.setFont('helvetica','normal'); doc.setTextColor(180,180,180);
+    doc.text('Diagnostic Report  |  ' + dateStr + '  |  Link Core Co., Ltd.', margin, 22);
+    y = 38;
+
+    // ── スコア ──
+    doc.setFontSize(48); doc.setFont('helvetica','bold'); doc.setTextColor(255,255,255);
+    doc.setFillColor(15,15,15);
+    doc.rect(margin, y-8, 60, 28, 'F');
+    doc.text(String(d.total), margin+6, y+14);
+    doc.setFontSize(14); doc.setTextColor(150,150,150);
+    doc.text('/100', margin+42, y+14);
+
+    // ランクバッジ
+    const rgbFromHex = (hex) => { const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return [r,g,b]; };
+    const bgRgb = rgbFromHex(rc.bg.replace('#','') === rc.bg ? '#e4f5eb' : rc.bg);
+    doc.setFillColor(...[220,240,225]);
+    doc.rect(margin+70, y-4, 80, 12, 'F');
+    doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(15,15,15);
+    doc.text(toAscii(d.rank), margin+72, y+5);
+    doc.setFontSize(10); doc.setFont('helvetica','normal');
+    doc.text('Priority: ' + toAscii(d.priority), margin+70, y+18);
+    y += 34;
+
+    // ── 詳細スコア ──
+    addSection('DETAIL SCORES');
+    addBar('Title Appeal', d.scores.title);
+    addBar('Clarity', d.scores.clarity);
+    addBar('Differentiation', d.scores.differentiation);
+    addBar('Motivation', d.scores.motivation);
+    y += 4;
+
+    // ── 改善優先順位 ──
+    addSection('IMPROVEMENT PRIORITY');
+    const sorted = [
+      { label:'Title Appeal', score: d.scores.title },
+      { label:'Clarity', score: d.scores.clarity },
+      { label:'Differentiation', score: d.scores.differentiation },
+      { label:'Motivation', score: d.scores.motivation },
+    ].sort((a,b) => a.score - b.score);
+    sorted.forEach((x,i) => {
+      addLine(`${i+1}. ${x.label}  ${x.score}pt  ${x.score<=12?'[HIGH]':x.score<=17?'[MID]':'[OK]'}`, 10);
+    });
+    y += 4;
+
+    // ── 主な課題 ──
+    addSection('MAIN ISSUES');
+    d.issues.forEach((issue, i) => {
+      addLine(`${i+1}. ${toAscii(issue)}`, 10);
+    });
+    y += 4;
+
+    // ── 改善提案 ──
+    addSection('PROPOSALS');
+    d.proposals.forEach((p, i) => {
+      addLine(`[${i+1}] ${toAscii(p)}`, 10);
+      y += 2;
+    });
+    y += 4;
+
+    // ── タイトル改善案 ──
+    addSection('TITLE SUGGESTIONS');
+    d.titleSuggestions.forEach((t, i) => {
+      addLine(`[${i+1}] ${toAscii(t)}`, 10);
+      y += 2;
+    });
+    y += 4;
+
+    // ── 診断対象の求人票 ──
+    addSection('ORIGINAL JOB POSTING');
+    if (savedInputs.title) {
+      addLine('[Title]', 10, true);
+      addLine(toAscii(savedInputs.title), 10);
+      y += 2;
+    }
+    if (savedInputs.content) {
+      addLine('[Job Description]', 10, true);
+      addLine(toAscii(savedInputs.content), 10);
+      y += 2;
+    }
+    if (savedInputs.other) {
+      addLine('[Benefits & PR]', 10, true);
+      addLine(toAscii(savedInputs.other), 10);
+    }
+
+    // フッター
+    const pageCount = doc.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(150,150,150);
+      doc.text(`Kyujin Kaizen Cloud | Link Core Co., Ltd. | Page ${i}/${pageCount}`, margin, 290);
+    }
+
+    const dateFile = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+    doc.save(`kyujin-shindan-report_${dateFile}.pdf`);
+  } catch(err) {
+    alert('PDF生成中にエラーが発生しました。');
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '📄 PDFでダウンロード';
+  }
 }
 
 function renderResult(d) {
   const el = document.getElementById('diagResult');
   const rc = rankColor(d.total);
-  const now = new Date();
-  const dateStr = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日`;
   const sorted = [
     { label:'タイトル訴求', score: d.scores.title },
     { label:'わかりやすさ', score: d.scores.clarity },
@@ -552,93 +685,71 @@ function renderResult(d) {
 
   el.innerHTML = `
     <div class="pdf-btn-wrap">
-      <button class="pdf-btn" onclick="downloadPDF()">
-        📄 PDFでダウンロード
-      </button>
+      <button class="pdf-btn" id="pdfBtn" onclick="downloadPDF()">📄 PDFでダウンロード</button>
     </div>
-
-    <div id="pdf-target" style="background:white;">
-      <!-- PDF用ヘッダー -->
-      <div style="padding:24px 32px 16px;border:1.5px solid #c8c2b8;border-radius:8px 8px 0 0;border-bottom:none;background:#f5f2ec;display:flex;justify-content:space-between;align-items:center;">
-        <div>
-          <div style="font-family:sans-serif;font-size:11px;color:#6b6560;letter-spacing:0.1em;margin-bottom:4px;">求人改善クラウド｜診断レポート</div>
-          <div style="font-family:sans-serif;font-size:13px;font-weight:700;color:#0f0f0f;">診断日：${dateStr}</div>
-        </div>
-        <div style="font-family:sans-serif;font-size:11px;color:#6b6560;">運営：株式会社Link Core</div>
+    <div class="result-header">
+      <div>
+        <div class="result-title-label">DIAGNOSTIC REPORT</div>
+        <div class="result-score-big">${d.total}<span>/100</span></div>
       </div>
-
-      <div class="result-header">
-        <div>
-          <div class="result-title-label">DIAGNOSTIC REPORT</div>
-          <div class="result-score-big">${d.total}<span>/100</span></div>
-        </div>
-        <div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:8px;">総合評価</div>
-          <div class="result-rank-badge" style="background:${rc.bg};color:${rc.fg};">${d.rank}</div>
-          <div style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.5);">改善優先度</div>
-          <div style="margin-top:4px;font-size:18px;font-weight:700;color:${d.priority==='高'?'#ff8080':d.priority==='中'?'#ffd080':'#80e0a0'};">${d.priority}</div>
+      <div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:8px;">総合評価</div>
+        <div class="result-rank-badge" style="background:${rc.bg};color:${rc.fg};">${d.rank}</div>
+        <div style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.5);">改善優先度</div>
+        <div style="margin-top:4px;font-size:18px;font-weight:700;color:${d.priority==='高'?'#ff8080':d.priority==='中'?'#ffd080':'#80e0a0'};">${d.priority}</div>
+      </div>
+    </div>
+    <div class="result-body">
+      <div class="result-section">
+        <div class="result-section-title">■ 詳細スコア</div>
+        <div class="r-bars">
+          ${[{l:'タイトル訴求',s:d.scores.title},{l:'わかりやすさ',s:d.scores.clarity},{l:'差別化',s:d.scores.differentiation},{l:'応募動機形成',s:d.scores.motivation}].map(x=>`
+            <div class="r-bar-row">
+              <div class="r-bar-name">${x.l}</div>
+              <div class="r-bar-track"><div class="r-bar-fill" style="width:${x.s/25*100}%;background:${col(x.s,25)};"></div></div>
+              <div class="r-bar-score" style="color:${col(x.s,25)};">${x.s}</div>
+            </div>`).join('')}
         </div>
       </div>
-
-      <div class="result-body">
-        <div class="result-section">
-          <div class="result-section-title">■ 詳細スコア</div>
-          <div class="r-bars">
-            ${[{l:'タイトル訴求',s:d.scores.title},{l:'わかりやすさ',s:d.scores.clarity},{l:'差別化',s:d.scores.differentiation},{l:'応募動機形成',s:d.scores.motivation}].map(x=>`
-              <div class="r-bar-row">
-                <div class="r-bar-name">${x.l}</div>
-                <div class="r-bar-track"><div class="r-bar-fill" style="width:${x.s/25*100}%;background:${col(x.s,25)};"></div></div>
-                <div class="r-bar-score" style="color:${col(x.s,25)};">${x.s}</div>
-              </div>`).join('')}
-          </div>
+      <div class="result-section">
+        <div class="result-section-title">■ 改善優先順位</div>
+        <div class="priority-list">
+          ${sorted.map((x,i)=>`
+            <div class="priority-item">
+              <div class="priority-rank">${i+1}</div>
+              <div class="priority-name">${x.label}</div>
+              <div class="priority-score" style="color:${col(x.score,25)};">${x.score}点</div>
+              ${badge(x.score)}
+            </div>`).join('')}
         </div>
-
-        <div class="result-section">
-          <div class="result-section-title">■ 改善優先順位</div>
-          <div class="priority-list">
-            ${sorted.map((x,i)=>`
-              <div class="priority-item">
-                <div class="priority-rank">${i+1}</div>
-                <div class="priority-name">${x.label}</div>
-                <div class="priority-score" style="color:${col(x.score,25)};">${x.score}点</div>
-                ${badge(x.score)}
-              </div>`).join('')}
-          </div>
+      </div>
+      <div class="result-section">
+        <div class="result-section-title">■ 主な課題</div>
+        <div class="issue-list">
+          ${d.issues.map(i=>`<div class="issue-item"><span>⚠️</span><span>${i}</span></div>`).join('')}
         </div>
-
-        <div class="result-section">
-          <div class="result-section-title">■ 主な課題</div>
-          <div class="issue-list">
-            ${d.issues.map(i=>`<div class="issue-item"><span>⚠️</span><span>${i}</span></div>`).join('')}
-          </div>
+      </div>
+      <div class="result-section">
+        <div class="result-section-title">■ 改善提案</div>
+        <div class="proposal-list">
+          ${d.proposals.map((p,i)=>`<div class="proposal-item"><div class="proposal-label">PROPOSAL ${i+1}</div>${p}</div>`).join('')}
         </div>
-
-        <div class="result-section">
-          <div class="result-section-title">■ 改善提案</div>
-          <div class="proposal-list">
-            ${d.proposals.map((p,i)=>`<div class="proposal-item"><div class="proposal-label">PROPOSAL ${i+1}</div>${p}</div>`).join('')}
-          </div>
+      </div>
+      <div class="result-section">
+        <div class="result-section-title">■ タイトル改善案</div>
+        <div class="proposal-list">
+          ${d.titleSuggestions.map((t,i)=>`<div class="proposal-item"><div class="proposal-label">タイトル案 ${i+1}</div>${t}</div>`).join('')}
         </div>
-
-        <div class="result-section">
-          <div class="result-section-title">■ タイトル改善案</div>
-          <div class="proposal-list">
-            ${d.titleSuggestions.map((t,i)=>`<div class="proposal-item"><div class="proposal-label">タイトル案 ${i+1}</div>${t}</div>`).join('')}
-          </div>
-        </div>
-
-        <!-- 診断対象の元の求人票 -->
-        <div class="result-section original-section">
-          <div class="result-section-title">■ 診断対象の求人票（入力内容）</div>
-          <div class="original-content">
-            ${savedInputs.title ? `<div class="original-block"><div class="original-block-label">求人タイトル</div><div class="original-block-text">${savedInputs.title}</div></div>` : ''}
-            ${savedInputs.content ? `<div class="original-block"><div class="original-block-label">仕事内容</div><div class="original-block-text">${savedInputs.content}</div></div>` : ''}
-            ${savedInputs.other ? `<div class="original-block"><div class="original-block-label">福利厚生・その他PR</div><div class="original-block-text">${savedInputs.other}</div></div>` : ''}
-          </div>
+      </div>
+      <div class="result-section original-section">
+        <div class="result-section-title">■ 診断対象の求人票（入力内容）</div>
+        <div class="original-content">
+          ${savedInputs.title?`<div class="original-block"><div class="original-block-label">求人タイトル</div><div class="original-block-text">${savedInputs.title}</div></div>`:''}
+          ${savedInputs.content?`<div class="original-block"><div class="original-block-label">仕事内容</div><div class="original-block-text">${savedInputs.content}</div></div>`:''}
+          ${savedInputs.other?`<div class="original-block"><div class="original-block-label">福利厚生・その他PR</div><div class="original-block-text">${savedInputs.other}</div></div>`:''}
         </div>
       </div>
     </div>
-
     <div class="result-cta">
       <div class="result-cta-text">
         <strong>もっと詳しく改善したい方へ</strong>
