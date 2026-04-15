@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>採用戦略クラウドAI｜Proダッシュボード</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root {
+  --ink: #0f0f0f;
+  --paper: #f5f2ec;
+  --accent: #d4401a;
+  --muted: #6b6560;
+  --border: #c8c2b8;
+  --score-green: #1a7a3c;
+  --score-yellow: #c89a00;
+  --score-red: #c93030;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Noto Sans JP', sans-serif; background: var(--paper); color: var(--ink); }
+
+/* ── Nav ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 40px;
+  background: rgba(245,242,236,0.96); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--ink); text-decoration: none; }
+.nav-logo span { color: var(--accent); }
+.nav-center { display: flex; gap: 4px; }
+.nav-tab { padding: 7px 16px; border-radius: 4px; font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer; border: 1.5px solid transparent; text-decoration: none; transition: all .2s; white-space: nowrap; }
+.nav-tab:hover { color: var(--ink); border-color: var(--border); }
+.nav-tab.active { color: var(--accent); border-color: var(--accent); background: rgba(212,64,26,0.05); }
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.pro-badge { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; padding: 5px 12px; border-radius: 2px; background: var(--accent); color: white; }
+.nav-home { font-size: 12px; color: var(--muted); text-decoration: none; padding: 6px 12px; border: 1px solid var(--border); border-radius: 4px; transition: all .2s; }
+.nav-home:hover { color: var(--ink); border-color: var(--ink); }
+
+/* ── Layout ── */
+.dashboard { max-width: 960px; margin: 0 auto; padding: 100px 40px 80px; }
+
+/* ── Page system ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── Section header ── */
+.sec-label { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--accent); font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+.sec-label::before { content: ''; width: 24px; height: 2px; background: var(--accent); display: block; }
+.sec-h2 { font-size: clamp(22px, 3vw, 32px); font-weight: 900; line-height: 1.3; letter-spacing: -0.02em; margin-bottom: 32px; }
+
+/* ── Cards ── */
+.card { background: white; border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 20px; }
+.card-head { padding: 20px 28px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+.card-icon { width: 36px; height: 36px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; background: var(--paper); border: 1.5px solid var(--border); }
+.card-title { font-size: 15px; font-weight: 700; }
+.card-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.card-body { padding: 24px 28px; }
+
+/* ── Form ── */
+.form-group { margin-bottom: 20px; }
+label { font-size: 13px; font-weight: 700; display: block; margin-bottom: 6px; }
+.hint { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 8px; padding-left: 0; }
+.field-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; background: var(--accent); color: white; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 8px; flex-shrink: 0; }
+textarea, input[type="text"], select {
+  width: 100%; padding: 12px 14px;
+  border: 1.5px solid var(--border); border-radius: 6px;
+  font-family: 'Noto Sans JP', sans-serif; font-size: 14px;
+  background: white; outline: none; transition: border-color .2s;
+}
+textarea { resize: vertical; line-height: 1.8; }
+textarea:focus, input[type="text"]:focus, select:focus { border-color: var(--accent); }
+textarea::placeholder, input::placeholder { color: #bbb; font-size: 13px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+/* ── Submit ── */
+.submit-btn {
+  width: 100%; padding: 17px; background: var(--accent); color: white;
+  border: none; border-radius: 4px; font-family: 'Noto Sans JP', sans-serif;
+  font-size: 16px; font-weight: 700; cursor: pointer; letter-spacing: 0.04em;
+  box-shadow: 4px 4px 0 var(--ink); transition: transform .2s, box-shadow .2s;
+  margin-top: 20px;
+}
+.submit-btn:hover:not(:disabled) { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+.submit-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: 4px 4px 0 var(--ink); }
+
+/* ── Loading ── */
+.loading { display: none; text-align: center; padding: 56px 20px; }
+.loading.active { display: block; }
+.spinner { width: 44px; height: 44px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Result ── */
+.result { display: none; margin-top: 32px; }
+.result.active { display: block; }
+.result-header { background: var(--ink); color: white; border-radius: 8px 8px 0 0; padding: 24px 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.result-title-label { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+.result-score-big { font-family: 'DM Serif Display', serif; font-size: 60px; color: white; line-height: 1; }
+.result-score-big span { font-size: 18px; color: rgba(255,255,255,0.4); }
+.result-rank-badge { padding: 10px 20px; border-radius: 4px; font-weight: 700; font-size: 14px; display: inline-block; }
+.result-body { border: 1.5px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; background: white; overflow: hidden; }
+.result-section { padding: 24px 28px; border-bottom: 1px solid var(--border); }
+.result-section:last-child { border-bottom: none; }
+.result-section-title { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: var(--accent); font-weight: 700; margin-bottom: 16px; }
+.r-bars { display: flex; flex-direction: column; gap: 12px; }
+.r-bar-row { display: grid; grid-template-columns: 110px 1fr 44px; align-items: center; gap: 12px; }
+.r-bar-name { font-size: 13px; font-weight: 500; }
+.r-bar-track { height: 8px; background: #e8e4dc; border-radius: 4px; overflow: hidden; }
+.r-bar-fill { height: 100%; border-radius: 4px; }
+.r-bar-score { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; text-align: right; }
+.priority-list { display: flex; flex-direction: column; gap: 10px; }
+.priority-item { display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: var(--paper); border-radius: 6px; }
+.priority-rank { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--border); line-height: 1; width: 28px; flex-shrink: 0; }
+.priority-name { font-size: 14px; font-weight: 700; flex: 1; }
+.priority-score { font-family: 'Space Mono', monospace; font-size: 13px; }
+.priority-badge { padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; }
+.badge-high { background: #ffe4e4; color: var(--score-red); }
+.badge-mid { background: #fff8e0; color: var(--score-yellow); }
+.badge-low { background: #e4f5eb; color: var(--score-green); }
+.issue-list { display: flex; flex-direction: column; gap: 10px; }
+.issue-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px 16px; background: #fff8f6; border: 1px solid #f0c4b8; border-radius: 6px; font-size: 13px; line-height: 1.7; }
+.proposal-list { display: flex; flex-direction: column; gap: 10px; }
+.proposal-item { padding: 14px 18px; background: var(--paper); border: 1.5px solid var(--border); border-radius: 6px; font-size: 13px; line-height: 1.8; }
+.proposal-label { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--accent); font-weight: 700; margin-bottom: 6px; }
+.sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.sw-box { border-radius: 6px; padding: 14px 16px; }
+.sw-box.s { background: #e4f5eb; border: 1px solid #b0d9be; }
+.sw-box.w { background: #ffe4e4; border: 1px solid #f0c4c4; }
+.sw-label { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; margin-bottom: 6px; }
+.sw-box.s .sw-label { color: var(--score-green); }
+.sw-box.w .sw-label { color: var(--score-red); }
+.sw-text { font-size: 13px; line-height: 1.7; }
+.bm-tag { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 2px; display: inline-block; margin-right: 8px; margin-bottom: 6px; }
+.bm-tag-info { background: #e8f0ff; color: #1a4fd4; }
+.bm-tag-warn { background: #fff8e0; color: var(--score-yellow); }
+.result-cta { margin-top: 24px; padding: 24px 28px; background: var(--ink); border-radius: 8px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.result-cta strong { display: block; font-size: 16px; margin-bottom: 4px; color: white; }
+.result-cta p { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.6; }
+.result-cta-btn { background: var(--accent); color: white; padding: 12px 24px; border-radius: 4px; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; box-shadow: 3px 3px 0 rgba(255,255,255,0.2); transition: transform .2s; display: inline-block; }
+.result-cta-btn:hover { transform: translate(-1px,-1px); }
+
+/* ── PDF btn ── */
+.pdf-btn-wrap { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+.pdf-btn { display: inline-flex; align-items: center; gap: 8px; background: white; color: var(--ink); border: 1.5px solid var(--border); border-radius: 4px; padding: 9px 18px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; transition: border-color .2s; }
+.pdf-btn:hover { border-color: var(--ink); }
+
+/* ── Competitor rows ── */
+.comp-head { display: grid; grid-template-columns: 1fr 1fr 2fr 30px; gap: 8px; margin-bottom: 6px; }
+.comp-head span { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); font-weight: 700; letter-spacing: 0.06em; }
+.comp-row { display: grid; grid-template-columns: 1fr 1fr 2fr 30px; gap: 8px; margin-bottom: 8px; align-items: start; }
+.add-comp-btn { background: none; border: 1.5px dashed var(--border); border-radius: 6px; padding: 9px; font-size: 13px; color: var(--muted); cursor: pointer; width: 100%; margin-top: 6px; font-family: 'Noto Sans JP', sans-serif; transition: all .2s; }
+.add-comp-btn:hover { border-color: var(--accent); color: var(--accent); }
+.rm-btn { background: none; border: 1.5px solid var(--border); color: var(--muted); cursor: pointer; font-size: 14px; border-radius: 4px; width: 30px; height: 36px; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+.rm-btn:hover { border-color: var(--score-red); color: var(--score-red); }
+
+/* ── Chips ── */
+.chip-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: 12px; padding: 7px 14px; border: 1.5px solid var(--border); border-radius: 100px; cursor: pointer; color: var(--muted); transition: all .2s; font-family: 'Noto Sans JP', sans-serif; font-weight: 500; }
+.chip:hover { border-color: var(--accent); color: var(--accent); }
+.chip.on { border-color: var(--accent); color: var(--accent); background: #fff8f6; font-weight: 700; }
+
+/* ── Mode toggle ── */
+.mode-toggle { display: flex; border: 1.5px solid var(--border); border-radius: 6px; overflow: hidden; flex-shrink: 0; }
+.mode-toggle button { padding: 8px 18px; font-size: 12px; font-weight: 700; font-family: 'Space Mono', monospace; letter-spacing: 0.05em; border: none; cursor: pointer; background: white; color: var(--muted); transition: all .2s; }
+.mode-toggle button.on { background: var(--ink); color: var(--paper); }
+
+/* ── Mypage ── */
+.stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 24px; }
+.stat-card { background: white; border: 1.5px solid var(--border); border-radius: 8px; padding: 18px 20px; }
+.stat-label { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); font-weight: 700; letter-spacing: 0.1em; margin-bottom: 8px; }
+.stat-num { font-family: 'DM Serif Display', serif; font-size: 32px; line-height: 1; }
+.stat-desc { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.hist-item { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: all .15s; border-radius: 4px; }
+.hist-item:last-child { border-bottom: none; }
+.hist-item:hover { background: var(--paper); padding-left: 8px; }
+.hist-badge { width: 44px; height: 44px; border-radius: 50%; border: 2.5px solid; display: flex; align-items: center; justify-content: center; font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.hist-info { flex: 1; }
+.hist-title { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.hist-meta { font-size: 12px; color: var(--muted); }
+
+/* ── Auto mode ── */
+.auto-info { background: #fff8f6; border: 1px solid #f0c4b8; border-radius: 6px; padding: 12px 16px; margin-bottom: 18px; font-size: 13px; line-height: 1.7; color: var(--ink); }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  nav { padding: 12px 20px; }
+  .nav-center { display: none; }
+  .dashboard { padding: 88px 20px 60px; }
+  .grid-2, .grid-3, .sw-grid, .stat-grid { grid-template-columns: 1fr; }
+  .comp-row, .comp-head { grid-template-columns: 1fr 1fr; }
+  .comp-row textarea { grid-column: 1 / -1; }
+  .result-header { flex-direction: column; }
+  .result-cta { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a href="index.html" class="nav-logo">採用戦略<span>クラウドAI</span></a>
+  <div class="nav-center">
+    <a class="nav-tab active" id="tab-btn-improve" onclick="showPage('improve')">🔍 無料診断</a>
+    <a class="nav-tab" id="tab-btn-benchmark" onclick="showPage('benchmark')">📊 競合分析</a>
+    <a class="nav-tab" id="tab-btn-mypage" onclick="showPage('mypage')">👤 マイページ</a>
+  </div>
+  <div class="nav-right">
+    <span class="pro-badge">PRO PLAN</span>
+    <a href="index.html" class="nav-home">← サイトトップ</a>
+  </div>
+</nav>
+
+<div class="dashboard">
+
+  <!-- ══ PAGE: 無料診断（Pro全解放版） ══ -->
+  <div class="page active" id="page-improve">
+    <div class="sec-label">FREE DIAGNOSIS — PRO</div>
+    <h2 class="sec-h2">求人票を診断する</h2>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon">📝</div>
+        <div><div class="card-title">求人票を入力</div><div class="card-sub">3項目に分けて貼り付けると精度が上がります</div></div>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label><span class="field-num">1</span>求人タイトル</label>
+          <p class="hint">掲載中の求人タイトルをそのまま貼り付けてください</p>
+          <textarea id="p-jobTitle" style="min-height:70px;" placeholder="例）【未経験歓迎】営業スタッフ募集｜月給25万円〜｜転勤なし"></textarea>
+        </div>
+        <div class="form-group">
+          <label><span class="field-num">2</span>仕事内容</label>
+          <p class="hint">仕事内容・業務詳細・1日の流れなど仕事に関する記載をすべて貼り付けてください</p>
+          <textarea id="p-jobContent" style="min-height:140px;" placeholder="例）法人向けにSaaSサービスの提案営業をお任せします。&#10;既存顧客フォロー70%・新規開拓30%のバランスです。"></textarea>
+        </div>
+        <div class="form-group">
+          <label><span class="field-num">3</span>福利厚生・その他PR</label>
+          <p class="hint">給与・待遇・福利厚生・会社の特徴・求める人物像など上記以外の内容を貼り付けてください</p>
+          <textarea id="p-jobOther" style="min-height:100px;" placeholder="例）月給25万円〜、社保完備、交通費全額支給、離職率5%以下の安定企業"></textarea>
+        </div>
+        <p style="font-size:12px;color:var(--muted);padding:10px 14px;background:rgba(0,0,0,0.03);border-radius:4px;line-height:1.6;">※ 入力内容はAI診断にのみ使用します。外部への送信・保存はされません。</p>
+        <button class="submit-btn" id="p-diagBtn" onclick="runProDiagnosis()">🔍 今すぐ診断する（Pro全解放）</button>
+      </div>
+    </div>
+
+    <div class="loading" id="p-diagLoading">
+      <div class="spinner"></div>
+      <p style="font-size:14px;color:var(--muted);">求人票を分析中です…</p>
+    </div>
+    <div class="result" id="p-diagResult"></div>
+  </div>
+
+  <!-- ══ PAGE: 競合分析（Pro全解放版） ══ -->
+  <div class="page" id="page-benchmark">
+    <div class="sec-label">COMPETITIVE ANALYSIS — PRO</div>
+    <h2 class="sec-h2">競合求人と自社を比較する</h2>
+
+    <!-- STEP 0: 会社情報 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon">🏢</div>
+        <div><div class="card-title">STEP 0 — 自社会社情報（任意・入力すると精度UP）</div><div class="card-sub">規模・業界・立ち位置を把握することでより実態に即した分析が可能です</div></div>
+      </div>
+      <div class="card-body">
+        <div class="grid-2" style="margin-bottom:14px;">
+          <div><label>会社名</label><input type="text" id="b-kaisha" placeholder="株式会社〇〇（非公開の場合は空白でOK）"></div>
+          <div><label>業界・事業内容</label><input type="text" id="b-gyokai" placeholder="例：SaaS営業支援ツール、人材紹介、製造業"></div>
+        </div>
+        <div class="grid-3" style="margin-bottom:14px;">
+          <div><label>従業員数</label><select id="b-jinin"><option value="">選択</option><option>〜30名（スタートアップ）</option><option>31〜100名（中小企業）</option><option>101〜300名</option><option>301〜1000名</option><option>1001名以上（大企業）</option></select></div>
+          <div><label>上場区分</label><select id="b-joto"><option value="">選択</option><option>東証プライム</option><option>東証スタンダード</option><option>東証グロース</option><option>非上場</option><option>外資系</option></select></div>
+          <div><label>設立年数</label><select id="b-nensu"><option value="">選択</option><option>3年未満</option><option>3〜10年</option><option>11〜30年</option><option>31年以上</option></select></div>
+        </div>
+        <div><label>自社のアピールポイント・強み（任意）</label><textarea id="b-jisha-pr" style="min-height:60px;" placeholder="例：3期連続増収増益、離職率5%以下、完全フレックス、副業OK"></textarea></div>
+      </div>
+    </div>
+
+    <!-- STEP 1: 求人情報 -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon">📋</div>
+        <div><div class="card-title">STEP 1 — 自社求人情報</div></div>
+      </div>
+      <div class="card-body">
+        <div class="grid-2" style="margin-bottom:14px;">
+          <div><label>職種 <span style="color:var(--score-red)">*</span></label><input type="text" id="b-shokushu" placeholder="例：営業マネージャー"></div>
+          <div><label>勤務地 <span style="color:var(--score-red)">*</span></label><input type="text" id="b-kinmu" placeholder="例：東京・リモート可"></div>
+        </div>
+        <div class="grid-3" style="margin-bottom:14px;">
+          <div><label>雇用形態</label><select id="b-koyo"><option>正社員</option><option>契約社員</option><option>業務委託</option><option>アルバイト・パート</option></select></div>
+          <div><label>年収（最低）</label><input type="text" id="b-nmin" placeholder="例：400万円"></div>
+          <div><label>年収（最高）</label><input type="text" id="b-nmax" placeholder="例：700万円"></div>
+        </div>
+        <div style="margin-bottom:14px;"><label>現在の求人タイトル</label><input type="text" id="b-title" placeholder="例：営業マネージャー募集｜年収600万〜"></div>
+        <div><label>ターゲット・現在の訴求ポイント</label><textarea id="b-appeal" style="min-height:70px;" placeholder="例：フルリモート可、残業少なめ、成果主義"></textarea></div>
+      </div>
+    </div>
+
+    <!-- STEP 2: 競合データ（手動/おまかせ） -->
+    <div class="card">
+      <div class="card-head" style="justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="card-icon">📊</div>
+          <div><div class="card-title">STEP 2 — 競合データ</div><div class="card-sub">手動入力でもAIおまかせでもOK</div></div>
+        </div>
+        <div class="mode-toggle">
+          <button id="tog-manual" class="on" onclick="setMode('manual')">手動入力</button>
+          <button id="tog-auto" onclick="setMode('auto')">AIおまかせ ✦</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- 手動 -->
+        <div id="manual-area">
+          <p style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Indeed・マイナビ・リクナビNEXTなどからコピーして貼り付けるだけでOKです</p>
+          <div class="comp-head"><span>企業名・求人タイトル</span><span>年収レンジ</span><span>主な訴求・特徴</span><span></span></div>
+          <div id="comp-list"></div>
+          <button class="add-comp-btn" onclick="addComp()">＋ 競合を追加する</button>
+        </div>
+        <!-- おまかせ -->
+        <div id="auto-area" style="display:none;">
+          <div class="auto-info">✦ AIが職種・勤務地・会社規模をもとに、同じ市場で競合する求人の傾向を推定して分析します。競合を調べる時間がない方に最適です。</div>
+          <div class="grid-2" style="margin-bottom:14px;">
+            <div><label>比較したい競合のタイプ</label><select id="auto-type"><option value="">自動で判定（推奨）</option><option>同業界・同規模</option><option>大手・上場企業</option><option>スタートアップ・ベンチャー</option><option>外資系企業</option><option>同職種・業界問わず</option></select></div>
+            <div><label>比較エリア</label><select id="auto-area-sel"><option value="">勤務地と同じ（自動）</option><option>全国（リモート含む）</option><option>同一都道府県内</option><option>首都圏</option><option>関西圏</option></select></div>
+          </div>
+          <div><label>競合の表記方法</label>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:9px 14px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;" id="disp-named"><input type="radio" name="disp" value="named" checked onchange="updateDisp()" style="accent-color:var(--accent);"> <span><strong>実名あり</strong>（エン転職・リクルートなど具体名で表示）</span></label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:9px 14px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;" id="disp-abs"><input type="radio" name="disp" value="abstract" onchange="updateDisp()" style="accent-color:var(--accent);"> <span><strong>抽象表現</strong>（競合A・同規模他社Bのように匿名表示）</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: 分析軸 -->
+    <div class="card">
+      <div class="card-head"><div class="card-icon">🎯</div><div><div class="card-title">STEP 3 — 重点分析軸（複数選択可）</div></div></div>
+      <div class="card-body">
+        <div class="chip-grid" id="b-chips">
+          <div class="chip on" data-v="給与・待遇">給与・待遇</div>
+          <div class="chip on" data-v="求人タイトル">求人タイトル</div>
+          <div class="chip on" data-v="訴求軸">訴求軸の分析</div>
+          <div class="chip" data-v="福利厚生">福利厚生</div>
+          <div class="chip" data-v="求める人物像">求める人物像</div>
+          <div class="chip" data-v="キャリアパス">キャリアパス</div>
+          <div class="chip" data-v="企業ブランド">企業ブランド</div>
+          <div class="chip" data-v="選考プロセス">選考プロセス</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group"><label>補足・AIへの追加指示（任意）</label><textarea id="b-note" style="min-height:60px;" placeholder="例：応募数が減っている原因を知りたい / 20〜30代前半への訴求を強化したい"></textarea></div>
+
+    <button class="submit-btn" id="b-btn" onclick="runBenchmark()">📊 AIで競合分析をスタートする</button>
+
+    <div class="loading" id="b-loading"><div class="spinner"></div><p style="font-size:14px;color:var(--muted);">競合データを分析中です…</p></div>
+    <div class="result" id="b-result"></div>
+  </div>
+
+  <!-- ══ PAGE: マイページ ══ -->
+  <div class="page" id="page-mypage">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:28px;">
+      <div>
+        <div class="sec-label">MY PAGE</div>
+        <h2 class="sec-h2" style="margin-bottom:0;">分析履歴・マイページ</h2>
+      </div>
+      <button onclick="clearHistory()" style="background:none;border:1.5px solid var(--border);border-radius:4px;padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;font-family:'Noto Sans JP',sans-serif;">履歴をリセット</button>
+    </div>
+
+    <!-- サマリー -->
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-label">TOTAL</div><div class="stat-num" id="s-total">0</div><div class="stat-desc">分析回数</div></div>
+      <div class="stat-card"><div class="stat-label">AVG SCORE</div><div class="stat-num" id="s-avg">—</div><div class="stat-desc">平均スコア</div></div>
+      <div class="stat-card"><div class="stat-label" style="color:var(--score-green);">BEST</div><div class="stat-num" style="color:var(--score-green);" id="s-best">—</div><div class="stat-desc">最高スコア</div></div>
+      <div class="stat-card"><div class="stat-label" style="color:var(--score-red);">WORST</div><div class="stat-num" style="color:var(--score-red);" id="s-worst">—</div><div class="stat-desc">最低スコア</div></div>
+    </div>
+
+    <!-- グラフ -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-head"><div class="card-icon">📈</div><div><div class="card-title">スコア推移</div></div></div>
+      <div class="card-body" style="position:relative;height:160px;">
+        <canvas id="m-chart" style="width:100%;height:160px;"></canvas>
+        <div id="m-chart-empty" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;">分析を実行するとグラフが表示されます</div>
+      </div>
+    </div>
+
+    <!-- タイトルバンク -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-head"><div class="card-icon">✏️</div><div><div class="card-title">改善タイトル案バンク</div><div class="card-sub">クリックでコピーできます</div></div></div>
+      <div class="card-body"><div id="m-title-bank"><p style="color:var(--muted);font-size:13px;text-align:center;padding:16px 0;">タイトル案はまだありません</p></div></div>
+    </div>
+
+    <!-- 履歴 -->
+    <div class="card">
+      <div class="card-head" style="justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:12px;"><div class="card-icon">📁</div><div><div class="card-title">分析履歴</div></div></div>
+        <span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);" id="m-count">0件</span>
+      </div>
+      <div class="card-body" style="padding:0 28px;"><div id="m-hist-list"><p style="text-align:center;padding:40px 0;color:var(--muted);font-size:13px;">まだ分析履歴がありません。<br>診断または競合分析を実行すると、ここに記録されます。</p></div></div>
+    </div>
+
+    <!-- 詳細展開 -->
+    <div id="m-detail" style="display:none;margin-top:20px;" class="card">
+      <div class="card-head" style="justify-content:space-between;background:var(--ink);">
+        <span style="font-family:'Space Mono',monospace;font-size:11px;color:rgba(255,255,255,0.5);font-weight:700;">DETAIL VIEW</span>
+        <button onclick="closeDetail()" style="background:none;border:1px solid rgba(255,255,255,0.2);border-radius:4px;color:rgba(255,255,255,0.6);padding:5px 14px;font-size:12px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;">閉じる ×</button>
+      </div>
+      <div class="card-body" id="m-detail-body"></div>
+    </div>
+  </div>
+
+</div><!-- /dashboard -->
+
+<script>
+/* ── State ── */
+const STORAGE_KEY = 'kyujin_history_v1';
+let compMode = 'manual';
+let compCount = 0;
+
+/* ── Page nav ── */
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.getElementById('tab-btn-' + id).classList.add('active');
+  if (id === 'mypage') renderMyPage();
+}
+
+/* ── Mode toggle ── */
+function setMode(m) {
+  compMode = m;
+  const isAuto = m === 'auto';
+  document.getElementById('manual-area').style.display = isAuto ? 'none' : 'block';
+  document.getElementById('auto-area').style.display = isAuto ? 'block' : 'none';
+  document.getElementById('tog-manual').className = isAuto ? '' : 'on';
+  document.getElementById('tog-auto').className = isAuto ? 'on' : '';
+}
+function updateDisp() {
+  const v = document.querySelector('input[name="disp"]:checked').value;
+  document.getElementById('disp-named').style.borderColor = v === 'named' ? 'var(--accent)' : 'var(--border)';
+  document.getElementById('disp-abs').style.borderColor = v === 'abstract' ? 'var(--accent)' : 'var(--border)';
+}
+
+/* ── Chips ── */
+document.querySelectorAll('#b-chips .chip').forEach(c => c.addEventListener('click', () => c.classList.toggle('on')));
+
+/* ── Competitor rows ── */
+function addComp() {
+  compCount++;
+  const id = compCount;
+  const li = document.getElementById('comp-list');
+  const row = document.createElement('div');
+  row.className = 'comp-row'; row.id = 'cr-' + id;
+  row.innerHTML = `
+    <input type="text" placeholder="株式会社〇〇｜営業マネージャー">
+    <input type="text" placeholder="450〜800万円">
+    <textarea style="min-height:52px;font-size:13px;" placeholder="フルリモート、ストックオプション、急成長SaaS"></textarea>
+    <button class="rm-btn" onclick="document.getElementById('cr-${id}').remove()">×</button>`;
+  li.appendChild(row);
+}
+addComp(); addComp(); addComp();
+
+/* ── Utils ── */
+function col(s, max) { const p = s/max; return p >= 0.72 ? '#1a7a3c' : p >= 0.52 ? '#c89a00' : '#c93030'; }
+function rankColor(t) {
+  if (t >= 80) return { bg:'#e4f5eb', fg:'#1a7a3c' };
+  if (t >= 65) return { bg:'#e8f0ff', fg:'#1a4fd4' };
+  if (t >= 50) return { bg:'#fff8e0', fg:'#c89a00' };
+  if (t >= 35) return { bg:'#ffe4e4', fg:'#c93030' };
+  return { bg:'#c93030', fg:'#fff' };
+}
+function badge(s) {
+  if (s <= 12) return '<span class="priority-badge badge-high">要対応</span>';
+  if (s <= 17) return '<span class="priority-badge badge-mid">改善推奨</span>';
+  return '<span class="priority-badge badge-low">良好</span>';
+}
+function scColor(s) { return s >= 75 ? '#1a7a3c' : s >= 50 ? '#c89a00' : '#c93030'; }
+function scBg(s) { return s >= 75 ? '#e4f5eb' : s >= 50 ? '#fff8e0' : '#ffe4e4'; }
+function now() { const d = new Date(); return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`; }
+
+/* ── History ── */
+function loadHist() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { return []; } }
+function saveHist(items) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); } catch(e) {} }
+function addHist(type, label, score, detail) {
+  const items = loadHist();
+  items.unshift({ id: Date.now(), type, label, score, detail: detail || null, date: now() });
+  saveHist(items);
+  renderMyPage();
+}
+function clearHistory() { if (!confirm('履歴をすべて削除しますか？')) return; localStorage.removeItem(STORAGE_KEY); renderMyPage(); }
+
+function renderMyPage() {
+  const items = loadHist();
+  document.getElementById('s-total').textContent = items.length;
+  if (items.length) {
+    const sc = items.map(i => i.score);
+    document.getElementById('s-avg').textContent = Math.round(sc.reduce((a,b)=>a+b,0)/sc.length);
+    document.getElementById('s-best').textContent = Math.max(...sc);
+    document.getElementById('s-worst').textContent = Math.min(...sc);
+  } else {
+    ['s-avg','s-best','s-worst'].forEach(id => document.getElementById(id).textContent = '—');
+  }
+  renderChart(items);
+  renderTitleBank(items);
+  const list = document.getElementById('m-hist-list');
+  document.getElementById('m-count').textContent = items.length + '件';
+  if (!items.length) { list.innerHTML = '<p style="text-align:center;padding:40px 0;color:var(--muted);font-size:13px;">まだ分析履歴がありません。</p>'; return; }
+  list.innerHTML = items.map(h => `
+    <div class="hist-item" onclick="showDetail(${h.id})">
+      <div class="hist-badge" style="border-color:${scColor(h.score)};color:${scColor(h.score)};background:${scBg(h.score)};">${h.score}</div>
+      <div class="hist-info">
+        <div class="hist-title">${h.type==='benchmark'?'📊':'🔍'} ${h.label}</div>
+        <div class="hist-meta">${h.date} · ${h.type==='benchmark'?'競合分析':'無料診断'}</div>
+      </div>
+      <span style="font-size:12px;color:var(--muted);">詳細 ›</span>
+    </div>`).join('');
+}
+
+function renderChart(items) {
+  const canvas = document.getElementById('m-chart');
+  const empty = document.getElementById('m-chart-empty');
+  if (!canvas) return;
+  if (items.length < 2) { empty.style.display = 'flex'; return; }
+  empty.style.display = 'none';
+  const ctx = canvas.getContext('2d');
+  const w = canvas.offsetWidth || 600; const h = 160;
+  canvas.width = w; canvas.height = h;
+  const rev = [...items].reverse(); const scores = rev.map(i => i.score);
+  const pad = {t:16,r:20,b:32,l:40}; const gw = w-pad.l-pad.r; const gh = h-pad.t-pad.b;
+  const minS = Math.max(0, Math.min(...scores)-10); const maxS = Math.min(100, Math.max(...scores)+10);
+  ctx.clearRect(0,0,w,h);
+  [0,25,50,75,100].forEach(v => {
+    if (v<minS||v>maxS) return;
+    const y = pad.t+gh-((v-minS)/(maxS-minS))*gh;
+    ctx.beginPath(); ctx.strokeStyle='#e8e4dc'; ctx.lineWidth=1; ctx.setLineDash([4,4]);
+    ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+gw,y); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='#6b6560'; ctx.font='10px monospace'; ctx.fillText(v,0,y+4);
+  });
+  const pts = scores.map((s,i) => ({x:pad.l+(i/(scores.length-1))*gw,y:pad.t+gh-((s-minS)/(maxS-minS))*gh}));
+  ctx.beginPath(); ctx.strokeStyle='#d4401a'; ctx.lineWidth=2.5; ctx.lineJoin='round';
+  pts.forEach((p,i) => i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y)); ctx.stroke();
+  ctx.beginPath(); pts.forEach((p,i) => i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
+  ctx.lineTo(pts[pts.length-1].x,pad.t+gh); ctx.lineTo(pts[0].x,pad.t+gh); ctx.closePath();
+  ctx.fillStyle='rgba(212,64,26,0.08)'; ctx.fill();
+  pts.forEach((p,i) => {
+    ctx.beginPath(); ctx.arc(p.x,p.y,4,0,Math.PI*2); ctx.fillStyle='#d4401a'; ctx.fill();
+    ctx.fillStyle='#0f0f0f'; ctx.font='bold 10px monospace'; ctx.textAlign='center'; ctx.fillText(scores[i],p.x,p.y-10);
+    ctx.fillStyle='#6b6560'; ctx.font='9px monospace'; ctx.fillText(rev[i].date.slice(5),p.x,pad.t+gh+18); ctx.textAlign='left';
+  });
+}
+
+function renderTitleBank(items) {
+  const bank = document.getElementById('m-title-bank');
+  const titles = [];
+  items.forEach(h => {
+    if (!h.detail) return;
+    const d = h.detail;
+    const ts = [d.title1,d.title2,d.title3,...(d.titleSuggestions||[])].filter(Boolean);
+    ts.forEach(t => titles.push({title:t,label:h.label,date:h.date}));
+  });
+  if (!titles.length) { bank.innerHTML = '<p style="color:var(--muted);font-size:13px;text-align:center;padding:16px 0;">タイトル案はまだありません</p>'; return; }
+  bank.innerHTML = `<div style="display:flex;flex-direction:column;gap:8px;">` + titles.map(t => `
+    <div onclick="copyTitle(this,'${t.title.replace(/'/g,"\\'")}') " style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 14px;background:var(--paper);border:1.5px solid var(--border);border-radius:6px;cursor:pointer;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div><div style="font-size:13px;font-weight:700;margin-bottom:2px;">${t.title}</div><div style="font-size:11px;color:var(--muted);">${t.date} · ${t.label}</div></div>
+      <span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--accent);font-weight:700;white-space:nowrap;">COPY</span>
+    </div>`).join('') + '</div>';
+}
+
+function copyTitle(el, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const sp = el.querySelector('span'); sp.textContent = 'COPIED!';
+    setTimeout(() => sp.textContent = 'COPY', 1500);
+  });
+}
+
+function showDetail(id) {
+  const h = loadHist().find(i => i.id === id);
+  if (!h || !h.detail) return;
+  const d = h.detail; const sc = scColor(h.score); const bg = scBg(h.score);
+  const body = document.getElementById('m-detail-body');
+  const scoreRow = `<div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;flex-wrap:wrap;">
+    <div style="width:68px;height:68px;border-radius:50%;border:3px solid ${sc};background:${bg};display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;">
+      <span style="font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:${sc};line-height:1;">${h.score}</span>
+      <span style="font-size:10px;color:var(--muted);">/100</span>
+    </div>
+    <div><div style="font-size:16px;font-weight:900;margin-bottom:3px;">${h.label}</div><div style="font-size:12px;color:var(--muted);">${h.date} · ${h.type==='benchmark'?'競合分析':'無料診断'}</div></div>
+  </div>`;
+  if (h.type === 'improve') {
+    body.innerHTML = scoreRow +
+      (d.issues ? `<div class="result-section-title">■ 主な課題</div><div class="issue-list" style="margin-bottom:20px;">${d.issues.map(i=>`<div class="issue-item"><span>⚠️</span><span>${i}</span></div>`).join('')}</div>` : '') +
+      (d.proposals ? `<div class="result-section-title">■ 改善提案</div><div class="proposal-list" style="margin-bottom:20px;">${d.proposals.map((p,i)=>`<div class="proposal-item"><div class="proposal-label">PROPOSAL ${i+1}</div>${p}</div>`).join('')}</div>` : '') +
+      (d.titleSuggestions ? `<div class="result-section-title">■ タイトル改善案</div><div class="proposal-list" style="margin-bottom:20px;">${d.titleSuggestions.map((t,i)=>`<div class="proposal-item"><div class="proposal-label">タイトル案 ${i+1}</div>${t}</div>`).join('')}</div>` : '') +
+      (d.salaryAdvice ? `<div class="result-section-title">■ 給与・条件の改善提案</div><p style="font-size:13px;line-height:1.8;margin-bottom:16px;">${d.salaryAdvice}</p>` : '') +
+      (d.contentAnalysis ? `<div class="result-section-title">■ 仕事内容の改善提案</div><p style="font-size:13px;line-height:1.8;margin-bottom:16px;">${d.contentAnalysis}</p>` : '') +
+      (d.benefitsAnalysis ? `<div class="result-section-title">■ 福利厚生・PRの改善提案</div><p style="font-size:13px;line-height:1.8;margin-bottom:16px;">${d.benefitsAnalysis}</p>` : '') +
+      (d.priorityAction ? `<div style="background:#fff8f6;border:1.5px solid #f0c4b8;border-radius:6px;padding:14px 18px;font-size:14px;font-weight:700;">⚡ ${d.priorityAction}</div>` : '');
+  } else {
+    body.innerHTML = scoreRow +
+      (d.market_salary ? `<div class="result-section-title">■ 市場分析</div><div style="margin-bottom:16px;"><p style="font-size:13px;line-height:1.8;"><span class="bm-tag bm-tag-info">給与</span>${d.market_salary}</p><p style="font-size:13px;line-height:1.8;margin-top:6px;"><span class="bm-tag bm-tag-info">タイトル</span>${d.market_title}</p></div>` : '') +
+      (d.self_strength ? `<div class="result-section-title">■ 自社評価</div><div class="sw-grid" style="margin-bottom:16px;"><div class="sw-box s"><div class="sw-label">STRENGTH</div><div class="sw-text">${d.self_strength}</div></div><div class="sw-box w"><div class="sw-label">WEAKNESS</div><div class="sw-text">${d.self_weakness}</div></div></div>` : '') +
+      (d.title1 ? `<div class="result-section-title">■ 改善タイトル案</div><div class="proposal-list" style="margin-bottom:16px;"><div class="proposal-item"><div class="proposal-label">タイトル案 1</div>${d.title1}</div><div class="proposal-item"><div class="proposal-label">タイトル案 2</div>${d.title2}</div><div class="proposal-item"><div class="proposal-label">タイトル案 3</div>${d.title3}</div></div>` : '') +
+      (d.priority ? `<div style="background:#fff8f6;border:1.5px solid #f0c4b8;border-radius:6px;padding:14px 18px;font-size:14px;font-weight:700;">⚡ ${d.priority}</div>` : '');
+  }
+  document.getElementById('m-detail').style.display = 'block';
+  setTimeout(() => document.getElementById('m-detail').scrollIntoView({behavior:'smooth',block:'start'}), 100);
+}
+
+function closeDetail() { document.getElementById('m-detail').style.display = 'none'; }
+
+/* ── PDF ── */
+async function downloadPDF(targetId, filename, btnId) {
+  const btn = document.getElementById(btnId);
+  if (btn) { btn.disabled = true; btn.textContent = '生成中...'; }
+  try {
+    const { jsPDF } = window.jspdf;
+    const canvas = await html2canvas(document.getElementById(targetId), { scale:2, useCORS:true, backgroundColor:'#ffffff', logging:false });
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const pw = pdf.internal.pageSize.getWidth(); const ph = pdf.internal.pageSize.getHeight();
+    const mg = 10; const iw = pw-mg*2; const ih = canvas.height*iw/canvas.width; const pc = ph-mg*2;
+    let rem = ih;
+    while (rem > 0) {
+      const sh = Math.min(rem, pc); const sy = (ih-rem)*(canvas.height/ih); const sch = sh*(canvas.height/ih);
+      const sc2 = document.createElement('canvas'); sc2.width = canvas.width; sc2.height = sch;
+      sc2.getContext('2d').drawImage(canvas,0,sy,canvas.width,sch,0,0,canvas.width,sch);
+      if (rem < ih) pdf.addPage();
+      pdf.addImage(sc2.toDataURL('image/png'),'PNG',mg,mg,iw,sh);
+      rem -= sh;
+    }
+    pdf.save(filename);
+  } catch(e) { alert('PDF生成に失敗しました。'); }
+  finally { if (btn) { btn.disabled = false; btn.textContent = '📄 PDFダウンロード'; } }
+}
+
+/* ── Pro診断（全解放） ── */
+async function runProDiagnosis() {
+  const title = document.getElementById('p-jobTitle').value.trim();
+  const content = document.getElementById('p-jobContent').value.trim();
+  const other = document.getElementById('p-jobOther').value.trim();
+  if (!title && !content) { alert('少なくともタイトルと仕事内容を入力してください。'); return; }
+  const btn = document.getElementById('p-diagBtn');
+  const loading = document.getElementById('p-diagLoading');
+  const result = document.getElementById('p-diagResult');
+  btn.disabled = true; btn.textContent = '診断中...';
+  loading.classList.add('active'); result.classList.remove('active'); result.innerHTML = '';
+  const jobText = `【求人タイトル】\n${title}\n\n【仕事内容】\n${content}\n\n【福利厚生・その他PR】\n${other}`;
+  try {
+    const res = await fetch('/.netlify/functions/diagnose', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({jobText}) });
+    if (!res.ok) throw new Error(res.status);
+    const d = await res.json();
+    renderProDiag(d, title);
+    addHist('improve', (title.slice(0,30)||'求人票診断')+(title.length>30?'…':''), d.total, d);
+  } catch(e) {
+    result.innerHTML = `<div style="padding:20px;background:#fff8f6;border:1px solid #f0c4b8;border-radius:8px;color:#c93030;font-size:14px;">エラーが発生しました。再度お試しください。</div>`;
+    result.classList.add('active');
+  } finally {
+    loading.classList.remove('active'); btn.disabled = false; btn.textContent = '🔍 今すぐ診断する（Pro全解放）';
+  }
+}
+
+function renderProDiag(d, title) {
+  const result = document.getElementById('p-diagResult');
+  const rc = rankColor(d.total); const dateStr = now();
+  const sorted = [{label:'タイトル訴求',score:d.scores.title},{label:'わかりやすさ',score:d.scores.clarity},{label:'差別化',score:d.scores.differentiation},{label:'応募動機形成',score:d.scores.motivation}].sort((a,b)=>a.score-b.score);
+  result.innerHTML = `
+    <div class="pdf-btn-wrap"><button class="pdf-btn" id="p-pdf-btn" onclick="downloadPDF('p-pdf-target','採用戦略クラウドAI_診断レポート_${dateStr}.pdf','p-pdf-btn')">📄 PDFダウンロード</button></div>
+    <div id="p-pdf-target">
+    <div class="result-header">
+      <div>
+        <div class="result-title-label">DIAGNOSTIC REPORT — PRO — 採用戦略クラウドAI</div>
+        <div class="result-score-big">${d.total}<span>/100</span></div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:6px;">${dateStr} · 株式会社Link Core</div>
+      </div>
+      <div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:8px;">総合評価</div>
+        <div class="result-rank-badge" style="background:${rc.bg};color:${rc.fg};">${d.rank}</div>
+        <div style="margin-top:10px;font-size:12px;color:rgba(255,255,255,0.5);">改善優先度</div>
+        <div style="margin-top:4px;font-size:18px;font-weight:700;color:${d.priority==='高'?'#ff8080':d.priority==='中'?'#ffd080':'#80e0a0'};">${d.priority}</div>
+      </div>
+    </div>
+    <div class="result-body">
+      <div class="result-section"><div class="result-section-title">■ 詳細スコア</div><div class="r-bars">${[{l:'タイトル訴求',s:d.scores.title},{l:'わかりやすさ',s:d.scores.clarity},{l:'差別化',s:d.scores.differentiation},{l:'応募動機形成',s:d.scores.motivation}].map(x=>`<div class="r-bar-row"><div class="r-bar-name">${x.l}</div><div class="r-bar-track"><div class="r-bar-fill" style="width:${x.s/25*100}%;background:${col(x.s,25)};"></div></div><div class="r-bar-score" style="color:${col(x.s,25)};">${x.s}</div></div>`).join('')}</div></div>
+      <div class="result-section"><div class="result-section-title">■ 改善優先順位</div><div class="priority-list">${sorted.map((x,i)=>`<div class="priority-item"><div class="priority-rank">${i+1}</div><div class="priority-name">${x.label}</div><div class="priority-score" style="color:${col(x.score,25)};">${x.score}点</div>${badge(x.score)}</div>`).join('')}</div></div>
+      <div class="result-section"><div class="result-section-title">■ 主な課題</div><div class="issue-list">${d.issues.map(i=>`<div class="issue-item"><span>⚠️</span><span>${i}</span></div>`).join('')}</div></div>
+      <div class="result-section"><div class="result-section-title">■ 改善提案（全${d.proposals.length}件）</div><div class="proposal-list">${d.proposals.map((p,i)=>`<div class="proposal-item"><div class="proposal-label">PROPOSAL ${i+1}</div>${p}</div>`).join('')}</div></div>
+      <div class="result-section"><div class="result-section-title">■ タイトル改善案（全3案）</div><div class="proposal-list">${d.titleSuggestions.map((t,i)=>`<div class="proposal-item"><div class="proposal-label">タイトル案 ${i+1}</div>${t}</div>`).join('')}</div></div>
+      ${d.salaryAdvice ? `<div class="result-section"><div class="result-section-title">■ 給与・条件の改善提案</div><p style="font-size:13px;line-height:1.9;">${d.salaryAdvice}</p></div>` : ''}
+      ${d.targetAdvice ? `<div class="result-section"><div class="result-section-title">■ ターゲット設定の改善提案</div><p style="font-size:13px;line-height:1.9;">${d.targetAdvice}</p></div>` : ''}
+      ${d.contentAnalysis ? `<div class="result-section"><div class="result-section-title">■ 仕事内容の改善提案</div><p style="font-size:13px;line-height:1.9;">${d.contentAnalysis}</p></div>` : ''}
+      ${d.benefitsAnalysis ? `<div class="result-section"><div class="result-section-title">■ 福利厚生・PRポイントの改善提案</div><p style="font-size:13px;line-height:1.9;">${d.benefitsAnalysis}</p></div>` : ''}
+      ${d.priorityAction ? `<div class="result-section"><div class="result-section-title">■ 最優先アクション</div><div style="background:#fff8f6;border:1.5px solid #f0c4b8;border-radius:6px;padding:14px 18px;font-size:14px;font-weight:700;line-height:1.8;">⚡ ${d.priorityAction}</div></div>` : ''}
+    </div></div>
+    <div class="result-cta"><div><strong>もっと詳しく改善したい方へ</strong><p>原稿修正代行・媒体別最適化まで対応します。</p></div><a href="https://link-core.co.jp/contact/" target="_blank" class="result-cta-btn">改善相談をする →</a></div>`;
+  result.classList.add('active');
+  setTimeout(() => result.scrollIntoView({behavior:'smooth',block:'start'}), 100);
+}
+
+/* ── 競合分析（Pro全解放） ── */
+async function runBenchmark() {
+  const sh = document.getElementById('b-shokushu').value.trim();
+  const ki = document.getElementById('b-kinmu').value.trim();
+  if (!sh || !ki) { alert('職種と勤務地を入力してください'); return; }
+  const isAuto = compMode === 'auto';
+  const axes = Array.from(document.querySelectorAll('#b-chips .chip.on')).map(c => c.dataset.v);
+  const kaishaInfo = [
+    document.getElementById('b-kaisha').value.trim() ? `会社名：${document.getElementById('b-kaisha').value.trim()}` : '',
+    document.getElementById('b-gyokai').value.trim() ? `業界：${document.getElementById('b-gyokai').value.trim()}` : '',
+    document.getElementById('b-jinin').value ? `従業員数：${document.getElementById('b-jinin').value}` : '',
+    document.getElementById('b-joto').value ? `上場区分：${document.getElementById('b-joto').value}` : '',
+    document.getElementById('b-nensu').value ? `設立年数：${document.getElementById('b-nensu').value}` : '',
+    document.getElementById('b-jisha-pr').value.trim() ? `自社PR：${document.getElementById('b-jisha-pr').value.trim()}` : '',
+  ].filter(Boolean).join('\n') || '（未入力）';
+
+  let compText = ''; let compNum = 0;
+  if (!isAuto) {
+    const rows = document.querySelectorAll('#comp-list .comp-row');
+    const comps = [];
+    rows.forEach(r => { const inp = r.querySelectorAll('input,textarea'); if (inp[0]?.value.trim()) comps.push({name:inp[0].value.trim(),salary:inp[1]?.value.trim()||'',appeal:inp[2]?.value.trim()||''}); });
+    if (comps.length < 2) { alert('競合データを2社以上入力してください'); return; }
+    compNum = comps.length;
+    compText = comps.map((c,i) => `競合${i+1}：${c.name}\n年収：${c.salary}\n訴求：${c.appeal}`).join('\n\n');
+  } else {
+    const t = document.getElementById('auto-type').value || '自動判定';
+    const a = document.getElementById('auto-area-sel').value || '勤務地と同じ';
+    const disp = document.querySelector('input[name="disp"]:checked').value;
+    compText = `【おまかせモード】\n比較対象：${t}\n比較エリア：${a}\n競合の表記：${disp==='named'?'実名あり':'抽象表現'}`;
+  }
+
+  const btn = document.getElementById('b-btn'); const loading = document.getElementById('b-loading'); const result = document.getElementById('b-result');
+  btn.disabled = true; btn.textContent = '分析中...'; loading.classList.add('active'); result.classList.remove('active'); result.innerHTML = '';
+
+  const prompt = `採用コンサルタントとして競合ベンチマーク分析をJSONのみで出力してください。マークダウン不要。
+【自社会社情報】\n${kaishaInfo}
+【自社求人】\n職種：${sh} / 勤務地：${ki}\n雇用：${document.getElementById('b-koyo').value}\n年収：${document.getElementById('b-nmin').value.trim()}〜${document.getElementById('b-nmax').value.trim()}\nタイトル：${document.getElementById('b-title').value.trim()||'未入力'}\n訴求：${document.getElementById('b-appeal').value.trim()||'未入力'}
+【競合データ】\n${isAuto?compText+'\n上記をもとに競合傾向を推定して分析してください。':compText}
+【重点分析軸】${axes.join('、')}
+${document.getElementById('b-note').value.trim()?'【補足】'+document.getElementById('b-note').value.trim():''}
+
+{"score":58,"pos_label":"立ち位置","market_salary":"給与市場傾向（数字含む）","market_title":"タイトル傾向","market_appeal":"訴求軸傾向","comp_common":"上位共通点3点","comp_diff":"各社差別化","comp_strategy":"勝ち筋戦略","self_strength":"自社強み2〜3点","self_weakness":"自社弱み2〜3点","gap":"競合差分","title1":"タイトル案①","title2":"タイトル案②","title3":"タイトル案③","salary_advice":"給与改善","appeal_advice":"訴求改善","target_advice":"ターゲット打ち出し","priority":"最優先アクション1つ"}`;
+
+  try {
+    const r = await fetch('/.netlify/functions/benchmark', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({prompt}) });
+    if (!r.ok) throw new Error(r.status);
+    const d = await r.json();
+    renderProBenchmark(d, sh, ki, compNum, isAuto);
+    addHist('benchmark', sh+' / '+ki+(isAuto?'（AIおまかせ）':`(${compNum}社比較)`), d.score, d);
+  } catch(e) {
+    result.innerHTML = `<div style="padding:20px;background:#fff8f6;border:1px solid #f0c4b8;border-radius:8px;color:#c93030;font-size:14px;">エラーが発生しました。再度お試しください。</div>`;
+    result.classList.add('active');
+  } finally {
+    loading.classList.remove('active'); btn.disabled = false; btn.textContent = '📊 AIで競合分析をスタートする';
+  }
+}
+
+function renderProBenchmark(d, sh, ki, compNum, isAuto) {
+  const result = document.getElementById('b-result');
+  const sc = scColor(d.score); const bg = scBg(d.score); const dateStr = now();
+  const modeLabel = isAuto ? '<span style="font-family:\'Space Mono\',monospace;font-size:10px;font-weight:700;background:var(--accent);color:white;padding:2px 8px;border-radius:2px;margin-left:8px;">AIおまかせ</span>' : `<span style="font-size:12px;color:rgba(255,255,255,0.4);margin-left:8px;">${compNum}社比較</span>`;
+  result.innerHTML = `
+    <div class="pdf-btn-wrap"><button class="pdf-btn" id="b-pdf-btn" onclick="downloadPDF('b-pdf-target','採用戦略クラウドAI_競合分析レポート_${dateStr}.pdf','b-pdf-btn')">📄 PDFダウンロード</button></div>
+    <div id="b-pdf-target">
+    <div class="result-header">
+      <div>
+        <div class="result-title-label">COMPETITIVE ANALYSIS REPORT — PRO</div>
+        <div class="result-score-big">${d.score}<span>/100</span></div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:6px;display:flex;align-items:center;flex-wrap:wrap;">${sh} / ${ki} · ${dateStr}${modeLabel}</div>
+      </div>
+      <div><div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:8px;">市場ポジション</div><div class="result-rank-badge" style="background:${bg};color:${sc};">${d.pos_label}</div></div>
+    </div>
+    <div class="result-body">
+      <div class="result-section"><div class="result-section-title">■ 市場分析</div><div style="display:flex;flex-direction:column;gap:12px;"><div><span class="bm-tag bm-tag-info">給与レンジ</span><p style="font-size:13px;line-height:1.8;margin-top:6px;">${d.market_salary}</p></div><div><span class="bm-tag bm-tag-info">タイトル傾向</span><p style="font-size:13px;line-height:1.8;margin-top:6px;">${d.market_title}</p></div><div><span class="bm-tag bm-tag-info">訴求軸</span><p style="font-size:13px;line-height:1.8;margin-top:6px;">${d.market_appeal}</p></div></div></div>
+      <div class="result-section"><div class="result-section-title">■ 競合分析</div><div style="display:flex;flex-direction:column;gap:12px;"><div><span class="bm-tag bm-tag-warn">上位共通点</span><p style="font-size:13px;line-height:1.8;margin-top:6px;">${d.comp_common}</p></div><div><span class="bm-tag bm-tag-warn">各社差別化</span><p style="font-size:13px;line-height:1.8;margin-top:6px;">${d.comp_diff}</p></div><div><span class="bm-tag bm-tag-warn">勝ち筋</span><p style="font-size:13px;line-height:1.8;margin-top:6px;">${d.comp_strategy}</p></div></div></div>
+      <div class="result-section"><div class="result-section-title">■ 自社ポジション評価</div><div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap;"><div style="width:72px;height:72px;border-radius:50%;border:3px solid ${sc};background:${bg};display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;"><span style="font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:${sc};line-height:1;">${d.score}</span><span style="font-size:10px;color:var(--muted);">/100</span></div><p style="font-size:13px;line-height:1.8;color:var(--muted);">${d.gap}</p></div><div class="sw-grid"><div class="sw-box s"><div class="sw-label">STRENGTH</div><div class="sw-text">${d.self_strength}</div></div><div class="sw-box w"><div class="sw-label">WEAKNESS</div><div class="sw-text">${d.self_weakness}</div></div></div></div>
+      <div class="result-section"><div class="result-section-title">■ 改善タイトル案（全3案）</div><div class="proposal-list"><div class="proposal-item"><div class="proposal-label">タイトル案 1</div>${d.title1}</div><div class="proposal-item"><div class="proposal-label">タイトル案 2</div>${d.title2}</div><div class="proposal-item"><div class="proposal-label">タイトル案 3</div>${d.title3}</div></div></div>
+      <div class="result-section"><div class="result-section-title">■ 給与・条件の改善提案</div><p style="font-size:13px;line-height:1.9;">${d.salary_advice}</p></div>
+      <div class="result-section"><div class="result-section-title">■ 訴求ポイントの改善提案</div><p style="font-size:13px;line-height:1.9;">${d.appeal_advice}</p></div>
+      <div class="result-section"><div class="result-section-title">■ ターゲットへの打ち出し方</div><p style="font-size:13px;line-height:1.9;">${d.target_advice}</p></div>
+      <div class="result-section"><div class="result-section-title">■ 最優先アクション</div><div style="background:#fff8f6;border:1.5px solid #f0c4b8;border-radius:6px;padding:14px 18px;font-size:14px;font-weight:700;line-height:1.8;">⚡ ${d.priority}</div></div>
+    </div></div>
+    <div class="result-cta"><div><strong>分析結果をもとに改善まで依頼したい方へ</strong><p>競合分析ベースの原稿修正代行・媒体別最適化まで対応します。</p></div><a href="https://link-core.co.jp/contact/" target="_blank" class="result-cta-btn">改善相談をする →</a></div>`;
+  result.classList.add('active');
+  setTimeout(() => result.scrollIntoView({behavior:'smooth',block:'start'}), 100);
+}
+</script>
+</body>
+</html>
