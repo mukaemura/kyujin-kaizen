@@ -493,7 +493,7 @@
           <p class="form-hint">給与・待遇・福利厚生・会社の特徴・求める人物像など、上記以外の内容を貼り付けてください</p>
           <textarea class="form-textarea" id="jobOther" style="min-height:120px;" placeholder="例）月給25万円〜、社保完備、交通費全額支給、離職率5%以下の安定企業"></textarea>
         </div>
-        <p class="form-note">※ 入力内容はAI診断にのみ使用します。外部への送信・保存はされません。<br>※ 無料プランではスコア・課題・タイトル改善案①のみ表示。全項目はProプランで解放されます。</p>
+        <p class="form-note">※ 入力内容はAI診断にのみ使用します。外部への送信・保存はされません。<br>※ 無料プランではスコア・課題・タイトル改善案①のみ表示。全項目はスタンダードプランで解放されます。</p>
         <button class="submit-btn" id="diagBtn" onclick="runDiagnosis()">🔍 今すぐ無料診断する</button>
       </div>
       <div class="diag-loading" id="diagLoading">
@@ -516,7 +516,7 @@
         <div>
           <div style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:0.1em;margin-bottom:8px;">PRO PLAN REQUIRED</div>
           <div style="font-size:16px;font-weight:900;margin-bottom:6px;">競合ベンチマーク機能はProプランで利用できます</div>
-          <p style="font-size:13px;color:var(--muted);line-height:1.7;">無料診断でスコアを確認後、Proにアップグレードすると競合比較・履歴保存・全改善提案が解放されます。</p>
+          <p style="font-size:13px;color:var(--muted);line-height:1.7;">無料診断でスコアを確認後、スタンダードプランにアップグレードすると競合比較・履歴保存・全改善提案が解放されます。</p>
         </div>
         <button class="lock-cta" onclick="scrollToPlans()" style="white-space:nowrap;">プランを見る →</button>
       </div>
@@ -775,10 +775,9 @@
           <li>求人票1本の診断</li>
           <li>4軸スコア表示（100点満点）</li>
           <li>主な課題の提示</li>
-          <li>タイトル改善案① のみ表示</li>
-          <li>PDFレポートダウンロード</li>
+          <li>改善提案①・タイトル案① のみ表示</li>
           <li class="locked">全改善提案・タイトル案②③</li>
-          <li class="locked">競合ベンチマーク分析</li>
+          <li class="locked">競合分析・市場ポジション評価</li>
           <li class="locked">分析履歴の保存・比較</li>
         </ul>
         <a href="#app-section" class="plan-btn plan-btn-outline" style="border:1.5px solid var(--border);" onclick="showTab('improve')">無料で診断する</a>
@@ -786,25 +785,25 @@
     </div>
     <div class="plan-card featured fade-in">
       <div class="plan-featured-badge">MOST POPULAR</div>
-      <div class="plan-header"><div class="plan-type">PRO</div><div class="plan-name">プロプラン</div><div class="plan-price"><strong>¥9,800</strong>月額 / 税込</div></div>
+      <div class="plan-header"><div class="plan-type">STANDARD</div><div class="plan-name">スタンダード</div><div class="plan-price"><strong>¥9,800</strong>月額 / 税込</div></div>
       <div class="plan-body">
         <ul class="plan-features">
           <li>求人票診断（回数無制限）</li>
           <li>全改善提案・タイトル案3つ</li>
-          <li>競合ベンチマーク分析（無制限）</li>
+          <li>給与・仕事内容・福利厚生の改善案</li>
+          <li>競合分析（無制限）</li>
           <li>分析履歴の保存・スコア比較</li>
-          <li>CSVで競合データ一括インポート</li>
           <li>PDFレポートダウンロード</li>
           <li>優先サポート</li>
         </ul>
-        <button class="plan-btn plan-btn-filled" onclick="activatePro()">Proプランを始める →</button>
+        <button class="plan-btn plan-btn-filled" onclick="activatePro()">スタンダードプランを始める →</button>
       </div>
     </div>
     <div class="plan-card fade-in">
-      <div class="plan-header"><div class="plan-type">AGENCY</div><div class="plan-name">改善代行付き</div><div class="plan-price"><strong>¥100,000〜</strong>月額 / 税別</div></div>
+      <div class="plan-header"><div class="plan-type">PRO</div><div class="plan-name">Pro・改善代行付き</div><div class="plan-price"><strong>¥100,000〜</strong>月額 / 税別</div></div>
       <div class="plan-body">
         <ul class="plan-features">
-          <li>Proプランの全機能</li>
+          <li>スタンダードの全機能</li>
           <li>求人改善の実務まで代行</li>
           <li>原稿修正・ライティング</li>
           <li>媒体別最適化対応</li>
@@ -1372,7 +1371,7 @@ function renderDiagResult(d) {
       <div style="position:relative;margin-top:8px;">
         <div style="filter:blur(4px);user-select:none;pointer-events:none;line-height:1.8;font-size:13px;">給与面では市場と比較してこのような課題があります。年収レンジの見直しや表記方法の変更で応募数の改善が見込めます。具体的には下限年収を明示することで求職者の安心感が高まります。またベネフィットの順序を変えることで印象が大きく変わります。</div>
         <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-          <button onclick="scrollToPlans()" style="background:var(--ink);color:white;border:none;border-radius:4px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:3px 3px 0 var(--accent);">🔒 Proプランで解放</button>
+          
         </div>
       </div>
     </div>
@@ -1381,7 +1380,7 @@ function renderDiagResult(d) {
       <div style="position:relative;margin-top:8px;">
         <div style="filter:blur(4px);user-select:none;pointer-events:none;line-height:1.8;font-size:13px;">ターゲット設定の見直しにより応募層の質・量を改善できます。どの経験年数・職種バックグラウンドを持つ人材に刺さる書き方かを明確にすることが重要です。</div>
         <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-          <button onclick="scrollToPlans()" style="background:var(--ink);color:white;border:none;border-radius:4px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:3px 3px 0 var(--accent);">🔒 Proプランで解放</button>
+          
         </div>
       </div>
     </div>
@@ -1390,7 +1389,7 @@ function renderDiagResult(d) {
       <div style="position:relative;margin-top:8px;">
         <div style="filter:blur(4px);user-select:none;pointer-events:none;line-height:1.8;font-size:13px;">仕事内容の書き方には具体的な改善余地があります。1日の流れや業務の比率を数字で示すことで求職者がイメージしやすくなります。現状の記載では抽象的な表現が多く離脱につながっています。</div>
         <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-          <button onclick="scrollToPlans()" style="background:var(--ink);color:white;border:none;border-radius:4px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:3px 3px 0 var(--accent);">🔒 Proプランで解放</button>
+          
         </div>
       </div>
     </div>
@@ -1399,7 +1398,7 @@ function renderDiagResult(d) {
       <div style="position:relative;margin-top:8px;">
         <div style="filter:blur(4px);user-select:none;pointer-events:none;line-height:1.8;font-size:13px;">福利厚生の訴求順序と表現を変えることで応募率を改善できます。求職者が最も気にする項目を前面に出し、競合と差別化できる独自の制度を強調する書き方が効果的です。</div>
         <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-          <button onclick="scrollToPlans()" style="background:var(--ink);color:white;border:none;border-radius:4px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:3px 3px 0 var(--accent);">🔒 Proプランで解放</button>
+          
         </div>
       </div>
     </div>
@@ -1408,7 +1407,7 @@ function renderDiagResult(d) {
       <div style="position:relative;margin-top:8px;">
         <div style="filter:blur(4px);user-select:none;pointer-events:none;background:#fff8f6;border:1.5px solid #f0c4b8;border-radius:6px;padding:16px 20px;font-size:14px;font-weight:700;line-height:1.8;">⚡ 今すぐ着手すべき最優先の改善アクションがここに表示されます</div>
         <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-          <button onclick="scrollToPlans()" style="background:var(--ink);color:white;border:none;border-radius:4px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:3px 3px 0 var(--accent);">🔒 Proプランで解放</button>
+          
         </div>
       </div>
     </div>
@@ -1424,7 +1423,7 @@ function renderDiagResult(d) {
           <div class="proposal-item"><div class="proposal-label">タイトル案 3</div>異なる訴求軸で作成した、市場競争力の高い候補です。</div>
         </div>
         <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-          <button onclick="scrollToPlans()" style="background:var(--ink);color:white;border:none;border-radius:4px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:3px 3px 0 var(--accent);">🔒 Proプランで解放</button>
+          
         </div>
       </div>
     `;
@@ -1447,6 +1446,25 @@ function renderDiagResult(d) {
         <div style="margin-top:4px;font-size:18px;font-weight:700;color:${d.priority==='高'?'#ff8080':d.priority==='中'?'#ffd080':'#80e0a0'};">${d.priority}</div>
       </div>
     </div>
+
+    ${!isPro ? `
+    <div style="background:${d.total >= 65 ? '#fff8e0' : d.total >= 35 ? '#fff0eb' : '#fff0eb'};border-left:4px solid ${d.total >= 65 ? 'var(--score-yellow)' : 'var(--accent)'};padding:20px 24px;margin-top:0;">
+      <div style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.1em;color:${d.total >= 65 ? 'var(--score-yellow)' : 'var(--accent)'};margin-bottom:8px;">
+        ${d.total >= 65 ? '⚠ CAUTION' : d.total >= 35 ? '🚨 WARNING' : '🚨 CRITICAL'}
+      </div>
+      <p style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px;line-height:1.5;">
+        ${d.total >= 80 ? 'この求人票は市場水準を上回っています。さらに上を目指しましょう。' :
+          d.total >= 65 ? '改善の余地があります。このまま放置すると、応募数で競合に差をつけられる可能性があります。' :
+          d.total >= 50 ? 'この求人票では、競合に応募を奪われ続けている可能性が高いです。今すぐ改善が必要です。' :
+          d.total >= 35 ? '危険な水準です。求職者はこの求人を見た瞬間に離脱しています。掲載費用が無駄になっています。' :
+          '深刻な状態です。このスコアでは採用活動において、掲載を続けるほど機会損失が拡大します。'}
+      </p>
+      <p style="font-size:13px;color:var(--muted);line-height:1.7;">
+        ${d.total >= 65 ? '競合他社との差を数値で確認し、スコアを80点以上に引き上げることで応募率の改善が期待できます。' :
+          '以下の診断結果と改善提案をもとに、今すぐ求人票を見直してください。スタンダードプランでは全ての改善提案が確認でき、競合との比較分析も行えます。'}
+      </p>
+    </div>` : ''}
+
     <div class="result-body">
       <div class="result-section">
         <div class="result-section-title">■ 詳細スコア</div>
@@ -1488,7 +1506,7 @@ function renderDiagResult(d) {
               <div class="proposal-item"><div class="proposal-label">PROPOSAL 3</div>3つ目の改善提案。応募動機を高めるための構成変更と表現の改善案です。</div>
             </div>
             <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-              <button onclick="scrollToPlans()" style="background:var(--ink);color:white;border:none;border-radius:4px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:3px 3px 0 var(--accent);">🔒 Proプランで解放</button>
+              
             </div>
           </div>`}
         </div>
@@ -1514,7 +1532,35 @@ function renderDiagResult(d) {
         <p>冒頭文・訴求文の改善案作成、原稿修正代行、媒体別最適化まで対応します。</p>
       </div>
       <a href="https://link-core.co.jp/contact/" target="_blank" class="result-cta-btn">改善相談をする →</a>
-    </div>`;
+    </div>
+    ${!isPro ? `
+    <div style="margin-top:24px;background:var(--ink);border-radius:8px;overflow:hidden;">
+      <div style="background:var(--accent);padding:10px 24px;display:flex;align-items:center;gap:10px;">
+        <span style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.12em;color:white;">🔒 STANDARD PLAN</span>
+        <span style="font-size:12px;color:rgba(255,255,255,0.85);">この診断結果の続きがすべて見られます</span>
+      </div>
+      <div style="padding:24px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;">
+        <div>
+          <div style="font-size:17px;font-weight:900;color:white;margin-bottom:10px;line-height:1.5;">
+            ${d.total < 50 ? 'このまま掲載を続けても、応募は増えません。' : 'スコアの改善ポイントが、まだ${5 - Math.floor(d.total/20)}項目残っています。'}
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:8px;"><span style="color:var(--accent);font-weight:700;">✓</span> 改善提案②③・タイトル案②③ — すべて表示</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:8px;"><span style="color:var(--accent);font-weight:700;">✓</span> 給与・仕事内容・福利厚生の具体的な改善案</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:8px;"><span style="color:var(--accent);font-weight:700;">✓</span> 競合分析 — 市場での自社の立ち位置を把握</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:8px;"><span style="color:var(--accent);font-weight:700;">✓</span> 今すぐ着手すべき最優先アクション</div>
+          </div>
+        </div>
+        <div style="text-align:center;flex-shrink:0;">
+          <div style="font-family:'DM Serif Display',serif;font-size:36px;color:white;line-height:1;margin-bottom:4px;">¥9,800</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:16px;">月額 / 税込</div>
+          <button onclick="scrollToPlans()" style="background:var(--accent);color:white;border:none;border-radius:4px;padding:14px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:4px 4px 0 rgba(255,255,255,0.2);transition:transform .2s,box-shadow .2s;white-space:nowrap;" onmouseover="this.style.transform='translate(-2px,-2px)';this.style.boxShadow='6px 6px 0 rgba(255,255,255,0.2)'" onmouseout="this.style.transform='none';this.style.boxShadow='4px 4px 0 rgba(255,255,255,0.2)'">
+            スタンダードプランを見る →
+          </button>
+          <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:10px;">いつでも解約可能</div>
+        </div>
+      </div>
+    </div>` : ''}`;
 
   el.classList.add('active');
   setTimeout(() => el.scrollIntoView({ behavior:'smooth', block:'start' }), 100);
