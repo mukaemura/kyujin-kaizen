@@ -3,10 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>求人改善クラウド｜求人票診断＆競合ベンチマーク</title>
-<meta name="description" content="求人票を貼り付けるだけでAIが4軸スコアリング＋競合比較。改善ポイントと改善案まで即座に提示。株式会社Link Coreが提供する求人改善サービス。">
+<title>採用戦略クラウドAI｜求人票診断＆競合分析</title>
+<meta name="description" content="求人票を貼り付けるだけでAIが4軸スコアリング＋競合分析。改善ポイントと改善案まで即座に提示。株式会社Link Coreが提供する採用戦略AIサービス。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root {
     --ink: #0f0f0f;
@@ -108,11 +110,15 @@
 
   /* ── App Section (tabbed) ── */
   .app-section { padding: 0; background: white; border-top: 1.5px solid var(--border); }
-  .app-tab-bar { display: flex; background: var(--paper); border-bottom: 1.5px solid var(--border); padding: 0 80px; position: sticky; top: 73px; z-index: 50; overflow-x: auto; }
-  .app-tab { padding: 16px 20px; font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: all .2s; display: flex; align-items: center; gap: 8px; }
-  .app-tab:hover { color: var(--ink); }
+  .app-tab-bar { display: flex; background: var(--paper); border-bottom: 1.5px solid var(--border); padding: 0 40px; position: sticky; top: 73px; z-index: 50; overflow-x: auto; }
+  .app-tab { padding: 16px 24px; font-weight: 700; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: all .2s; display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 130px; }
+  .app-tab:hover { color: var(--ink); background: rgba(0,0,0,0.02); }
   .app-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-  .app-tab-badge { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 2px; background: var(--accent); color: white; letter-spacing: 0.06em; }
+  .app-tab-icon { font-size: 20px; line-height: 1; }
+  .app-tab-label { font-size: 13px; font-weight: 700; }
+  .app-tab-desc { font-size: 10px; color: var(--muted); font-weight: 400; font-family: 'Noto Sans JP', sans-serif; }
+  .app-tab.active .app-tab-desc { color: var(--accent); opacity: 0.7; }
+  .app-tab-badge { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 2px; background: var(--accent); color: white; letter-spacing: 0.06em; margin-top: 2px; }
   .app-tab-badge.free-badge { background: var(--score-green); }
 
   .tab-page { display: none; }
@@ -306,20 +312,38 @@
   /* ── Print ── */
   @media print {
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-    body { background: white !important; }
-    nav, .hero, .section, .how-section, .plans-section, .why-section, .cta-section, footer, .app-tab-bar, #tab-benchmark, #tab-history, .diag-form-wrap, .diag-loading, .pdf-btn-wrap, .result-cta { display: none !important; }
+    html, body { margin: 0 !important; padding: 0 !important; background: white !important; font-size: 12px !important; }
+    nav, .hero, .section, .how-section, .plans-section, .why-section, .cta-section, footer,
+    .app-tab-bar, #tab-benchmark, #tab-history, .diag-form-wrap, .diag-loading,
+    .pdf-btn-wrap, .result-cta, .lock-section { display: none !important; }
     .app-section { padding: 0 !important; background: white !important; border: none !important; }
-    .tab-inner { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+    .tab-page { display: none !important; }
     #tab-improve { display: block !important; }
+    .tab-inner { max-width: 100% !important; margin: 0 !important; padding: 16px 24px !important; }
     .diag-result { display: block !important; margin: 0 !important; }
     .print-header { display: block !important; }
-    .result-header { border-radius: 0 !important; }
-    .result-body { border-radius: 0 !important; }
-    .priority-item, .proposal-item, .issue-item, .original-block { break-inside: avoid; }
+    /* ページ跨ぎ防止 */
+    .result-section { break-inside: avoid; page-break-inside: avoid; }
+    .priority-item { break-inside: avoid; page-break-inside: avoid; }
+    .proposal-item { break-inside: avoid; page-break-inside: avoid; }
+    .issue-item { break-inside: avoid; page-break-inside: avoid; }
+    .original-block { break-inside: avoid; page-break-inside: avoid; }
+    .sw-grid { break-inside: avoid; page-break-inside: avoid; }
+    /* レポートレイアウト調整 */
+    .result-header { border-radius: 0 !important; padding: 20px 24px !important; }
+    .result-score-big { font-size: 48px !important; }
+    .result-body { border-radius: 0 !important; border: 1px solid #ccc !important; }
+    .result-section { padding: 16px 20px !important; }
+    .r-bar-row { grid-template-columns: 100px 1fr 40px !important; }
+    .proposal-item { padding: 12px 16px !important; }
+    .issue-item { padding: 10px 14px !important; }
+    /* フォント */
+    .result-section-title { font-size: 10px !important; margin-bottom: 12px !important; }
+    p, .proposal-item, .issue-item { font-size: 11px !important; line-height: 1.7 !important; }
   }
-  .print-header { display: none; padding: 16px 0 24px; border-bottom: 2px solid var(--ink); margin-bottom: 24px; }
+  .print-header { display: none; padding: 16px 0 20px; border-bottom: 2px solid var(--ink); margin-bottom: 20px; }
   .print-header-inner { display: flex; justify-content: space-between; align-items: flex-end; }
-  .print-header h1 { font-size: 20px; font-weight: 900; }
+  .print-header h1 { font-size: 18px; font-weight: 900; }
   .print-header h1 span { color: var(--accent); }
   .print-header p { font-size: 11px; color: var(--muted); }
 
@@ -350,7 +374,7 @@
 
 <!-- ── Nav ── -->
 <nav>
-  <a href="#" class="nav-logo">求人改善<span>クラウド</span></a>
+  <a href="#" class="nav-logo">採用戦略<span>クラウドAI</span></a>
   <div class="nav-links">
     <a href="#problems">課題</a>
     <a href="#how">使い方</a>
@@ -368,7 +392,7 @@
   <div class="hero-bg"></div>
   <div class="hero-grid-overlay"></div>
   <div class="hero-left fade-in visible">
-    <div class="hero-eyebrow">求人改善の新標準</div>
+    <div class="hero-eyebrow">採用戦略の新標準</div>
     <h1 class="hero-h1">応募が来ない求人、<br><span class="underline">感覚で直して</span><br>いませんか？</h1>
     <p class="hero-sub">求人票を診断して改善点を見える化。<br>競合と比較して自社の立ち位置を把握。<br>AIと採用実務の知見で、応募につながる原稿改善を支援します。</p>
     <div class="hero-actions">
@@ -424,9 +448,24 @@
 <!-- ── App (tabbed) ── -->
 <div class="app-section" id="app-section">
   <div class="app-tab-bar">
-    <div class="app-tab active" onclick="showTab('improve')">🔍 無料診断 <span class="app-tab-badge free-badge">FREE</span></div>
-    <div class="app-tab" onclick="showTab('benchmark')" id="tab-btn-benchmark">📊 競合ベンチマーク <span class="app-tab-badge">PRO</span></div>
-    <div class="app-tab" onclick="showTab('history')" id="tab-btn-history">📁 分析履歴 <span class="app-tab-badge">PRO</span></div>
+    <div class="app-tab active" onclick="showTab('improve')">
+      <span class="app-tab-icon">🔍</span>
+      <span class="app-tab-label">無料診断</span>
+      <span class="app-tab-desc">求人票をAIが採点</span>
+      <span class="app-tab-badge free-badge">FREE</span>
+    </div>
+    <div class="app-tab" onclick="showTab('benchmark')" id="tab-btn-benchmark">
+      <span class="app-tab-icon">📊</span>
+      <span class="app-tab-label">競合分析</span>
+      <span class="app-tab-desc">競合と自社を比較</span>
+      <span class="app-tab-badge">PRO</span>
+    </div>
+    <div class="app-tab" onclick="showTab('history')" id="tab-btn-history">
+      <span class="app-tab-icon">📁</span>
+      <span class="app-tab-label">マイページ</span>
+      <span class="app-tab-desc">履歴・スコア推移</span>
+      <span class="app-tab-badge">PRO</span>
+    </div>
   </div>
 
   <!-- ── TAB: 無料診断 ── -->
@@ -464,7 +503,7 @@
   <!-- ── TAB: 競合ベンチマーク ── -->
   <div class="tab-page" id="tab-benchmark">
     <div class="tab-inner">
-      <div class="section-label">COMPETITIVE BENCHMARK</div>
+      <div class="section-label">COMPETITIVE ANALYSIS</div>
       <h2 class="section-h2" style="margin-bottom:16px;">競合求人と自社を比較する</h2>
       <p style="font-size:14px;color:var(--muted);margin-bottom:40px;line-height:1.8;">競合5〜10社の求人データを入力するだけで、市場分析・自社ポジション評価・勝ち筋戦略をコンサルレベルで出力します。</p>
 
@@ -786,7 +825,7 @@
   </div>
 </section>
 
-<!-- ── CTA ── -->
+<!-- ── CTA → 診断フォームへ誘導 ── -->
 <section class="cta-section" id="cta">
   <div class="cta-bg"></div>
   <div class="section-label" style="position:relative;z-index:1;">GET STARTED</div>
@@ -800,14 +839,14 @@
 
 <footer>
   <div>
-    <div class="footer-logo">求人改善<span>クラウド</span></div>
+    <div class="footer-logo">採用戦略<span>クラウドAI</span></div>
     <p style="margin-top:6px;font-size:12px;color:var(--muted);">運営：<a href="https://link-core.co.jp/company/" target="_blank" style="color:var(--muted);text-decoration:underline;">株式会社Link Core</a></p>
   </div>
   <div class="footer-links">
     <a href="https://link-core.co.jp/company/" target="_blank">会社概要</a>
     <a href="https://link-core.co.jp/contact/" target="_blank">お問い合わせ</a>
   </div>
-  <p>© 2025 株式会社Link Core. All rights reserved.</p>
+  <p>© 2026 株式会社Link Core. All rights reserved.</p>
 </footer>
 
 <script>
@@ -820,8 +859,58 @@ let historyItems = [];
 let savedInputs = { title: '', content: '', other: '' };
 
 /* ══════════════════════════════════
-   SCROLL OBSERVER
+   PDF DOWNLOAD
 ══════════════════════════════════ */
+async function downloadPDF(targetId, filename) {
+  const btn = document.getElementById(targetId === 'diagPdfTarget' ? 'diagPdfBtn' : 'bmPdfBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '生成中...'; }
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const target = document.getElementById(targetId);
+    const canvas = await html2canvas(target, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+    });
+
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const margin = 10;
+    const imgW = pageW - margin * 2;
+    const imgH = (canvas.height * imgW) / canvas.width;
+    const pageContent = pageH - margin * 2;
+
+    let yPos = margin;
+    let remaining = imgH;
+
+    while (remaining > 0) {
+      const sliceH = Math.min(remaining, pageContent);
+      const srcY = (imgH - remaining) * (canvas.height / imgH);
+      const srcH = sliceH * (canvas.height / imgH);
+
+      const sliceCanvas = document.createElement('canvas');
+      sliceCanvas.width = canvas.width;
+      sliceCanvas.height = srcH;
+      const ctx = sliceCanvas.getContext('2d');
+      ctx.drawImage(canvas, 0, srcY, canvas.width, srcH, 0, 0, canvas.width, srcH);
+
+      if (remaining < imgH) pdf.addPage();
+      pdf.addImage(sliceCanvas.toDataURL('image/png'), 'PNG', margin, margin, imgW, sliceH);
+      remaining -= sliceH;
+    }
+
+    pdf.save(filename);
+  } catch(e) {
+    alert('PDF生成に失敗しました。再度お試しください。');
+    console.error(e);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '📄 PDFダウンロード'; }
+  }
+}
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
 }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
@@ -1217,6 +1306,8 @@ ${jobText}
   ],
   "salaryAdvice": "給与・条件面の改善提案（具体的に）",
   "targetAdvice": "ターゲット設定の改善提案（具体的に）",
+  "contentAnalysis": "仕事内容の書き方の問題点と改善提案（具体的に・採用現場で使えるレベルで）",
+  "benefitsAnalysis": "福利厚生・PRポイントの問題点と改善提案（訴求力を高める具体的な書き方まで）",
   "priorityAction": "今すぐ着手すべき最優先アクション（1つに絞って）"
 }
 
@@ -1310,18 +1401,14 @@ function renderDiagResult(d) {
 
   el.innerHTML = `
     <div class="pdf-btn-wrap">
-      <button class="pdf-btn" onclick="window.print()">📄 PDFで保存する</button>
+      <button class="pdf-btn" id="diagPdfBtn" onclick="downloadPDF('diagPdfTarget', '採用戦略クラウドAI_診断レポート_${dateStr}.pdf')">📄 PDFダウンロード</button>
     </div>
-    <div class="print-header">
-      <div class="print-header-inner">
-        <h1>求人改善<span>クラウド</span> 診断レポート</h1>
-        <p>診断日：${dateStr}　運営：株式会社Link Core</p>
-      </div>
-    </div>
+    <div id="diagPdfTarget">
     <div class="result-header">
       <div>
-        <div class="result-title-label">DIAGNOSTIC REPORT</div>
+        <div class="result-title-label">DIAGNOSTIC REPORT — 採用戦略クラウドAI</div>
         <div class="result-score-big">${d.total}<span>/100</span></div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:6px;">${dateStr} · 株式会社Link Core</div>
       </div>
       <div>
         <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:8px;">総合評価</div>
@@ -1371,6 +1458,16 @@ function renderDiagResult(d) {
         <div class="proposal-list">${titleHtml}</div>
       </div>
       ${lockedHtml}
+      ${isPro && d.contentAnalysis ? `
+      <div class="result-section">
+        <div class="result-section-title">■ 仕事内容の改善提案</div>
+        <p style="font-size:13px;line-height:1.9;color:var(--ink);">${d.contentAnalysis}</p>
+      </div>` : ''}
+      ${isPro && d.benefitsAnalysis ? `
+      <div class="result-section">
+        <div class="result-section-title">■ 福利厚生・PRポイントの改善提案</div>
+        <p style="font-size:13px;line-height:1.9;color:var(--ink);">${d.benefitsAnalysis}</p>
+      </div>` : ''}
       <div class="result-section original-section">
         <div class="result-section-title">■ 診断対象の求人票（入力内容）</div>
         <div class="original-content">
@@ -1379,6 +1476,7 @@ function renderDiagResult(d) {
           ${savedInputs.other?`<div class="original-block"><div class="original-block-label">福利厚生・その他PR</div><div class="original-block-text">${savedInputs.other}</div></div>`:''}
         </div>
       </div>
+    </div>
     </div>
     <div class="result-cta">
       <div class="result-cta-text">
@@ -1552,11 +1650,12 @@ function renderBmResult(d, sh, ki, compNum, isAuto) {
 
   el.innerHTML = `
     <div class="pdf-btn-wrap">
-      <button class="pdf-btn" onclick="window.print()">📄 PDFで保存する</button>
+      <button class="pdf-btn" id="bmPdfBtn" onclick="downloadPDF('bmPdfTarget', '採用戦略クラウドAI_競合分析レポート_${dateStr}.pdf')">📄 PDFダウンロード</button>
     </div>
+    <div id="bmPdfTarget">
     <div class="result-header">
       <div>
-        <div class="result-title-label">COMPETITIVE BENCHMARK REPORT</div>
+        <div class="result-title-label">COMPETITIVE ANALYSIS REPORT — 採用戦略クラウドAI</div>
         <div class="result-score-big">${d.score}<span>/100</span></div>
         <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-top:6px;display:flex;align-items:center;flex-wrap:wrap;gap:4px;">${sh} / ${ki} · ${dateStr}${modeLabel}</div>
       </div>
@@ -1630,10 +1729,11 @@ function renderBmResult(d, sh, ki, compNum, isAuto) {
       </div>
 
     </div>
+    </div>
     <div class="result-cta">
       <div class="result-cta-text">
         <strong>分析結果をもとに改善まで依頼したい方へ</strong>
-        <p>競合ベンチマークをベースにした原稿修正代行・媒体別最適化まで対応します。</p>
+        <p>競合分析をベースにした原稿修正代行・媒体別最適化まで対応します。</p>
       </div>
       <a href="https://link-core.co.jp/contact/" target="_blank" class="result-cta-btn">改善相談をする →</a>
     </div>`;
