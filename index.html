@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>求人改善クラウド｜求人票を診断して応募率を改善</title>
-<meta name="description" content="求人票を貼り付けるだけでAIが4軸スコアリング。改善ポイントと改善案まで即座に提示。株式会社Link Coreが提供する求人改善サービス。">
+<title>求人改善クラウド｜求人票診断＆競合ベンチマーク</title>
+<meta name="description" content="求人票を貼り付けるだけでAIが4軸スコアリング＋競合比較。改善ポイントと改善案まで即座に提示。株式会社Link Coreが提供する求人改善サービス。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -22,29 +22,36 @@
   html { scroll-behavior: smooth; }
   body { font-family: 'Noto Sans JP', sans-serif; background: var(--paper); color: var(--ink); overflow-x: hidden; }
 
-  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 18px 40px; background: rgba(245,242,236,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+  /* ── Nav ── */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 16px 40px; background: rgba(245,242,236,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
   .nav-logo { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--ink); text-decoration: none; }
   .nav-logo span { color: var(--accent); }
-  .nav-links { display: flex; gap: 32px; align-items: center; }
+  .nav-links { display: flex; gap: 28px; align-items: center; }
   .nav-links a { font-size: 13px; font-weight: 500; color: var(--muted); text-decoration: none; transition: color .2s; }
   .nav-links a:hover { color: var(--ink); }
-  .nav-cta { background: var(--ink); color: var(--paper) !important; padding: 10px 22px; border-radius: 4px; font-size: 13px !important; font-weight: 700 !important; transition: background .2s !important; }
-  .nav-cta:hover { background: var(--accent) !important; }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .plan-pill { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; padding: 5px 12px; border-radius: 2px; cursor: pointer; transition: all .2s; }
+  .plan-pill.free { background: var(--paper); color: var(--muted); border: 1px solid var(--border); }
+  .plan-pill.pro { background: var(--accent); color: white; border: 1px solid var(--accent); }
+  .nav-cta { background: var(--ink); color: var(--paper); padding: 10px 20px; border-radius: 4px; font-size: 13px; font-weight: 700; transition: background .2s; text-decoration: none; white-space: nowrap; }
+  .nav-cta:hover { background: var(--accent); color: white; }
+  .nav-cta.hidden { display: none; }
 
+  /* ── Hero ── */
   .hero { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; padding-top: 80px; position: relative; overflow: hidden; }
   .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 50% at 70% 40%, rgba(212,64,26,0.06) 0%, transparent 70%), radial-gradient(ellipse 40% 60% at 20% 80%, rgba(26,79,212,0.05) 0%, transparent 70%); }
   .hero-grid-overlay { position: absolute; inset: 0; opacity: 0.04; background-image: linear-gradient(var(--ink) 1px, transparent 1px), linear-gradient(90deg, var(--ink) 1px, transparent 1px); background-size: 60px 60px; }
   .hero-left { display: flex; flex-direction: column; justify-content: center; padding: 80px 60px 80px 80px; position: relative; z-index: 2; }
   .hero-eyebrow { display: inline-flex; align-items: center; gap: 10px; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--accent); font-weight: 700; margin-bottom: 32px; }
   .hero-eyebrow::before { content: ''; display: block; width: 32px; height: 2px; background: var(--accent); }
-  .hero-h1 { font-size: clamp(32px, 4vw, 52px); font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 28px; }
+  .hero-h1 { font-size: clamp(30px, 3.8vw, 50px); font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 28px; }
   .hero-h1 .underline { position: relative; display: inline-block; }
   .hero-h1 .underline::after { content: ''; position: absolute; left: 0; bottom: 2px; right: 0; height: 6px; background: rgba(212,64,26,0.25); z-index: -1; transform: skew(-2deg); }
-  .hero-sub { font-size: 16px; line-height: 1.9; color: var(--muted); margin-bottom: 48px; max-width: 460px; }
+  .hero-sub { font-size: 15px; line-height: 1.9; color: var(--muted); margin-bottom: 48px; max-width: 460px; }
   .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
-  .btn-primary { background: var(--accent); color: white; padding: 16px 32px; border-radius: 4px; font-weight: 700; font-size: 15px; letter-spacing: 0.04em; border: none; cursor: pointer; text-decoration: none; display: inline-block; transition: transform .2s, box-shadow .2s; box-shadow: 4px 4px 0 var(--ink); }
+  .btn-primary { background: var(--accent); color: white; padding: 15px 30px; border-radius: 4px; font-weight: 700; font-size: 14px; letter-spacing: 0.04em; border: none; cursor: pointer; text-decoration: none; display: inline-block; transition: transform .2s, box-shadow .2s; box-shadow: 4px 4px 0 var(--ink); font-family: 'Noto Sans JP', sans-serif; }
   .btn-primary:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
-  .btn-secondary { background: transparent; color: var(--ink); padding: 16px 28px; border-radius: 4px; font-weight: 500; font-size: 15px; border: 1.5px solid var(--border); cursor: pointer; text-decoration: none; display: inline-block; transition: border-color .2s, background .2s; }
+  .btn-secondary { background: transparent; color: var(--ink); padding: 15px 26px; border-radius: 4px; font-weight: 500; font-size: 14px; border: 1.5px solid var(--border); cursor: pointer; text-decoration: none; display: inline-block; transition: border-color .2s, background .2s; font-family: 'Noto Sans JP', sans-serif; }
   .btn-secondary:hover { border-color: var(--ink); background: rgba(0,0,0,0.03); }
   .hero-right { display: flex; align-items: center; justify-content: center; padding: 80px 80px 80px 40px; position: relative; z-index: 2; }
 
@@ -70,11 +77,13 @@
   .mock-advice { background: #fff8f6; border: 1px solid #f0c4b8; border-radius: 6px; padding: 14px; font-size: 12px; line-height: 1.7; }
   .mock-advice strong { color: var(--accent); display: block; margin-bottom: 4px; font-size: 11px; }
 
+  /* ── Sections ── */
   .section { padding: 100px 80px; }
   .section-label { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--accent); font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
   .section-label::before { content: ''; width: 28px; height: 2px; background: var(--accent); display: block; }
   .section-h2 { font-size: clamp(26px, 3vw, 40px); font-weight: 900; line-height: 1.3; letter-spacing: -0.02em; margin-bottom: 60px; }
 
+  /* ── Problems ── */
   .problems-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
   .problem-card { padding: 36px 32px; border-right: 1.5px solid var(--border); border-bottom: 1.5px solid var(--border); transition: background .2s; }
   .problem-card:hover { background: white; }
@@ -83,6 +92,7 @@
   .problem-title { font-size: 16px; font-weight: 700; margin-bottom: 10px; line-height: 1.5; }
   .problem-desc { font-size: 13px; color: var(--muted); line-height: 1.8; }
 
+  /* ── How ── */
   .how-section { background: var(--ink); padding: 100px 80px; }
   .how-section .section-label { color: var(--accent); }
   .how-section .section-label::before { background: var(--accent); }
@@ -94,58 +104,80 @@
   .step-title { font-size: 22px; font-weight: 700; margin-bottom: 12px; color: white; }
   .step-desc { font-size: 14px; line-height: 1.9; color: rgba(255,255,255,0.6); }
   .step-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
-  .chip { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; padding: 6px 14px; font-size: 12px; color: rgba(255,255,255,0.7); }
+  .chip-mono { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; padding: 6px 14px; font-size: 12px; color: rgba(255,255,255,0.7); }
 
-  .diag-section { padding: 100px 80px; background: white; border-top: 1.5px solid var(--border); }
-  .diag-inner { max-width: 860px; margin: 0 auto; }
-  .diag-form-wrap { background: var(--paper); border: 1.5px solid var(--border); border-radius: 8px; padding: 40px; }
-  .input-fields { display: flex; flex-direction: column; gap: 24px; }
-  .input-field-group { display: flex; flex-direction: column; gap: 8px; }
-  .input-field-label { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  /* ── App Section (tabbed) ── */
+  .app-section { padding: 0; background: white; border-top: 1.5px solid var(--border); }
+  .app-tab-bar { display: flex; background: var(--paper); border-bottom: 1.5px solid var(--border); padding: 0 80px; position: sticky; top: 73px; z-index: 50; overflow-x: auto; }
+  .app-tab { padding: 16px 20px; font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: all .2s; display: flex; align-items: center; gap: 8px; }
+  .app-tab:hover { color: var(--ink); }
+  .app-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .app-tab-badge { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 2px; background: var(--accent); color: white; letter-spacing: 0.06em; }
+  .app-tab-badge.free-badge { background: var(--score-green); }
+
+  .tab-page { display: none; }
+  .tab-page.active { display: block; }
+  .tab-inner { max-width: 860px; margin: 0 auto; padding: 60px 80px; }
+
+  /* ── Form elements ── */
+  .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+  .form-label { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
   .field-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; background: var(--accent); color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .input-field-hint { font-size: 12px; color: var(--muted); line-height: 1.6; padding-left: 28px; }
-  .diag-textarea { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 6px; font-family: 'Noto Sans JP', sans-serif; font-size: 14px; line-height: 1.8; background: white; resize: vertical; outline: none; transition: border-color .2s; }
-  .diag-textarea:focus { border-color: var(--accent); }
-  .diag-textarea::placeholder { color: #bbb; font-size: 13px; }
-  .ta-title { min-height: 80px; }
-  .ta-content { min-height: 160px; }
-  .ta-other { min-height: 120px; }
-  .diag-note { font-size: 12px; color: var(--muted); margin-top: 16px; line-height: 1.6; padding: 12px 16px; background: rgba(0,0,0,0.03); border-radius: 4px; }
-  .diag-submit { width: 100%; margin-top: 20px; padding: 18px; background: var(--accent); color: white; border: none; border-radius: 4px; font-family: 'Noto Sans JP', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; letter-spacing: 0.04em; box-shadow: 4px 4px 0 var(--ink); transition: transform .2s, box-shadow .2s; }
-  .diag-submit:hover:not(:disabled) { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
-  .diag-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+  .form-hint { font-size: 12px; color: var(--muted); line-height: 1.6; padding-left: 28px; }
+  .form-textarea { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 6px; font-family: 'Noto Sans JP', sans-serif; font-size: 14px; line-height: 1.8; background: white; resize: vertical; outline: none; transition: border-color .2s; }
+  .form-textarea:focus { border-color: var(--accent); }
+  .form-textarea::placeholder { color: #bbb; font-size: 13px; }
+  .form-input { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 6px; font-family: 'Noto Sans JP', sans-serif; font-size: 14px; background: white; outline: none; transition: border-color .2s; }
+  .form-input:focus { border-color: var(--accent); }
+  .form-select { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 6px; font-family: 'Noto Sans JP', sans-serif; font-size: 14px; background: white; outline: none; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .form-note { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.6; padding: 12px 16px; background: rgba(0,0,0,0.03); border-radius: 4px; }
+  .submit-btn { width: 100%; margin-top: 24px; padding: 18px; background: var(--accent); color: white; border: none; border-radius: 4px; font-family: 'Noto Sans JP', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; letter-spacing: 0.04em; box-shadow: 4px 4px 0 var(--ink); transition: transform .2s, box-shadow .2s; }
+  .submit-btn:hover:not(:disabled) { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: 4px 4px 0 var(--ink); }
 
+  /* ── Competitor rows ── */
+  .comp-section-head { display: grid; grid-template-columns: 1fr 1fr 2fr 32px; gap: 8px; margin-bottom: 6px; padding: 0 2px; }
+  .comp-section-head span { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.06em; font-weight: 700; }
+  .comp-row { display: grid; grid-template-columns: 1fr 1fr 2fr 32px; gap: 8px; margin-bottom: 10px; align-items: start; }
+  .add-comp-btn { background: none; border: 1.5px dashed var(--border); border-radius: 6px; padding: 10px; font-size: 13px; color: var(--muted); cursor: pointer; width: 100%; margin-top: 6px; font-family: 'Noto Sans JP', sans-serif; transition: border-color .2s, color .2s; }
+  .add-comp-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .rm-btn { background: none; border: 1.5px solid var(--border); color: var(--muted); cursor: pointer; font-size: 14px; line-height: 1; padding: 0; border-radius: 4px; width: 32px; height: 38px; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+  .rm-btn:hover { border-color: var(--score-red); color: var(--score-red); background: #fff5f5; }
+
+  /* ── Analysis chips ── */
+  .chip-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip-select { font-size: 12px; padding: 7px 14px; border: 1.5px solid var(--border); border-radius: 100px; cursor: pointer; color: var(--muted); transition: all .2s; font-family: 'Noto Sans JP', sans-serif; font-weight: 500; }
+  .chip-select:hover { border-color: var(--accent); color: var(--accent); }
+  .chip-select.on { border-color: var(--accent); color: var(--accent); background: #fff8f6; font-weight: 700; }
+
+  /* ── Loading ── */
   .diag-loading { display: none; text-align: center; padding: 60px 20px; }
   .diag-loading.active { display: block; }
   .loading-spinner { width: 48px; height: 48px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 20px; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .loading-text { font-size: 14px; color: var(--muted); }
 
+  /* ── Result common ── */
   .diag-result { display: none; margin-top: 40px; }
   .diag-result.active { display: block; }
-
-  .pdf-btn-wrap { display: flex; justify-content: flex-end; margin-bottom: 16px; }
-  .pdf-btn { display: inline-flex; align-items: center; gap: 8px; background: white; color: var(--ink); border: 1.5px solid var(--border); border-radius: 4px; padding: 10px 20px; font-size: 13px; font-weight: 700; cursor: pointer; transition: border-color .2s, background .2s; font-family: 'Noto Sans JP', sans-serif; }
-  .pdf-btn:hover { border-color: var(--ink); background: var(--paper); }
 
   .result-header { background: var(--ink); color: white; border-radius: 8px 8px 0 0; padding: 28px 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
   .result-title-label { font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 0.12em; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
   .result-score-big { font-family: 'DM Serif Display', serif; font-size: 64px; color: white; line-height: 1; }
   .result-score-big span { font-size: 20px; color: rgba(255,255,255,0.4); }
   .result-rank-badge { padding: 10px 20px; border-radius: 4px; font-weight: 700; font-size: 14px; display: inline-block; }
-
   .result-body { border: 1.5px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; overflow: hidden; background: white; }
   .result-section { padding: 28px 32px; border-bottom: 1px solid var(--border); }
   .result-section:last-child { border-bottom: none; }
   .result-section-title { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: var(--accent); font-weight: 700; margin-bottom: 20px; }
-
   .r-bars { display: flex; flex-direction: column; gap: 14px; }
   .r-bar-row { display: grid; grid-template-columns: 120px 1fr 48px; align-items: center; gap: 12px; }
   .r-bar-name { font-size: 13px; font-weight: 500; }
   .r-bar-track { height: 8px; background: #e8e4dc; border-radius: 4px; overflow: hidden; }
   .r-bar-fill { height: 100%; border-radius: 4px; }
   .r-bar-score { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; text-align: right; }
-
   .priority-list { display: flex; flex-direction: column; gap: 10px; }
   .priority-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--paper); border-radius: 6px; }
   .priority-rank { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--border); line-height: 1; width: 32px; flex-shrink: 0; }
@@ -155,26 +187,61 @@
   .badge-high { background: #ffe4e4; color: var(--score-red); }
   .badge-mid { background: #fff8e0; color: var(--score-yellow); }
   .badge-low { background: #e4f5eb; color: var(--score-green); }
-
   .issue-list { display: flex; flex-direction: column; gap: 10px; }
   .issue-item { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; background: #fff8f6; border: 1px solid #f0c4b8; border-radius: 6px; font-size: 13px; line-height: 1.7; }
   .proposal-list { display: flex; flex-direction: column; gap: 12px; }
   .proposal-item { padding: 16px 20px; background: var(--paper); border: 1.5px solid var(--border); border-radius: 6px; font-size: 13px; line-height: 1.8; }
   .proposal-label { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--accent); font-weight: 700; margin-bottom: 6px; }
-
   .original-section { background: var(--paper); }
   .original-content { display: flex; flex-direction: column; gap: 12px; }
   .original-block { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 16px; }
   .original-block-label { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--muted); font-weight: 700; margin-bottom: 8px; }
   .original-block-text { font-size: 13px; line-height: 1.9; white-space: pre-wrap; color: var(--ink); }
 
+  /* ── Freemium lock ── */
+  .lock-section { position: relative; margin-top: 0; }
+  .lock-blur { filter: blur(6px); pointer-events: none; user-select: none; }
+  .lock-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .lock-card { background: white; border: 1.5px solid var(--border); border-radius: 8px; padding: 28px 32px; text-align: center; box-shadow: 6px 6px 0 rgba(0,0,0,0.08); max-width: 340px; }
+  .lock-icon-wrap { width: 48px; height: 48px; background: var(--paper); border: 1.5px solid var(--border); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin: 0 auto 16px; }
+  .lock-title { font-size: 16px; font-weight: 900; margin-bottom: 8px; }
+  .lock-desc { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 20px; }
+  .lock-cta { display: inline-block; background: var(--accent); color: white; padding: 12px 24px; border-radius: 4px; font-weight: 700; font-size: 14px; cursor: pointer; border: none; font-family: 'Noto Sans JP', sans-serif; box-shadow: 3px 3px 0 var(--ink); transition: transform .2s, box-shadow .2s; }
+  .lock-cta:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+
+  /* ── Result CTA ── */
   .result-cta { margin-top: 32px; padding: 28px 32px; background: var(--ink); border-radius: 8px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
-  .result-cta-text { color: white; }
-  .result-cta-text strong { display: block; font-size: 18px; margin-bottom: 6px; }
+  .result-cta-text strong { display: block; font-size: 17px; margin-bottom: 6px; color: white; }
   .result-cta-text p { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.6; }
-  .result-cta-btn { background: var(--accent); color: white; padding: 14px 28px; border-radius: 4px; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; box-shadow: 3px 3px 0 rgba(255,255,255,0.2); transition: transform .2s; }
+  .result-cta-btn { background: var(--accent); color: white; padding: 14px 26px; border-radius: 4px; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; box-shadow: 3px 3px 0 rgba(255,255,255,0.2); transition: transform .2s; display: inline-block; }
   .result-cta-btn:hover { transform: translate(-1px,-1px); }
 
+  /* ── Benchmark specific ── */
+  .bm-tag { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 2px; display: inline-block; margin-right: 8px; margin-bottom: 6px; }
+  .bm-tag-info { background: #e8f0ff; color: #1a4fd4; }
+  .bm-tag-warn { background: #fff8e0; color: var(--score-yellow); }
+  .bm-tag-success { background: #e4f5eb; color: var(--score-green); }
+  .bm-tag-danger { background: #ffe4e4; color: var(--score-red); }
+  .sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .sw-box { border-radius: 6px; padding: 14px 16px; }
+  .sw-box.strength { background: #e4f5eb; border: 1px solid #b0d9be; }
+  .sw-box.weakness { background: #ffe4e4; border: 1px solid #f0c4c4; }
+  .sw-label { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .sw-box.strength .sw-label { color: var(--score-green); }
+  .sw-box.weakness .sw-label { color: var(--score-red); }
+  .sw-text { font-size: 13px; line-height: 1.7; color: var(--ink); }
+
+  /* ── History ── */
+  .hist-item { display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .15s; border-radius: 6px; padding: 16px; margin: 0 -16px; }
+  .hist-item:last-child { border-bottom: none; }
+  .hist-item:hover { background: var(--paper); }
+  .hist-score-badge { width: 48px; height: 48px; border-radius: 50%; border: 2.5px solid; display: flex; align-items: center; justify-content: center; font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .hist-info { flex: 1; }
+  .hist-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+  .hist-meta { font-size: 12px; color: var(--muted); }
+  .hist-arrow { font-size: 16px; color: var(--border); }
+
+  /* ── Plans ── */
   .plans-section { padding: 100px 80px; }
   .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 60px; }
   .plan-card { border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; background: white; transition: transform .2s, box-shadow .2s; }
@@ -185,13 +252,15 @@
   .plan-header { padding: 32px 28px 24px; border-bottom: 1px solid var(--border); }
   .plan-type { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--muted); font-weight: 700; margin-bottom: 12px; }
   .plan-name { font-size: 22px; font-weight: 900; margin-bottom: 8px; }
-  .plan-price { font-size: 13px; color: var(--muted); line-height: 1.5; }
   .plan-price strong { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--ink); display: block; margin-bottom: 4px; }
+  .plan-price { font-size: 13px; color: var(--muted); line-height: 1.5; }
   .plan-body { padding: 24px 28px 32px; }
   .plan-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
   .plan-features li { font-size: 13px; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
   .plan-features li::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
-  .plan-btn { width: 100%; padding: 14px; border-radius: 4px; font-weight: 700; font-size: 14px; cursor: pointer; border: none; letter-spacing: 0.04em; transition: all .2s; text-decoration: none; display: block; text-align: center; }
+  .plan-features li.locked { color: var(--muted); }
+  .plan-features li.locked::before { content: '—'; color: var(--border); }
+  .plan-btn { width: 100%; padding: 14px; border-radius: 4px; font-weight: 700; font-size: 14px; cursor: pointer; border: none; letter-spacing: 0.04em; transition: all .2s; text-decoration: none; display: block; text-align: center; font-family: 'Noto Sans JP', sans-serif; }
   .plan-btn-outline { background: transparent; color: var(--ink); border: 1.5px solid var(--border) !important; }
   .plan-btn-outline:hover { border-color: var(--ink) !important; }
   .plan-btn-filled { background: var(--accent); color: white; box-shadow: 3px 3px 0 var(--ink); }
@@ -199,6 +268,7 @@
   .plan-btn-dark { background: var(--ink); color: white; }
   .plan-btn-dark:hover { background: #333; }
 
+  /* ── Why ── */
   .why-section { background: white; padding: 100px 80px; border-top: 1.5px solid var(--border); border-bottom: 1.5px solid var(--border); }
   .why-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 48px; margin-top: 60px; }
   .why-card { display: flex; gap: 24px; align-items: flex-start; }
@@ -206,14 +276,16 @@
   .why-text-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
   .why-text-desc { font-size: 13px; color: var(--muted); line-height: 1.8; }
 
+  /* ── CTA ── */
   .cta-section { padding: 120px 80px; text-align: center; position: relative; overflow: hidden; }
   .cta-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(212,64,26,0.07) 0%, transparent 70%); }
   .cta-section .section-label { justify-content: center; }
   .cta-section .section-label::before { display: none; }
-  .cta-h2 { font-size: clamp(28px, 4vw, 48px); font-weight: 900; margin-bottom: 20px; line-height: 1.25; letter-spacing: -0.02em; }
-  .cta-sub { font-size: 16px; color: var(--muted); margin-bottom: 48px; line-height: 1.8; }
+  .cta-h2 { font-size: clamp(28px, 4vw, 46px); font-weight: 900; margin-bottom: 20px; line-height: 1.25; letter-spacing: -0.02em; }
+  .cta-sub { font-size: 15px; color: var(--muted); margin-bottom: 48px; line-height: 1.8; }
   .cta-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
 
+  /* ── Footer ── */
   footer { border-top: 1.5px solid var(--border); padding: 40px 80px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
   .footer-logo { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--ink); }
   .footer-logo span { color: var(--accent); }
@@ -222,67 +294,85 @@
   .footer-links a:hover { color: var(--ink); }
   footer p { font-size: 12px; color: var(--muted); }
 
+  /* ── PDF ── */
+  .pdf-btn-wrap { display: flex; justify-content: flex-end; margin-bottom: 16px; }
+  .pdf-btn { display: inline-flex; align-items: center; gap: 8px; background: white; color: var(--ink); border: 1.5px solid var(--border); border-radius: 4px; padding: 10px 20px; font-size: 13px; font-weight: 700; cursor: pointer; transition: border-color .2s, background .2s; font-family: 'Noto Sans JP', sans-serif; }
+  .pdf-btn:hover { border-color: var(--ink); background: var(--paper); }
+
+  /* ── Animations ── */
   .fade-in { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
   .fade-in.visible { opacity: 1; transform: none; }
 
-  /* ── 印刷用スタイル（PDF出力） ── */
+  /* ── Print ── */
   @media print {
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     body { background: white !important; }
-    nav, .hero, .section, .how-section, .plans-section, .why-section, .cta-section, footer,
-    .diag-form-wrap, .diag-loading, .pdf-btn-wrap, .result-cta { display: none !important; }
-    .diag-section { padding: 0 !important; background: white !important; border: none !important; }
-    .diag-inner { max-width: 100% !important; margin: 0 !important; }
+    nav, .hero, .section, .how-section, .plans-section, .why-section, .cta-section, footer, .app-tab-bar, #tab-benchmark, #tab-history, .diag-form-wrap, .diag-loading, .pdf-btn-wrap, .result-cta { display: none !important; }
+    .app-section { padding: 0 !important; background: white !important; border: none !important; }
+    .tab-inner { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+    #tab-improve { display: block !important; }
     .diag-result { display: block !important; margin: 0 !important; }
     .print-header { display: block !important; }
-    .result-header { border-radius: 0 !important; -webkit-print-color-adjust: exact !important; }
+    .result-header { border-radius: 0 !important; }
     .result-body { border-radius: 0 !important; }
     .priority-item, .proposal-item, .issue-item, .original-block { break-inside: avoid; }
   }
-
   .print-header { display: none; padding: 16px 0 24px; border-bottom: 2px solid var(--ink); margin-bottom: 24px; }
   .print-header-inner { display: flex; justify-content: space-between; align-items: flex-end; }
   .print-header h1 { font-size: 20px; font-weight: 900; }
   .print-header h1 span { color: var(--accent); }
   .print-header p { font-size: 11px; color: var(--muted); }
 
+  /* ── Responsive ── */
   @media (max-width: 900px) {
-    nav { padding: 16px 20px; } .nav-links { display: none; }
+    nav { padding: 14px 20px; } .nav-links { display: none; }
     .hero { grid-template-columns: 1fr; min-height: auto; }
     .hero-left { padding: 60px 24px 40px; } .hero-right { padding: 0 24px 60px; }
-    .section, .plans-section, .why-section, .cta-section, .diag-section { padding: 60px 24px; }
-    .how-section { padding: 60px 24px; } .plans-grid { grid-template-columns: 1fr; }
+    .section, .plans-section, .why-section, .cta-section { padding: 60px 24px; }
+    .how-section { padding: 60px 24px; }
+    .app-tab-bar { padding: 0 24px; }
+    .tab-inner { padding: 40px 24px; }
+    .plans-grid { grid-template-columns: 1fr; }
     .why-grid { grid-template-columns: 1fr; gap: 32px; }
     footer { padding: 32px 24px; flex-direction: column; text-align: center; }
     .step { grid-template-columns: 60px 1fr; gap: 20px; }
     .r-bar-row { grid-template-columns: 100px 1fr 40px; }
-    .result-header { flex-direction: column; } .result-cta { flex-direction: column; }
-    .diag-form-wrap { padding: 24px; }
+    .result-header { flex-direction: column; }
+    .result-cta { flex-direction: column; }
+    .grid-2, .grid-3, .sw-grid { grid-template-columns: 1fr; }
+    .comp-row, .comp-section-head { grid-template-columns: 1fr 1fr; }
+    .comp-row textarea { grid-column: 1 / -1; }
+    .comp-row .rm-btn { grid-column: 2; grid-row: 1; justify-self: end; }
   }
 </style>
 </head>
 <body>
 
+<!-- ── Nav ── -->
 <nav>
   <a href="#" class="nav-logo">求人改善<span>クラウド</span></a>
   <div class="nav-links">
     <a href="#problems">課題</a>
     <a href="#how">使い方</a>
-    <a href="#diagnosis">無料診断</a>
+    <a href="#app-section">診断・分析</a>
     <a href="#plans">料金</a>
-    <a href="#diagnosis" class="nav-cta">無料で診断する</a>
+  </div>
+  <div class="nav-right">
+    <span class="plan-pill free" id="planPill" onclick="scrollToPlans()">FREE PLAN</span>
+    <a href="#app-section" class="nav-cta" id="navCta">無料で診断する</a>
   </div>
 </nav>
 
+<!-- ── Hero ── -->
 <section class="hero">
   <div class="hero-bg"></div>
   <div class="hero-grid-overlay"></div>
   <div class="hero-left fade-in visible">
-    <div class="hero-eyebrow">求人票改善の新標準</div>
+    <div class="hero-eyebrow">求人改善の新標準</div>
     <h1 class="hero-h1">応募が来ない求人、<br><span class="underline">感覚で直して</span><br>いませんか？</h1>
-    <p class="hero-sub">求人票を診断し、改善点を見える化。<br>AIと採用実務の知見で、<br>応募につながる原稿改善を支援します。</p>
+    <p class="hero-sub">求人票を診断して改善点を見える化。<br>競合と比較して自社の立ち位置を把握。<br>AIと採用実務の知見で、応募につながる原稿改善を支援します。</p>
     <div class="hero-actions">
-      <a href="#diagnosis" class="btn-primary">🔍 無料で求人を診断する</a>
+      <a href="#app-section" class="btn-primary">🔍 無料で求人を診断する</a>
       <a href="#plans" class="btn-secondary">料金を見る</a>
     </div>
   </div>
@@ -300,68 +390,275 @@
           <div class="score-bar-row"><span class="score-bar-label">差別化</span><div class="score-bar-track"><div class="score-bar-fill bar-red" style="width:20%"></div></div><span class="score-bar-val" style="color:var(--score-red)">20</span></div>
           <div class="score-bar-row"><span class="score-bar-label">応募動機形成</span><div class="score-bar-track"><div class="score-bar-fill bar-yellow" style="width:60%"></div></div><span class="score-bar-val" style="color:var(--score-yellow)">60</span></div>
         </div>
-        <div class="mock-advice"><strong>⚠ 最優先の改善ポイント</strong>タイトルに職種名のみ記載で、求職者が「自分向け」と判断できない。ターゲットと特徴を30字以内で追記することを推奨します。</div>
+        <div class="mock-advice"><strong>⚠ 最優先の改善ポイント</strong>タイトルに職種名のみ記載で、求職者が「自分向け」と判断できない。ターゲットと特徴を追記することを推奨します。</div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- ── Problems ── -->
 <section class="section" id="problems">
   <div class="section-label">PROBLEMS</div>
   <h2 class="section-h2">こんな課題、<br>ありませんか？</h2>
   <div class="problems-grid fade-in">
     <div class="problem-card"><div class="problem-num">01</div><div class="problem-title">求人を出しても<br>応募が来ない</div><div class="problem-desc">掲載費用をかけているのに、クリックすらされていない。原因がわからないまま次の掲載を繰り返している。</div></div>
-    <div class="problem-card"><div class="problem-num">02</div><div class="problem-title">何を修正すれば<br>いいかわからない</div><div class="problem-desc">「なんとなく良くない」とは思うが、具体的にどこをどう直せば応募が増えるのか判断できない。</div></div>
+    <div class="problem-card"><div class="problem-num">02</div><div class="problem-title">競合と比べて<br>何が違うかわからない</div><div class="problem-desc">他社がなぜ応募を集めているのか、自社と何が違うのかを把握できていない。同じような求人に負け続けている。</div></div>
     <div class="problem-card"><div class="problem-num">03</div><div class="problem-title">改善が感覚論に<br>なっている</div><div class="problem-desc">担当者の経験や好みで修正が行われ、根拠のない変更が繰り返されている。効果検証もできていない。</div></div>
     <div class="problem-card"><div class="problem-num">04</div><div class="problem-title">媒体任せ・現場任せ<br>になっている</div><div class="problem-desc">媒体担当者の提案をそのまま採用しているが、本当に自社に最適な原稿かどうか判断できない。</div></div>
     <div class="problem-card" style="border-right:none;"><div class="problem-num">05</div><div class="problem-title">社内で原稿の<br>良し悪しを判断できない</div><div class="problem-desc">採用担当に専門知識がなく、仕上がった原稿を「これでいいか」と確認できる基準がない。</div></div>
   </div>
 </section>
 
+<!-- ── How ── -->
 <section class="how-section" id="how">
   <div class="section-label">HOW IT WORKS</div>
-  <h2 class="section-h2" style="color:white;">貼り付けるだけで、<br>改善案まで届く。</h2>
+  <h2 class="section-h2" style="color:white;">貼り付けるだけで、<br>改善案と競合分析まで届く。</h2>
   <div class="steps">
-    <div class="step fade-in"><div class="step-num">01</div><div class="step-content"><div class="step-tag">INPUT</div><div class="step-title">3項目に分けて入力する</div><div class="step-desc">タイトル・仕事内容・福利厚生＆PRの3項目に分けて貼り付けるだけ。より精度の高い診断が可能です。</div><div class="step-chips"><span class="chip">タイトル</span><span class="chip">仕事内容</span><span class="chip">福利厚生・PR</span></div></div></div>
-    <div class="step fade-in"><div class="step-num">02</div><div class="step-content"><div class="step-tag">ANALYZE</div><div class="step-title">4項目をAIがスコア診断</div><div class="step-desc">タイトル訴求・わかりやすさ・差別化・応募動機形成の4軸・100点満点で採点します。</div><div class="step-chips"><span class="chip">タイトル訴求</span><span class="chip">わかりやすさ</span><span class="chip">差別化</span><span class="chip">応募動機形成</span></div></div></div>
-    <div class="step fade-in"><div class="step-num">03</div><div class="step-content"><div class="step-tag">REPORT</div><div class="step-title">改善案をその場で受け取る</div><div class="step-desc">主な課題・改善優先順位・具体的な改善提案をその場で表示。PDFでダウンロードも可能です。</div><div class="step-chips"><span class="chip">課題3つ</span><span class="chip">優先順位</span><span class="chip">PDFダウンロード</span></div></div></div>
-    <div class="step fade-in"><div class="step-num">04</div><div class="step-content"><div class="step-tag">OPTIONAL</div><div class="step-title">改善代行まで依頼できる</div><div class="step-desc">「実際の修正まで任せたい」方には改善代行サービスをご用意。原稿修正から媒体別最適化・月次レビューまで伴走します。</div><div class="step-chips"><span class="chip">原稿修正代行</span><span class="chip">媒体別最適化</span><span class="chip">月次レビュー</span></div></div></div>
+    <div class="step fade-in"><div class="step-num">01</div><div class="step-content"><div class="step-tag">INPUT</div><div class="step-title">求人票を3項目に分けて入力</div><div class="step-desc">タイトル・仕事内容・福利厚生＆PRの3項目に分けて貼り付けるだけ。より精度の高い診断が可能です。</div><div class="step-chips"><span class="chip-mono">タイトル</span><span class="chip-mono">仕事内容</span><span class="chip-mono">福利厚生・PR</span></div></div></div>
+    <div class="step fade-in"><div class="step-num">02</div><div class="step-content"><div class="step-tag">ANALYZE</div><div class="step-title">4軸スコア診断＋改善提案を即座に取得</div><div class="step-desc">タイトル訴求・わかりやすさ・差別化・応募動機形成の4軸・100点満点で採点。具体的な改善案まで生成します。</div><div class="step-chips"><span class="chip-mono">タイトル訴求</span><span class="chip-mono">わかりやすさ</span><span class="chip-mono">差別化</span><span class="chip-mono">応募動機形成</span></div></div></div>
+    <div class="step fade-in"><div class="step-num">03</div><div class="step-content"><div class="step-tag">BENCHMARK — PRO</div><div class="step-title">競合求人と比較して立ち位置を把握</div><div class="step-desc">競合5〜10社のデータをもとに市場分析・自社ポジション評価・勝ち筋戦略をコンサルレベルで提示します。</div><div class="step-chips"><span class="chip-mono">市場分析</span><span class="chip-mono">競合差分</span><span class="chip-mono">改善タイトル案3つ</span></div></div></div>
+    <div class="step fade-in"><div class="step-num">04</div><div class="step-content"><div class="step-tag">OPTIONAL</div><div class="step-title">改善代行まで依頼できる</div><div class="step-desc">「実際の修正まで任せたい」方には改善代行サービスをご用意。原稿修正から媒体別最適化・月次レビューまで伴走します。</div><div class="step-chips"><span class="chip-mono">原稿修正代行</span><span class="chip-mono">媒体別最適化</span><span class="chip-mono">月次レビュー</span></div></div></div>
   </div>
 </section>
 
-<section class="diag-section" id="diagnosis">
-  <div class="diag-inner">
-    <div class="section-label">FREE DIAGNOSIS</div>
-    <h2 class="section-h2">求人票を無料で診断する</h2>
-    <div class="diag-form-wrap">
-      <div class="input-fields">
-        <div class="input-field-group">
-          <div class="input-field-label"><span class="field-num">1</span>求人タイトル</div>
-          <p class="input-field-hint">掲載している求人票のタイトルをそのまま貼り付けてください</p>
-          <textarea class="diag-textarea ta-title" id="jobTitle" placeholder="例）【未経験歓迎】営業スタッフ募集｜月給25万円〜｜転勤なし"></textarea>
+<!-- ── App (tabbed) ── -->
+<div class="app-section" id="app-section">
+  <div class="app-tab-bar">
+    <div class="app-tab active" onclick="showTab('improve')">🔍 無料診断 <span class="app-tab-badge free-badge">FREE</span></div>
+    <div class="app-tab" onclick="showTab('benchmark')" id="tab-btn-benchmark">📊 競合ベンチマーク <span class="app-tab-badge">PRO</span></div>
+    <div class="app-tab" onclick="showTab('history')" id="tab-btn-history">📁 分析履歴 <span class="app-tab-badge">PRO</span></div>
+  </div>
+
+  <!-- ── TAB: 無料診断 ── -->
+  <div class="tab-page active" id="tab-improve">
+    <div class="tab-inner">
+      <div class="section-label">FREE DIAGNOSIS</div>
+      <h2 class="section-h2" style="margin-bottom:40px;">求人票を無料で診断する</h2>
+      <div style="background:var(--paper);border:1.5px solid var(--border);border-radius:8px;padding:40px;">
+        <div class="form-group">
+          <div class="form-label"><span class="field-num">1</span>求人タイトル</div>
+          <p class="form-hint">掲載している求人票のタイトルをそのまま貼り付けてください</p>
+          <textarea class="form-textarea" id="jobTitle" style="min-height:80px;" placeholder="例）【未経験歓迎】営業スタッフ募集｜月給25万円〜｜転勤なし"></textarea>
         </div>
-        <div class="input-field-group">
-          <div class="input-field-label"><span class="field-num">2</span>仕事内容</div>
-          <p class="input-field-hint">仕事内容・業務詳細・1日の流れなど、仕事に関する記載をすべて貼り付けてください</p>
-          <textarea class="diag-textarea ta-content" id="jobContent" placeholder="例）法人向けにSaaSサービスの提案営業をお任せします。&#10;既存顧客へのフォロー70%、新規開拓30%のバランスです。"></textarea>
+        <div class="form-group">
+          <div class="form-label"><span class="field-num">2</span>仕事内容</div>
+          <p class="form-hint">仕事内容・業務詳細・1日の流れなど、仕事に関する記載をすべて貼り付けてください</p>
+          <textarea class="form-textarea" id="jobContent" style="min-height:160px;" placeholder="例）法人向けにSaaSサービスの提案営業をお任せします。&#10;既存顧客へのフォロー70%、新規開拓30%のバランスです。"></textarea>
         </div>
-        <div class="input-field-group">
-          <div class="input-field-label"><span class="field-num">3</span>福利厚生・その他PR</div>
-          <p class="input-field-hint">給与・待遇・福利厚生・会社の特徴・求める人物像など、上記以外の内容を貼り付けてください</p>
-          <textarea class="diag-textarea ta-other" id="jobOther" placeholder="例）月給25万円〜、社保完備、交通費全額支給、離職率5%以下の安定企業"></textarea>
+        <div class="form-group">
+          <div class="form-label"><span class="field-num">3</span>福利厚生・その他PR</div>
+          <p class="form-hint">給与・待遇・福利厚生・会社の特徴・求める人物像など、上記以外の内容を貼り付けてください</p>
+          <textarea class="form-textarea" id="jobOther" style="min-height:120px;" placeholder="例）月給25万円〜、社保完備、交通費全額支給、離職率5%以下の安定企業"></textarea>
+        </div>
+        <p class="form-note">※ 入力内容はAI診断にのみ使用します。外部への送信・保存はされません。<br>※ 無料プランではスコア・課題・タイトル改善案①のみ表示。全項目はProプランで解放されます。</p>
+        <button class="submit-btn" id="diagBtn" onclick="runDiagnosis()">🔍 今すぐ無料診断する</button>
+      </div>
+      <div class="diag-loading" id="diagLoading">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">求人票を分析中です。少々お待ちください…</p>
+      </div>
+      <div class="diag-result" id="diagResult"></div>
+    </div>
+  </div>
+
+  <!-- ── TAB: 競合ベンチマーク ── -->
+  <div class="tab-page" id="tab-benchmark">
+    <div class="tab-inner">
+      <div class="section-label">COMPETITIVE BENCHMARK</div>
+      <h2 class="section-h2" style="margin-bottom:16px;">競合求人と自社を比較する</h2>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:40px;line-height:1.8;">競合5〜10社の求人データを入力するだけで、市場分析・自社ポジション評価・勝ち筋戦略をコンサルレベルで出力します。</p>
+
+      <!-- Pro lock (hidden when pro) -->
+      <div id="bm-lock" style="background:#fff8f6;border:1.5px solid #f0c4b8;border-radius:8px;padding:28px 32px;margin-bottom:32px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+        <div>
+          <div style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:0.1em;margin-bottom:8px;">PRO PLAN REQUIRED</div>
+          <div style="font-size:16px;font-weight:900;margin-bottom:6px;">競合ベンチマーク機能はProプランで利用できます</div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.7;">無料診断でスコアを確認後、Proにアップグレードすると競合比較・履歴保存・全改善提案が解放されます。</p>
+        </div>
+        <button class="lock-cta" onclick="scrollToPlans()" style="white-space:nowrap;">プランを見る →</button>
+      </div>
+
+      <div id="bm-form">
+        <!-- STEP 0: 自社会社情報 -->
+        <div style="background:var(--paper);border:1.5px solid var(--border);border-radius:8px;padding:32px;margin-bottom:24px;">
+          <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.12em;color:var(--accent);font-weight:700;margin-bottom:6px;">STEP 0 — 自社会社情報（任意・入力すると分析精度が上がります）</div>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.6;">会社の規模・業界・立ち位置を把握することで、より実態に即したベンチマーク分析が可能になります</p>
+          <div class="grid-2" style="margin-bottom:16px;">
+            <div><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">会社名</label><input type="text" class="form-input" id="bm-kaisha" placeholder="例：株式会社〇〇（非公開の場合は空白でOK）"></div>
+            <div><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">業界・事業内容</label><input type="text" class="form-input" id="bm-gyokai" placeholder="例：SaaS営業支援ツール、人材紹介、製造業（部品）"></div>
+          </div>
+          <div class="grid-3" style="margin-bottom:16px;">
+            <div><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">従業員数</label><select class="form-select" id="bm-jinin">
+              <option value="">選択してください</option>
+              <option>〜30名（スタートアップ）</option>
+              <option>31〜100名（中小企業）</option>
+              <option>101〜300名</option>
+              <option>301〜1000名</option>
+              <option>1001名以上（大企業）</option>
+            </select></div>
+            <div><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">上場区分</label><select class="form-select" id="bm-joto">
+              <option value="">選択してください</option>
+              <option>東証プライム</option>
+              <option>東証スタンダード</option>
+              <option>東証グロース</option>
+              <option>非上場</option>
+              <option>外資系</option>
+            </select></div>
+            <div><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">設立年数</label><select class="form-select" id="bm-nensu">
+              <option value="">選択してください</option>
+              <option>3年未満</option>
+              <option>3〜10年</option>
+              <option>11〜30年</option>
+              <option>31年以上</option>
+            </select></div>
+          </div>
+          <div><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">自社の採用上のアピールポイント・強み（任意）</label><textarea class="form-textarea" id="bm-jisha-pr" style="min-height:70px;" placeholder="例：3期連続増収増益、離職率5%以下、完全フレックス、副業OK、資金調達済みスタートアップ"></textarea></div>
+        </div>
+
+        <!-- STEP 1: 求人情報 -->
+        <div style="background:var(--paper);border:1.5px solid var(--border);border-radius:8px;padding:32px;margin-bottom:24px;">
+          <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.12em;color:var(--accent);font-weight:700;margin-bottom:20px;">STEP 1 — 自社求人情報</div>
+          <div class="grid-2" style="margin-bottom:16px;">
+            <div><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">職種 <span style="color:var(--score-red);">*</span></label><input type="text" class="form-input" id="bm-shokushu" placeholder="例：営業マネージャー"></div>
+            <div><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">勤務地 <span style="color:var(--score-red);">*</span></label><input type="text" class="form-input" id="bm-kinmu" placeholder="例：東京・リモート可"></div>
+          </div>
+          <div class="grid-3" style="margin-bottom:16px;">
+            <div><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">雇用形態</label><select class="form-select" id="bm-koyo"><option>正社員</option><option>契約社員</option><option>業務委託</option><option>アルバイト・パート</option></select></div>
+            <div><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">年収（最低）</label><input type="text" class="form-input" id="bm-nmin" placeholder="例：400万円"></div>
+            <div><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">年収（最高）</label><input type="text" class="form-input" id="bm-nmax" placeholder="例：700万円"></div>
+          </div>
+          <div style="margin-bottom:16px;"><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">現在の求人タイトル</label><input type="text" class="form-input" id="bm-title" placeholder="例：営業マネージャー募集｜年収600万〜"></div>
+          <div><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">ターゲット・現在の訴求ポイント</label><textarea class="form-textarea" id="bm-appeal" style="min-height:80px;" placeholder="例：フルリモート可、残業少なめ、成果主義"></textarea></div>
+        </div>
+
+        <!-- STEP 2: 競合データ（手動/おまかせ切り替え） -->
+        <div style="background:var(--paper);border:1.5px solid var(--border);border-radius:8px;padding:32px;margin-bottom:24px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+            <div>
+              <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.12em;color:var(--accent);font-weight:700;margin-bottom:4px;">STEP 2 — 競合データ</div>
+              <p style="font-size:12px;color:var(--muted);line-height:1.5;">手動入力でもAIおまかせでもOKです</p>
+            </div>
+            <!-- トグル -->
+            <div style="display:flex;border:1.5px solid var(--border);border-radius:6px;overflow:hidden;flex-shrink:0;">
+              <button id="toggle-manual" onclick="setCompMode('manual')" style="padding:9px 18px;font-size:12px;font-weight:700;font-family:'Space Mono',monospace;letter-spacing:0.05em;border:none;cursor:pointer;background:var(--ink);color:var(--paper);transition:all .2s;">手動入力</button>
+              <button id="toggle-auto" onclick="setCompMode('auto')" style="padding:9px 18px;font-size:12px;font-weight:700;font-family:'Space Mono',monospace;letter-spacing:0.05em;border:none;cursor:pointer;background:white;color:var(--muted);transition:all .2s;">AIおまかせ ✦</button>
+            </div>
+          </div>
+
+          <!-- 手動入力エリア -->
+          <div id="comp-manual-area">
+            <p style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6;">Indeed・マイナビ・リクナビNEXTなどから情報をコピーして貼り付けるだけでOKです</p>
+            <div class="comp-section-head"><span>企業名・求人タイトル</span><span>年収レンジ</span><span>主な訴求・特徴</span><span></span></div>
+            <div id="bm-comp-list"></div>
+            <button class="add-comp-btn" onclick="addComp()">＋ 競合を追加する</button>
+          </div>
+
+          <!-- おまかせエリア -->
+          <div id="comp-auto-area" style="display:none;">
+            <div style="background:#fff8f6;border:1px solid #f0c4b8;border-radius:6px;padding:14px 16px;margin-bottom:20px;font-size:13px;line-height:1.7;color:var(--ink);">
+              ✦ AIが職種・勤務地・会社規模をもとに、同じ市場で競合する求人の傾向を推定して分析します。競合他社を調べる時間がない方や、市場全体の傾向を把握したい方に最適です。
+            </div>
+            <div class="grid-2" style="margin-bottom:16px;">
+              <div><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">比較したい競合の業界・タイプ</label>
+                <select class="form-select" id="auto-gyokai">
+                  <option value="">自動で判定する（推奨）</option>
+                  <option>同業界・同規模の企業</option>
+                  <option>大手・上場企業（規模上の競合）</option>
+                  <option>スタートアップ・ベンチャー（勢いある競合）</option>
+                  <option>外資系企業</option>
+                  <option>業界を問わず同職種で比較</option>
+                </select>
+              </div>
+              <div><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">比較したいエリア</label>
+                <select class="form-select" id="auto-area">
+                  <option value="">勤務地と同じ（自動）</option>
+                  <option>全国（リモート含む）</option>
+                  <option>同一都道府県内</option>
+                  <option>首都圏（東京・神奈川・埼玉・千葉）</option>
+                  <option>関西圏（大阪・京都・兵庫）</option>
+                </select>
+              </div>
+            </div>
+            <!-- 会社名の表示設定 -->
+            <div style="margin-bottom:0;">
+              <label style="font-size:13px;font-weight:700;display:block;margin-bottom:10px;">分析結果での競合の表記方法</label>
+              <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 16px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;transition:border-color .2s;" id="label-named">
+                  <input type="radio" name="comp-display" value="named" checked onchange="updateCompDisplayLabel()" style="accent-color:var(--accent);">
+                  <span><strong>実名あり</strong>「エン転職・リクルートエージェント など」と具体名で表示</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 16px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;transition:border-color .2s;" id="label-abstract">
+                  <input type="radio" name="comp-display" value="abstract" onchange="updateCompDisplayLabel()" style="accent-color:var(--accent);">
+                  <span><strong>抽象表現</strong>「同規模の競合A・B・C」のように匿名で表示</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: 分析軸 -->
+        <div style="background:var(--paper);border:1.5px solid var(--border);border-radius:8px;padding:32px;margin-bottom:24px;">
+          <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.12em;color:var(--accent);font-weight:700;margin-bottom:16px;">STEP 3 — 重点分析軸（複数選択可）</div>
+          <div class="chip-grid" id="bm-chips">
+            <div class="chip-select on" data-v="給与・待遇">給与・待遇</div>
+            <div class="chip-select on" data-v="求人タイトル">求人タイトル</div>
+            <div class="chip-select on" data-v="訴求軸">訴求軸の分析</div>
+            <div class="chip-select" data-v="福利厚生">福利厚生</div>
+            <div class="chip-select" data-v="求める人物像">求める人物像</div>
+            <div class="chip-select" data-v="キャリアパス">キャリアパス</div>
+            <div class="chip-select" data-v="企業ブランド">企業ブランド</div>
+            <div class="chip-select" data-v="選考プロセス">選考プロセス</div>
+          </div>
+        </div>
+
+        <!-- 補足 -->
+        <div style="margin-bottom:8px;"><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">補足・AIへの追加指示（任意）</label><textarea class="form-textarea" id="bm-note" style="min-height:70px;" placeholder="例：応募数が減っている原因を知りたい / 20〜30代前半への訴求を強化したい"></textarea></div>
+
+        <button class="submit-btn" id="bmBtn" onclick="runBenchmark()">📊 AIで競合分析をスタートする</button>
+      </div>
+
+      <div class="diag-loading" id="bmLoading">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">競合データを分析中です。少々お待ちください…</p>
+      </div>
+      <div class="diag-result" id="bmResult"></div>
+    </div>
+  </div>
+
+  <!-- ── TAB: 分析履歴 ── -->
+  <div class="tab-page" id="tab-history">
+    <div class="tab-inner">
+      <div class="section-label">ANALYSIS HISTORY</div>
+      <h2 class="section-h2" style="margin-bottom:16px;">分析履歴</h2>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:40px;">過去の分析結果を振り返り、スコアの推移・改善トレンドを確認できます。</p>
+
+      <div id="hist-lock-section">
+        <div style="background:#fff8f6;border:1.5px solid #f0c4b8;border-radius:8px;padding:28px 32px;margin-bottom:32px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+          <div>
+            <div style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:0.1em;margin-bottom:8px;">PRO PLAN REQUIRED</div>
+            <div style="font-size:16px;font-weight:900;margin-bottom:6px;">分析履歴の保存はProプランで利用できます</div>
+            <p style="font-size:13px;color:var(--muted);line-height:1.7;">過去の分析を保存・比較してスコアの推移を継続的にトラッキングできます。</p>
+          </div>
+          <button class="lock-cta" onclick="scrollToPlans()">プランを見る →</button>
         </div>
       </div>
-      <p class="diag-note">※ 入力内容はAI診断にのみ使用します。外部への送信・保存はされません。</p>
-      <button class="diag-submit" id="diagBtn" onclick="runDiagnosis()">🔍 今すぐ無料診断する</button>
-    </div>
-    <div class="diag-loading" id="diagLoading">
-      <div class="loading-spinner"></div>
-      <p class="loading-text">求人票を分析中です。少々お待ちください…</p>
-    </div>
-    <div class="diag-result" id="diagResult"></div>
-  </div>
-</section>
 
+      <div id="hist-list-section" style="display:none;">
+        <div style="background:white;border:1.5px solid var(--border);border-radius:8px;overflow:hidden;">
+          <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.1em;color:var(--accent);font-weight:700;">HISTORY LOG</span>
+            <span id="hist-count" style="font-size:13px;color:var(--muted);">0件</span>
+          </div>
+          <div id="hist-list" style="padding:0 24px;">
+            <div style="text-align:center;padding:48px 0;color:var(--muted);font-size:14px;">まだ分析履歴がありません。<br>診断または競合分析を実行すると、ここに記録されます。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Plans ── -->
 <section class="plans-section" id="plans">
   <div class="section-label">PLANS</div>
   <h2 class="section-h2">まずは無料で<br>診断してみてください。</h2>
@@ -369,46 +666,72 @@
     <div class="plan-card fade-in">
       <div class="plan-header"><div class="plan-type">FREE</div><div class="plan-name">無料診断</div><div class="plan-price"><strong>¥0</strong>まずは試してみる</div></div>
       <div class="plan-body">
-        <ul class="plan-features"><li>求人票1本の診断</li><li>4軸スコア表示（100点満点）</li><li>主な課題3つの提示</li><li>改善優先順位の表示</li><li>PDFレポートダウンロード</li></ul>
-        <a href="#diagnosis" class="plan-btn plan-btn-outline" style="border:1.5px solid var(--border);">無料で診断する</a>
+        <ul class="plan-features">
+          <li>求人票1本の診断</li>
+          <li>4軸スコア表示（100点満点）</li>
+          <li>主な課題の提示</li>
+          <li>タイトル改善案① のみ表示</li>
+          <li>PDFレポートダウンロード</li>
+          <li class="locked">全改善提案・タイトル案②③</li>
+          <li class="locked">競合ベンチマーク分析</li>
+          <li class="locked">分析履歴の保存・比較</li>
+        </ul>
+        <a href="#app-section" class="plan-btn plan-btn-outline" style="border:1.5px solid var(--border);" onclick="showTab('improve')">無料で診断する</a>
       </div>
     </div>
     <div class="plan-card featured fade-in">
       <div class="plan-featured-badge">MOST POPULAR</div>
-      <div class="plan-header"><div class="plan-type">STANDARD</div><div class="plan-name">スタンダード</div><div class="plan-price"><strong>¥30,000〜</strong>月額 / 税別</div></div>
+      <div class="plan-header"><div class="plan-type">PRO</div><div class="plan-name">プロプラン</div><div class="plan-price"><strong>¥9,800</strong>月額 / 税込</div></div>
       <div class="plan-body">
-        <ul class="plan-features"><li>月3〜5本の求人票診断</li><li>詳細スコアレポート</li><li>改善案作成（タイトル・冒頭文・訴求文）</li><li>チャット相談サポート</li><li>改善履歴の管理</li></ul>
-        <a href="https://link-core.co.jp/contact/" target="_blank" class="plan-btn plan-btn-filled">このプランを始める</a>
+        <ul class="plan-features">
+          <li>求人票診断（回数無制限）</li>
+          <li>全改善提案・タイトル案3つ</li>
+          <li>競合ベンチマーク分析（無制限）</li>
+          <li>分析履歴の保存・スコア比較</li>
+          <li>CSVで競合データ一括インポート</li>
+          <li>PDFレポートダウンロード</li>
+          <li>優先サポート</li>
+        </ul>
+        <button class="plan-btn plan-btn-filled" onclick="activatePro()">Proプランを始める →</button>
       </div>
     </div>
     <div class="plan-card fade-in">
       <div class="plan-header"><div class="plan-type">AGENCY</div><div class="plan-name">改善代行付き</div><div class="plan-price"><strong>¥100,000〜</strong>月額 / 税別</div></div>
       <div class="plan-body">
-        <ul class="plan-features"><li>求人改善の実務まで代行</li><li>原稿修正・ライティング</li><li>媒体別最適化対応</li><li>月次レビューミーティング</li><li>専任担当による伴走支援</li></ul>
+        <ul class="plan-features">
+          <li>Proプランの全機能</li>
+          <li>求人改善の実務まで代行</li>
+          <li>原稿修正・ライティング</li>
+          <li>媒体別最適化対応</li>
+          <li>月次レビューミーティング</li>
+          <li>専任担当による伴走支援</li>
+        </ul>
         <a href="https://link-core.co.jp/contact/" target="_blank" class="plan-btn plan-btn-dark">改善相談をする</a>
       </div>
     </div>
   </div>
 </section>
 
+<!-- ── Why ── -->
 <section class="why-section">
   <div class="section-label">WHY US</div>
   <h2 class="section-h2">感覚論ではなく、<br>根拠ある改善を。</h2>
   <div class="why-grid">
     <div class="why-card fade-in"><div class="why-icon">📋</div><div><div class="why-text-title">採用実務の知見で設計</div><div class="why-text-desc">求人票の評価基準は、実際の採用現場の知見をもとに構築。単なるAI文章評価ではなく、応募率に直結する実践的な指標で診断します。</div></div></div>
+    <div class="why-card fade-in"><div class="why-icon">📊</div><div><div class="why-text-title">競合との差分を可視化</div><div class="why-text-desc">自社求人を単体で見るだけでなく、市場・競合と比較することで「何が足りないか」を客観的なデータとして把握できます。</div></div></div>
     <div class="why-card fade-in"><div class="why-icon">🤝</div><div><div class="why-text-title">AIで終わらず改善まで伴走</div><div class="why-text-desc">診断レポートを渡して終わりではありません。改善案の作成から実際の原稿修正まで、必要なレベルに合わせてサポートします。</div></div></div>
     <div class="why-card fade-in"><div class="why-icon">🏢</div><div><div class="why-text-title">中小企業でも使いやすい</div><div class="why-text-desc">採用専門部署がない企業でも使えるシンプルな設計。難しい操作や専門知識は不要で、貼り付けるだけで診断できます。</div></div></div>
-    <div class="why-card fade-in"><div class="why-icon">📊</div><div><div class="why-text-title">改善ポイントを見える化</div><div class="why-text-desc">「なんとなく良くない」を数値とコメントで明確化。担当者が変わっても同じ基準で評価できるため、改善活動が組織に定着します。</div></div></div>
   </div>
 </section>
 
+<!-- ── CTA ── -->
 <section class="cta-section" id="cta">
   <div class="cta-bg"></div>
   <div class="section-label" style="position:relative;z-index:1;">GET STARTED</div>
   <h2 class="cta-h2" style="position:relative;z-index:1;">まず1本、診断してみましょう。<br>無料で、今すぐ。</h2>
   <p class="cta-sub" style="position:relative;z-index:1;">求人票を貼り付けるだけ。スコアと改善ポイントがその場で表示されます。<br>ログイン・クレジットカード登録は不要です。</p>
   <div class="cta-actions" style="position:relative;z-index:1;">
-    <a href="#diagnosis" class="btn-primary">🔍 無料で求人を診断する</a>
+    <a href="#app-section" class="btn-primary" onclick="showTab('improve')">🔍 無料で求人を診断する</a>
     <a href="https://link-core.co.jp/contact/" target="_blank" class="btn-secondary">💬 改善相談をする</a>
   </div>
 </section>
@@ -426,17 +749,145 @@
 </footer>
 
 <script>
+/* ══════════════════════════════════
+   STATE
+══════════════════════════════════ */
+let isPro = false;
+let compCount = 0;
+let historyItems = [];
+let savedInputs = { title: '', content: '', other: '' };
+
+/* ══════════════════════════════════
+   SCROLL OBSERVER
+══════════════════════════════════ */
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
 }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.fade-in:not(.visible)').forEach(el => observer.observe(el));
 
-let savedInputs = { title: '', content: '', other: '' };
+/* ══════════════════════════════════
+   TABS
+══════════════════════════════════ */
+function showTab(id) {
+  document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.app-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  const idx = { improve: 0, benchmark: 1, history: 2 };
+  document.querySelectorAll('.app-tab')[idx[id]].classList.add('active');
+  document.getElementById('app-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
+/* ══════════════════════════════════
+   PRO PLAN
+══════════════════════════════════ */
+function activatePro() {
+  isPro = true;
+  document.getElementById('planPill').textContent = 'PRO PLAN';
+  document.getElementById('planPill').className = 'plan-pill pro';
+  document.getElementById('navCta').textContent = 'Proプラン利用中';
+  document.getElementById('navCta').className = 'nav-cta hidden';
+  document.getElementById('bm-lock').style.display = 'none';
+  document.getElementById('hist-lock-section').style.display = 'none';
+  document.getElementById('hist-list-section').style.display = 'block';
+  document.querySelectorAll('.app-tab-badge:not(.free-badge)').forEach(b => { b.style.background = '#1a7a3c'; });
+  showTab('benchmark');
+}
+
+function scrollToPlans() {
+  document.getElementById('plans').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ══════════════════════════════════
+   COMPETITOR ROWS
+══════════════════════════════════ */
+function addComp() {
+  compCount++;
+  const id = compCount;
+  const li = document.getElementById('bm-comp-list');
+  const row = document.createElement('div');
+  row.className = 'comp-row';
+  row.id = 'cr-' + id;
+  row.innerHTML = `
+    <input type="text" class="form-input" placeholder="株式会社〇〇｜営業マネージャー">
+    <input type="text" class="form-input" placeholder="450〜800万円">
+    <textarea class="form-textarea" style="min-height:54px;font-size:13px;" placeholder="フルリモート、ストックオプション、急成長SaaS"></textarea>
+    <button class="rm-btn" onclick="document.getElementById('cr-${id}').remove()">×</button>
+  `;
+  li.appendChild(row);
+}
+addComp(); addComp(); addComp();
+
+/* ══════════════════════════════════
+   CHIPS
+══════════════════════════════════ */
+document.querySelectorAll('#bm-chips .chip-select').forEach(c => {
+  c.addEventListener('click', () => c.classList.toggle('on'));
+});
+
+/* ══════════════════════════════════
+   UTILS
+══════════════════════════════════ */
+function col(s, max) {
+  const p = s / max;
+  return p >= 0.72 ? '#1a7a3c' : p >= 0.52 ? '#c89a00' : '#c93030';
+}
+function rankColor(t) {
+  if (t >= 80) return { bg: '#e4f5eb', fg: '#1a7a3c' };
+  if (t >= 65) return { bg: '#e8f0ff', fg: '#1a4fd4' };
+  if (t >= 50) return { bg: '#fff8e0', fg: '#c89a00' };
+  if (t >= 35) return { bg: '#ffe4e4', fg: '#c93030' };
+  return { bg: '#c93030', fg: '#fff' };
+}
+function badge(score) {
+  if (score <= 12) return '<span class="priority-badge badge-high">要対応</span>';
+  if (score <= 17) return '<span class="priority-badge badge-mid">改善推奨</span>';
+  return '<span class="priority-badge badge-low">良好</span>';
+}
+function scoreRingColor(s) {
+  if (s >= 75) return '#1a7a3c';
+  if (s >= 50) return '#c89a00';
+  return '#c93030';
+}
+
+/* ══════════════════════════════════
+   HISTORY
+══════════════════════════════════ */
+function addHistory(type, label, score) {
+  if (!isPro) return;
+  historyItems.unshift({ type, label, score, date: new Date().toLocaleDateString('ja-JP') });
+  renderHistory();
+}
+function renderHistory() {
+  const list = document.getElementById('hist-list');
+  const count = document.getElementById('hist-count');
+  if (!list) return;
+  count.textContent = historyItems.length + '件';
+  if (!historyItems.length) {
+    list.innerHTML = '<div style="text-align:center;padding:48px 0;color:var(--muted);font-size:14px;">まだ分析履歴がありません。</div>';
+    return;
+  }
+  list.innerHTML = historyItems.map(h => {
+    const sc = scoreRingColor(h.score);
+    const bg = h.score >= 75 ? '#e4f5eb' : h.score >= 50 ? '#fff8e0' : '#ffe4e4';
+    const icon = h.type === 'benchmark' ? '📊' : '🔍';
+    return `<div class="hist-item">
+      <div class="hist-score-badge" style="border-color:${sc};color:${sc};background:${bg};">${h.score}</div>
+      <div class="hist-info">
+        <div class="hist-title">${icon} ${h.label}</div>
+        <div class="hist-meta">${h.date} · ${h.type === 'benchmark' ? '競合ベンチマーク' : '無料診断'}</div>
+      </div>
+      <span class="hist-arrow">›</span>
+    </div>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════
+   FREE DIAGNOSIS
+══════════════════════════════════ */
 async function runDiagnosis() {
-  const title   = document.getElementById('jobTitle').value.trim();
+  const title = document.getElementById('jobTitle').value.trim();
   const content = document.getElementById('jobContent').value.trim();
-  const other   = document.getElementById('jobOther').value.trim();
+  const other = document.getElementById('jobOther').value.trim();
   if (!title && !content) { alert('少なくとも「求人タイトル」と「仕事内容」を入力してください。'); return; }
   savedInputs = { title, content, other };
 
@@ -449,14 +900,54 @@ async function runDiagnosis() {
 
   const jobText = `【求人タイトル】\n${title}\n\n【仕事内容】\n${content}\n\n【福利厚生・その他PR】\n${other}`;
 
+  const prompt = `あなたは採用コンサルタントのエキスパートです。以下の求人票を分析して、JSONのみ出力してください。マークダウン・説明文は不要。
+
+求人票：
+${jobText}
+
+以下の形式でJSONを返してください：
+{
+  "total": 58,
+  "rank": "要改善",
+  "priority": "高",
+  "scores": {
+    "title": 14,
+    "clarity": 15,
+    "differentiation": 12,
+    "motivation": 17
+  },
+  "issues": [
+    "具体的な課題1（採用現場で使えるレベルで）",
+    "具体的な課題2",
+    "具体的な課題3"
+  ],
+  "proposals": [
+    "具体的な改善提案1（採用現場で使えるレベルで）",
+    "具体的な改善提案2",
+    "具体的な改善提案3"
+  ],
+  "titleSuggestions": [
+    "改善タイトル案①（実際に使えるレベルで）",
+    "改善タイトル案②",
+    "改善タイトル案③"
+  ],
+  "salaryAdvice": "給与・条件面の改善提案（具体的に）",
+  "targetAdvice": "ターゲット設定の改善提案（具体的に）",
+  "priorityAction": "今すぐ着手すべき最優先アクション（1つに絞って）"
+}
+
+スコアは各項目25点満点（合計100点）。厳しめに評価すること。`;
+
   try {
     const response = await fetch('/.netlify/functions/diagnose', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jobText })
     });
+    if (!response.ok) throw new Error('サーバーエラー: ' + response.status);
     const parsed = await response.json();
-    renderResult(parsed);
+    renderDiagResult(parsed);
+    addHistory('improve', (title.slice(0, 30) || '求人票診断') + (title.length > 30 ? '…' : ''), parsed.total);
   } catch(err) {
     result.innerHTML = `<div style="padding:24px;background:#fff8f6;border:1px solid #f0c4b8;border-radius:8px;color:#c93030;font-size:14px;">診断中にエラーが発生しました。しばらくしてから再度お試しください。</div>`;
     result.classList.add('active');
@@ -466,29 +957,7 @@ async function runDiagnosis() {
   }
 }
 
-function col(s, max) {
-  const p = s/max;
-  return p >= 0.72 ? '#1a7a3c' : p >= 0.52 ? '#c89a00' : '#c93030';
-}
-function rankColor(t) {
-  if (t >= 80) return { bg:'#e4f5eb', fg:'#1a7a3c' };
-  if (t >= 65) return { bg:'#e8f0ff', fg:'#1a4fd4' };
-  if (t >= 50) return { bg:'#fff8e0', fg:'#c89a00' };
-  if (t >= 35) return { bg:'#ffe4e4', fg:'#c93030' };
-  return { bg:'#c93030', fg:'#fff' };
-}
-function badge(score) {
-  if (score <= 12) return '<span class="priority-badge badge-high">要対応</span>';
-  if (score <= 17) return '<span class="priority-badge badge-mid">改善推奨</span>';
-  return '<span class="priority-badge badge-low">良好</span>';
-}
-
-// ── PDF：ブラウザの印刷機能を使用（日本語完全対応） ──
-function downloadPDF() {
-  window.print();
-}
-
-function renderResult(d) {
+function renderDiagResult(d) {
   const el = document.getElementById('diagResult');
   const rc = rankColor(d.total);
   const now = new Date();
@@ -500,19 +969,71 @@ function renderResult(d) {
     { label:'応募動機形成', score: d.scores.motivation },
   ].sort((a,b) => a.score - b.score);
 
+  const lockedHtml = isPro ? `
+    <div class="result-section">
+      <div class="result-section-title">■ 給与・条件の改善提案</div>
+      <p style="font-size:13px;line-height:1.8;color:var(--ink);">${d.salaryAdvice || '分析データなし'}</p>
+    </div>
+    <div class="result-section">
+      <div class="result-section-title">■ ターゲット設定の改善提案</div>
+      <p style="font-size:13px;line-height:1.8;color:var(--ink);">${d.targetAdvice || '分析データなし'}</p>
+    </div>
+    <div class="result-section">
+      <div class="result-section-title">■ 最優先アクション</div>
+      <div style="background:#fff8f6;border:1.5px solid #f0c4b8;border-radius:6px;padding:16px 20px;font-size:14px;font-weight:700;line-height:1.8;color:var(--ink);">⚡ ${d.priorityAction || '分析データなし'}</div>
+    </div>
+  ` : `
+    <div class="lock-section">
+      <div class="lock-blur">
+        <div class="result-section">
+          <div class="result-section-title">■ 給与・条件の改善提案</div>
+          <p style="font-size:13px;line-height:1.8;">給与面では市場と比較してこのような課題があります。年収レンジの見直しや表記方法の変更で応募数の改善が見込めます。具体的には下限年収を明示することで求職者の安心感が高まります。</p>
+        </div>
+        <div class="result-section">
+          <div class="result-section-title">■ ターゲット設定・最優先アクション</div>
+          <p style="font-size:13px;line-height:1.8;">ターゲット設定の見直しにより応募層の質・量を改善できます。今すぐ着手すべき最優先アクションも含めて詳細を提示します。</p>
+        </div>
+      </div>
+      <div class="lock-overlay">
+        <div class="lock-card">
+          <div class="lock-icon-wrap">🔒</div>
+          <div class="lock-title">詳細な改善提案はProで解放</div>
+          <div class="lock-desc">給与・ターゲット・最優先アクションの具体的な改善案をすべて確認できます</div>
+          <button class="lock-cta" onclick="scrollToPlans()">Proプランを見る →</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const titleHtml = isPro
+    ? d.titleSuggestions.map((t,i)=>`<div class="proposal-item"><div class="proposal-label">タイトル案 ${i+1}</div>${t}</div>`).join('')
+    : `
+      <div class="proposal-item"><div class="proposal-label">タイトル案 1</div>${d.titleSuggestions[0] || ''}</div>
+      <div class="lock-section" style="margin-top:12px;">
+        <div class="lock-blur">
+          <div class="proposal-item" style="margin-bottom:10px;"><div class="proposal-label">タイトル案 2</div>さらに別アングルからの訴求タイトル案がここに表示されます。ターゲット層と差別化ポイントを組み合わせた案です。</div>
+          <div class="proposal-item"><div class="proposal-label">タイトル案 3</div>3つ目のタイトル案。異なる訴求軸で作成した、市場競争力の高い候補です。</div>
+        </div>
+        <div class="lock-overlay">
+          <div class="lock-card" style="padding:20px 24px;">
+            <div style="font-size:14px;font-weight:900;margin-bottom:6px;">🔒 タイトル案②③はProで解放</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">より多角的な選択肢で最適な1案を選べます</div>
+            <button class="lock-cta" onclick="scrollToPlans()">Proにアップグレード →</button>
+          </div>
+        </div>
+      </div>
+    `;
+
   el.innerHTML = `
     <div class="pdf-btn-wrap">
-      <button class="pdf-btn" onclick="downloadPDF()">📄 PDFで保存する</button>
+      <button class="pdf-btn" onclick="window.print()">📄 PDFで保存する</button>
     </div>
-
-    <!-- 印刷時のみ表示するヘッダー -->
     <div class="print-header">
       <div class="print-header-inner">
         <h1>求人改善<span>クラウド</span> 診断レポート</h1>
         <p>診断日：${dateStr}　運営：株式会社Link Core</p>
       </div>
     </div>
-
     <div class="result-header">
       <div>
         <div class="result-title-label">DIAGNOSTIC REPORT</div>
@@ -563,10 +1084,9 @@ function renderResult(d) {
       </div>
       <div class="result-section">
         <div class="result-section-title">■ タイトル改善案</div>
-        <div class="proposal-list">
-          ${d.titleSuggestions.map((t,i)=>`<div class="proposal-item"><div class="proposal-label">タイトル案 ${i+1}</div>${t}</div>`).join('')}
-        </div>
+        <div class="proposal-list">${titleHtml}</div>
       </div>
+      ${lockedHtml}
       <div class="result-section original-section">
         <div class="result-section-title">■ 診断対象の求人票（入力内容）</div>
         <div class="original-content">
@@ -580,6 +1100,256 @@ function renderResult(d) {
       <div class="result-cta-text">
         <strong>もっと詳しく改善したい方へ</strong>
         <p>冒頭文・訴求文の改善案作成、原稿修正代行、媒体別最適化まで対応します。</p>
+      </div>
+      <a href="https://link-core.co.jp/contact/" target="_blank" class="result-cta-btn">改善相談をする →</a>
+    </div>`;
+
+  el.classList.add('active');
+  setTimeout(() => el.scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+}
+
+/* ══════════════════════════════════
+   COMP MODE TOGGLE
+══════════════════════════════════ */
+let compMode = 'manual';
+
+function setCompMode(mode) {
+  compMode = mode;
+  const isAuto = mode === 'auto';
+  document.getElementById('comp-manual-area').style.display = isAuto ? 'none' : 'block';
+  document.getElementById('comp-auto-area').style.display = isAuto ? 'block' : 'none';
+  document.getElementById('toggle-manual').style.background = isAuto ? 'white' : 'var(--ink)';
+  document.getElementById('toggle-manual').style.color = isAuto ? 'var(--muted)' : 'var(--paper)';
+  document.getElementById('toggle-auto').style.background = isAuto ? 'var(--ink)' : 'white';
+  document.getElementById('toggle-auto').style.color = isAuto ? 'var(--paper)' : 'var(--muted)';
+}
+
+function updateCompDisplayLabel() {
+  const val = document.querySelector('input[name="comp-display"]:checked').value;
+  document.getElementById('label-named').style.borderColor = val === 'named' ? 'var(--accent)' : 'var(--border)';
+  document.getElementById('label-abstract').style.borderColor = val === 'abstract' ? 'var(--accent)' : 'var(--border)';
+}
+
+/* ══════════════════════════════════
+   COMPETITIVE BENCHMARK
+══════════════════════════════════ */
+async function runBenchmark() {
+  const sh = document.getElementById('bm-shokushu').value.trim();
+  const ki = document.getElementById('bm-kinmu').value.trim();
+  if (!sh || !ki) { alert('職種と勤務地を入力してください'); return; }
+
+  // 自社会社情報
+  const kaisha = document.getElementById('bm-kaisha').value.trim();
+  const gyokai = document.getElementById('bm-gyokai').value.trim();
+  const jinin  = document.getElementById('bm-jinin').value;
+  const joto   = document.getElementById('bm-joto').value;
+  const nensu  = document.getElementById('bm-nensu').value;
+  const jishaPr = document.getElementById('bm-jisha-pr').value.trim();
+
+  const kaishaInfo = [
+    kaisha  ? `会社名：${kaisha}` : '',
+    gyokai  ? `業界・事業：${gyokai}` : '',
+    jinin   ? `従業員数：${jinin}` : '',
+    joto    ? `上場区分：${joto}` : '',
+    nensu   ? `設立年数：${nensu}` : '',
+    jishaPr ? `自社PR：${jishaPr}` : '',
+  ].filter(Boolean).join('\n') || '（未入力）';
+
+  const isAuto = compMode === 'auto';
+  const axes = Array.from(document.querySelectorAll('#bm-chips .chip-select.on')).map(c => c.dataset.v);
+  const btn = document.getElementById('bmBtn');
+  const loading = document.getElementById('bmLoading');
+  const result = document.getElementById('bmResult');
+  btn.disabled = true; btn.textContent = '分析中...';
+  loading.classList.add('active');
+  result.classList.remove('active'); result.innerHTML = '';
+
+  // 手動モード：競合データ収集
+  let compText = '';
+  let compNum = 0;
+  if (!isAuto) {
+    const rows = document.querySelectorAll('#bm-comp-list .comp-row');
+    const comps = [];
+    rows.forEach(r => {
+      const inputs = r.querySelectorAll('input, textarea');
+      if (inputs[0] && inputs[0].value.trim()) {
+        comps.push({ name: inputs[0].value.trim(), salary: inputs[1] ? inputs[1].value.trim() : '', appeal: inputs[2] ? inputs[2].value.trim() : '' });
+      }
+    });
+    if (comps.length < 2) {
+      loading.classList.remove('active');
+      btn.disabled = false; btn.textContent = '📊 AIで競合分析をスタートする';
+      alert('競合データを2社以上入力してください');
+      return;
+    }
+    compNum = comps.length;
+    compText = comps.map((c,i) => `競合${i+1}：${c.name}\n年収：${c.salary}\n訴求：${c.appeal}`).join('\n\n');
+  } else {
+    // おまかせモード
+    const autoGyokai = document.getElementById('auto-gyokai').value || '自動判定';
+    const autoArea   = document.getElementById('auto-area').value || '勤務地と同じ';
+    const dispMode   = document.querySelector('input[name="comp-display"]:checked').value;
+    compNum = 0;
+    compText = `【おまかせモード】\n比較対象：${autoGyokai}\n比較エリア：${autoArea}\n競合の表記：${dispMode === 'named' ? '実在する代表的な企業・求人媒体の実名を使用' : '「競合A」「同規模他社B」のような抽象表現を使用'}`;
+  }
+
+  const prompt = `あなたは採用コンサルタントのエキスパートです。競合ベンチマーク分析を行い、JSONのみ出力してください。マークダウン不要。
+
+【自社会社情報】
+${kaishaInfo}
+
+【自社求人情報】
+職種：${sh} / 勤務地：${ki}
+雇用：${document.getElementById('bm-koyo').value}
+年収：${document.getElementById('bm-nmin').value.trim()}〜${document.getElementById('bm-nmax').value.trim()}
+タイトル：${document.getElementById('bm-title').value.trim() || '未入力'}
+訴求：${document.getElementById('bm-appeal').value.trim() || '未入力'}
+
+【競合データ】
+${isAuto ? `${compText}\n上記の条件をもとに、この職種・地域・規模感で実際に競合となりうる求人の傾向をあなたの知識で推定して分析してください。` : compText}
+
+【重点分析軸】${axes.join('、')}
+${document.getElementById('bm-note').value.trim() ? '【補足】' + document.getElementById('bm-note').value.trim() : ''}
+
+以下の形式でJSONを返してください：
+{
+  "score": 58,
+  "mode": "${isAuto ? 'auto' : 'manual'}",
+  "pos_label": "市場における自社の立ち位置（例：平均以下）",
+  "market_salary": "給与レンジの市場傾向（平均・上位・下位を具体的数字で）",
+  "market_title": "タイトルでよく使われるキーワード傾向（具体的に）",
+  "market_appeal": "訴求軸の傾向（安定・成長・高収入・働きやすさなど具体的に）",
+  "comp_common": "上位求人に共通する特徴（具体的に3点）",
+  "comp_diff": "各競合の差別化ポイント（具体名または抽象名で具体的に記述）",
+  "comp_strategy": "勝っている企業の戦略まとめ",
+  "self_strength": "自社の強み（会社規模・業界・PRポイントを踏まえて2〜3点、具体的に）",
+  "self_weakness": "自社の弱み・改善必須ポイント（2〜3点、具体的に）",
+  "gap": "競合との差分（数字・具体例を含めて）",
+  "title1": "改善タイトル案①（実際に使えるレベルで）",
+  "title2": "改善タイトル案②",
+  "title3": "改善タイトル案③",
+  "salary_advice": "給与・条件の改善提案（具体的に）",
+  "appeal_advice": "訴求ポイントの改善提案（具体的に）",
+  "target_advice": "ターゲットに刺さる打ち出し方（具体的に）",
+  "priority": "最優先アクション（1つに絞って）"
+}
+
+採用現場で成果が出るレベルで、厳しめに評価してください。`;
+
+  try {
+    const r = await fetch('/.netlify/functions/benchmark', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    if (!r.ok) throw new Error('サーバーエラー: ' + r.status);
+    const data = await r.json();
+    renderBmResult(data, sh, ki, compNum, isAuto);
+    const histLabel = sh + ' / ' + ki + (isAuto ? '（AIおまかせ）' : ` (${compNum}社比較)`);
+    addHistory('benchmark', histLabel, data.score);
+  } catch(e) {
+    result.innerHTML = `<div style="padding:24px;background:#fff8f6;border:1px solid #f0c4b8;border-radius:8px;color:#c93030;font-size:14px;">エラーが発生しました。再度お試しください。</div>`;
+    result.classList.add('active');
+  } finally {
+    loading.classList.remove('active');
+    btn.disabled = false; btn.textContent = '📊 AIで競合分析をスタートする';
+  }
+}
+
+function renderBmResult(d, sh, ki, compNum, isAuto) {
+  const el = document.getElementById('bmResult');
+  const sc = scoreRingColor(d.score);
+  const scBg = d.score >= 75 ? '#e4f5eb' : d.score >= 50 ? '#fff8e0' : '#ffe4e4';
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日`;
+  const modeLabel = isAuto
+    ? '<span style="font-family:\'Space Mono\',monospace;font-size:10px;font-weight:700;background:var(--accent);color:white;padding:3px 10px;border-radius:2px;letter-spacing:0.06em;margin-left:10px;">AIおまかせ</span>'
+    : `<span style="font-size:13px;color:rgba(255,255,255,0.5);margin-left:10px;">${compNum}社比較</span>`;
+
+  el.innerHTML = `
+    <div class="pdf-btn-wrap">
+      <button class="pdf-btn" onclick="window.print()">📄 PDFで保存する</button>
+    </div>
+    <div class="result-header">
+      <div>
+        <div class="result-title-label">COMPETITIVE BENCHMARK REPORT</div>
+        <div class="result-score-big">${d.score}<span>/100</span></div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-top:6px;display:flex;align-items:center;flex-wrap:wrap;gap:4px;">${sh} / ${ki} · ${dateStr}${modeLabel}</div>
+      </div>
+      <div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:8px;">市場ポジション</div>
+        <div class="result-rank-badge" style="background:${scBg};color:${sc};">${d.pos_label}</div>
+      </div>
+    </div>
+    <div class="result-body">
+
+      <div class="result-section">
+        <div class="result-section-title">■ 市場分析</div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div><span class="bm-tag bm-tag-info">給与レンジ</span><p style="font-size:13px;line-height:1.8;margin-top:6px;">${d.market_salary}</p></div>
+          <div><span class="bm-tag bm-tag-info">タイトル傾向</span><p style="font-size:13px;line-height:1.8;margin-top:6px;">${d.market_title}</p></div>
+          <div><span class="bm-tag bm-tag-info">訴求軸傾向</span><p style="font-size:13px;line-height:1.8;margin-top:6px;">${d.market_appeal}</p></div>
+        </div>
+      </div>
+
+      <div class="result-section">
+        <div class="result-section-title">■ 競合分析</div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div><span class="bm-tag bm-tag-warn">上位共通点</span><p style="font-size:13px;line-height:1.8;margin-top:6px;">${d.comp_common}</p></div>
+          <div><span class="bm-tag bm-tag-warn">各社差別化</span><p style="font-size:13px;line-height:1.8;margin-top:6px;">${d.comp_diff}</p></div>
+          <div><span class="bm-tag bm-tag-warn">勝ち筋戦略</span><p style="font-size:13px;line-height:1.8;margin-top:6px;">${d.comp_strategy}</p></div>
+        </div>
+      </div>
+
+      <div class="result-section">
+        <div class="result-section-title">■ 自社ポジション評価</div>
+        <div style="display:flex;align-items:center;gap:20px;margin-bottom:20px;flex-wrap:wrap;">
+          <div style="width:80px;height:80px;border-radius:50%;border:3px solid ${sc};display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;background:${scBg};">
+            <span style="font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:${sc};line-height:1;">${d.score}</span>
+            <span style="font-size:10px;color:var(--muted);">/100</span>
+          </div>
+          <p style="font-size:14px;line-height:1.8;color:var(--muted);">${d.gap}</p>
+        </div>
+        <div class="sw-grid">
+          <div class="sw-box strength"><div class="sw-label">STRENGTH — 強み</div><div class="sw-text">${d.self_strength}</div></div>
+          <div class="sw-box weakness"><div class="sw-label">WEAKNESS — 弱み</div><div class="sw-text">${d.self_weakness}</div></div>
+        </div>
+      </div>
+
+      <div class="result-section">
+        <div class="result-section-title">■ 改善タイトル案</div>
+        <div class="proposal-list">
+          <div class="proposal-item"><div class="proposal-label">タイトル案 1</div>${d.title1}</div>
+          <div class="proposal-item"><div class="proposal-label">タイトル案 2</div>${d.title2}</div>
+          <div class="proposal-item"><div class="proposal-label">タイトル案 3</div>${d.title3}</div>
+        </div>
+      </div>
+
+      <div class="result-section">
+        <div class="result-section-title">■ 給与・条件の改善提案</div>
+        <p style="font-size:13px;line-height:1.9;">${d.salary_advice}</p>
+      </div>
+
+      <div class="result-section">
+        <div class="result-section-title">■ 訴求ポイントの改善提案</div>
+        <p style="font-size:13px;line-height:1.9;">${d.appeal_advice}</p>
+      </div>
+
+      <div class="result-section">
+        <div class="result-section-title">■ ターゲットへの打ち出し方</div>
+        <p style="font-size:13px;line-height:1.9;">${d.target_advice}</p>
+      </div>
+
+      <div class="result-section">
+        <div class="result-section-title">■ 最優先アクション</div>
+        <div style="background:#fff8f6;border:1.5px solid #f0c4b8;border-radius:6px;padding:18px 20px;font-size:14px;font-weight:700;line-height:1.8;">⚡ ${d.priority}</div>
+      </div>
+
+    </div>
+    <div class="result-cta">
+      <div class="result-cta-text">
+        <strong>分析結果をもとに改善まで依頼したい方へ</strong>
+        <p>競合ベンチマークをベースにした原稿修正代行・媒体別最適化まで対応します。</p>
       </div>
       <a href="https://link-core.co.jp/contact/" target="_blank" class="result-cta-btn">改善相談をする →</a>
     </div>`;
