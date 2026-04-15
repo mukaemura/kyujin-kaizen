@@ -264,8 +264,8 @@
   .plan-name { font-size: 22px; font-weight: 900; margin-bottom: 8px; }
   .plan-price strong { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--ink); display: block; margin-bottom: 4px; }
   .plan-price { font-size: 13px; color: var(--muted); line-height: 1.5; }
-  .plan-body { padding: 24px 28px 32px; }
-  .plan-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+  .plan-body { padding: 24px 28px 32px; display: flex; flex-direction: column; }
+  .plan-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; flex: 1; }
   .plan-features li { font-size: 13px; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
   .plan-features li::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
   .plan-features li.locked { color: var(--muted); }
@@ -591,7 +591,7 @@
           <!-- 手動入力エリア -->
           <div id="comp-manual-area">
             <p style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6;">Indeed・マイナビ・リクナビNEXTなどから情報をコピーして貼り付けるだけでOKです</p>
-            <div class="comp-section-head"><span>企業名・求人タイトル</span><span>年収レンジ</span><span>主な訴求・特徴</span><span></span></div>
+            <div class="comp-section-head"><span>企業名</span><span>年収レンジ</span><span>主な訴求・特徴</span><span></span></div>
             <div id="bm-comp-list"></div>
             <button class="add-comp-btn" onclick="addComp()">＋ 競合を追加する</button>
           </div>
@@ -960,7 +960,7 @@ function addComp() {
   row.className = 'comp-row';
   row.id = 'cr-' + id;
   row.innerHTML = `
-    <input type="text" class="form-input" placeholder="株式会社〇〇｜営業マネージャー">
+    <input type="text" class="form-input" placeholder="例：株式会社〇〇">
     <input type="text" class="form-input" placeholder="450〜800万円">
     <textarea class="form-textarea" style="min-height:54px;font-size:13px;" placeholder="フルリモート、ストックオプション、急成長SaaS"></textarea>
     <button class="rm-btn" onclick="document.getElementById('cr-${id}').remove()">×</button>
@@ -1308,7 +1308,13 @@ ${jobText}
   "targetAdvice": "ターゲット設定の改善提案（具体的に）",
   "contentAnalysis": "仕事内容の書き方の問題点と改善提案（具体的に・採用現場で使えるレベルで）",
   "benefitsAnalysis": "福利厚生・PRポイントの問題点と改善提案（訴求力を高める具体的な書き方まで）",
-  "priorityAction": "今すぐ着手すべき最優先アクション（1つに絞って）"
+  "priorityAction": "今すぐ着手すべき最優先アクション（1つに絞って）",
+  "marketSalary": {
+    "median": "この職種・勤務地の市場年収中央値（例：450万円）",
+    "lower": "下位25%の年収目安（例：320万円）",
+    "upper": "上位25%の年収目安（例：650万円）",
+    "comment": "自社の年収設定に対する一言コメント（市場比較を含めて）"
+  }
 }
 
 スコアは各項目25点満点（合計100点）。厳しめに評価すること。`;
@@ -1465,6 +1471,33 @@ function renderDiagResult(d) {
       </p>
     </div>` : ''}
 
+    ${d.marketSalary ? `
+    <div style="background:white;border:1.5px solid var(--border);margin-top:0;padding:20px 28px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.1em;color:var(--muted);">MARKET SALARY DATA — ${savedInputs.title ? savedInputs.title.slice(0,20) : '入力職種'}</div>
+        <div style="font-size:11px;color:var(--muted);background:var(--paper);border:1px solid var(--border);border-radius:100px;padding:3px 10px;">※ AIによる推定値・参考情報です</div>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:24px;flex-wrap:wrap;margin-bottom:14px;">
+        <div style="text-align:center;">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">下位25%目安</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--muted);">おおよそ ${d.marketSalary.lower}</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:11px;color:var(--accent);font-weight:700;margin-bottom:4px;">中央値（推定）</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:32px;color:var(--ink);">おおよそ ${d.marketSalary.median}</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">上位25%目安</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--muted);">おおよそ ${d.marketSalary.upper}</div>
+        </div>
+      </div>
+      <div style="background:var(--paper);border-radius:6px;padding:12px 16px;">
+        <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px;">AIコメント</div>
+        <p style="font-size:13px;line-height:1.7;color:var(--ink);">${d.marketSalary.comment}</p>
+        <p style="font-size:11px;color:var(--muted);margin-top:6px;">※ 実際の数値とは異なる場合があります。厚生労働省「賃金構造基本統計調査」等の公的データも合わせてご確認ください。</p>
+      </div>
+    </div>` : ''}
+
     <div class="result-body">
       <div class="result-section">
         <div class="result-section-title">■ 詳細スコア</div>
@@ -1526,13 +1559,6 @@ function renderDiagResult(d) {
       </div>
     </div>
     </div>
-    <div class="result-cta">
-      <div class="result-cta-text">
-        <strong>もっと詳しく改善したい方へ</strong>
-        <p>冒頭文・訴求文の改善案作成、原稿修正代行、媒体別最適化まで対応します。</p>
-      </div>
-      <a href="https://link-core.co.jp/contact/" target="_blank" class="result-cta-btn">改善相談をする →</a>
-    </div>
     ${!isPro ? `
     <div style="margin-top:24px;background:var(--ink);border-radius:8px;overflow:hidden;">
       <div style="background:var(--accent);padding:10px 24px;display:flex;align-items:center;gap:10px;">
@@ -1542,7 +1568,7 @@ function renderDiagResult(d) {
       <div style="padding:24px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;">
         <div>
           <div style="font-size:17px;font-weight:900;color:white;margin-bottom:10px;line-height:1.5;">
-            ${d.total < 50 ? 'このまま掲載を続けても、応募は増えません。' : 'スコアの改善ポイントが、まだ${5 - Math.floor(d.total/20)}項目残っています。'}
+            ${d.total < 50 ? 'このまま掲載を続けても、応募は増えません。' : 'スコアの改善ポイントが残っています。'}
           </div>
           <div style="display:flex;flex-direction:column;gap:6px;">
             <div style="font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:8px;"><span style="color:var(--accent);font-weight:700;">✓</span> 改善提案②③・タイトル案②③ — すべて表示</div>
@@ -1560,7 +1586,14 @@ function renderDiagResult(d) {
           <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:10px;">いつでも解約可能</div>
         </div>
       </div>
-    </div>` : ''}`;
+    </div>` : `
+    <div class="result-cta">
+      <div class="result-cta-text">
+        <strong>もっと詳しく改善したい方へ</strong>
+        <p>冒頭文・訴求文の改善案作成、原稿修正代行、媒体別最適化まで対応します。</p>
+      </div>
+      <a href="https://link-core.co.jp/contact/" target="_blank" class="result-cta-btn">改善相談をする →</a>
+    </div>`}`;
 
   el.classList.add('active');
   setTimeout(() => el.scrollIntoView({ behavior:'smooth', block:'start' }), 100);
