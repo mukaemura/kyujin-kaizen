@@ -38,6 +38,10 @@
   .nav-cta { background: var(--ink); color: var(--paper); padding: 10px 20px; border-radius: 4px; font-size: 13px; font-weight: 700; transition: background .2s; text-decoration: none; white-space: nowrap; }
   .nav-cta:hover { background: var(--accent); color: white; }
   .nav-cta.hidden { display: none; }
+  .nav-tab-btn { padding: 8px 16px; border-radius: 4px; font-size: 13px; font-weight: 700; color: var(--muted); text-decoration: none; border: 1.5px solid var(--border); transition: all .2s; white-space: nowrap; }
+  .nav-tab-btn:hover { border-color: var(--ink); color: var(--ink); background: rgba(0,0,0,0.03); }
+  .nav-tab-btn-pro { background: var(--ink); color: var(--paper) !important; border-color: var(--ink); }
+  .nav-tab-btn-pro:hover { background: var(--accent) !important; border-color: var(--accent); }
 
   /* ── Hero ── */
   .hero { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; padding-top: 80px; position: relative; overflow: hidden; }
@@ -378,12 +382,12 @@
   <div class="nav-links">
     <a href="#problems">課題</a>
     <a href="#how">使い方</a>
-    <a href="#app-section">診断・分析</a>
     <a href="#plans">料金</a>
   </div>
   <div class="nav-right">
-    <span class="plan-pill free" id="planPill" onclick="scrollToPlans()">FREE PLAN</span>
-    <a href="#app-section" class="nav-cta" id="navCta">無料で診断する</a>
+    <a href="#app-section" class="nav-tab-btn" onclick="showTab('improve')">🔍 無料診断</a>
+    <a href="#app-section" class="nav-tab-btn" onclick="showTab('benchmark')">📊 競合分析</a>
+    <a href="pro.html" class="nav-tab-btn nav-tab-btn-pro" id="navMypage">👤 マイページ（Pro）</a>
   </div>
 </nav>
 
@@ -933,10 +937,7 @@ function showTab(id) {
 ══════════════════════════════════ */
 function activatePro() {
   isPro = true;
-  document.getElementById('planPill').textContent = 'PRO PLAN';
-  document.getElementById('planPill').className = 'plan-pill pro';
-  document.getElementById('navCta').textContent = 'Proプラン利用中';
-  document.getElementById('navCta').className = 'nav-cta hidden';
+  document.getElementById('navMypage').textContent = '👤 マイページ（Pro）';
   document.getElementById('bm-lock').style.display = 'none';
   document.getElementById('hist-lock-section').style.display = 'none';
   document.getElementById('hist-list-section').style.display = 'block';
@@ -1354,27 +1355,60 @@ function renderDiagResult(d) {
       <p style="font-size:13px;line-height:1.8;color:var(--ink);">${d.targetAdvice || '分析データなし'}</p>
     </div>
     <div class="result-section">
+      <div class="result-section-title">■ 仕事内容の改善提案</div>
+      <p style="font-size:13px;line-height:1.9;color:var(--ink);">${d.contentAnalysis || '分析データなし'}</p>
+    </div>
+    <div class="result-section">
+      <div class="result-section-title">■ 福利厚生・PRポイントの改善提案</div>
+      <p style="font-size:13px;line-height:1.9;color:var(--ink);">${d.benefitsAnalysis || '分析データなし'}</p>
+    </div>
+    <div class="result-section">
       <div class="result-section-title">■ 最優先アクション</div>
       <div style="background:#fff8f6;border:1.5px solid #f0c4b8;border-radius:6px;padding:16px 20px;font-size:14px;font-weight:700;line-height:1.8;color:var(--ink);">⚡ ${d.priorityAction || '分析データなし'}</div>
     </div>
   ` : `
-    <div class="lock-section">
-      <div class="lock-blur">
-        <div class="result-section">
-          <div class="result-section-title">■ 給与・条件の改善提案</div>
-          <p style="font-size:13px;line-height:1.8;">給与面では市場と比較してこのような課題があります。年収レンジの見直しや表記方法の変更で応募数の改善が見込めます。具体的には下限年収を明示することで求職者の安心感が高まります。</p>
-        </div>
-        <div class="result-section">
-          <div class="result-section-title">■ ターゲット設定・最優先アクション</div>
-          <p style="font-size:13px;line-height:1.8;">ターゲット設定の見直しにより応募層の質・量を改善できます。今すぐ着手すべき最優先アクションも含めて詳細を提示します。</p>
+    <div class="result-section">
+      <div class="result-section-title">■ 給与・条件の改善提案</div>
+      <div style="position:relative;margin-top:8px;">
+        <div style="filter:blur(4px);user-select:none;pointer-events:none;line-height:1.8;font-size:13px;">給与面では市場と比較してこのような課題があります。年収レンジの見直しや表記方法の変更で応募数の改善が見込めます。具体的には下限年収を明示することで求職者の安心感が高まります。またベネフィットの順序を変えることで印象が大きく変わります。</div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+          <button onclick="scrollToPlans()" style="background:var(--ink);color:white;border:none;border-radius:4px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:3px 3px 0 var(--accent);">🔒 Proプランで解放</button>
         </div>
       </div>
-      <div class="lock-overlay">
-        <div class="lock-card">
-          <div class="lock-icon-wrap">🔒</div>
-          <div class="lock-title">詳細な改善提案はProで解放</div>
-          <div class="lock-desc">給与・ターゲット・最優先アクションの具体的な改善案をすべて確認できます</div>
-          <button class="lock-cta" onclick="scrollToPlans()">Proプランを見る →</button>
+    </div>
+    <div class="result-section">
+      <div class="result-section-title">■ ターゲット設定の改善提案</div>
+      <div style="position:relative;margin-top:8px;">
+        <div style="filter:blur(4px);user-select:none;pointer-events:none;line-height:1.8;font-size:13px;">ターゲット設定の見直しにより応募層の質・量を改善できます。どの経験年数・職種バックグラウンドを持つ人材に刺さる書き方かを明確にすることが重要です。</div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+          <button onclick="scrollToPlans()" style="background:var(--ink);color:white;border:none;border-radius:4px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:3px 3px 0 var(--accent);">🔒 Proプランで解放</button>
+        </div>
+      </div>
+    </div>
+    <div class="result-section">
+      <div class="result-section-title">■ 仕事内容の改善提案</div>
+      <div style="position:relative;margin-top:8px;">
+        <div style="filter:blur(4px);user-select:none;pointer-events:none;line-height:1.8;font-size:13px;">仕事内容の書き方には具体的な改善余地があります。1日の流れや業務の比率を数字で示すことで求職者がイメージしやすくなります。現状の記載では抽象的な表現が多く離脱につながっています。</div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+          <button onclick="scrollToPlans()" style="background:var(--ink);color:white;border:none;border-radius:4px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:3px 3px 0 var(--accent);">🔒 Proプランで解放</button>
+        </div>
+      </div>
+    </div>
+    <div class="result-section">
+      <div class="result-section-title">■ 福利厚生・PRポイントの改善提案</div>
+      <div style="position:relative;margin-top:8px;">
+        <div style="filter:blur(4px);user-select:none;pointer-events:none;line-height:1.8;font-size:13px;">福利厚生の訴求順序と表現を変えることで応募率を改善できます。求職者が最も気にする項目を前面に出し、競合と差別化できる独自の制度を強調する書き方が効果的です。</div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+          <button onclick="scrollToPlans()" style="background:var(--ink);color:white;border:none;border-radius:4px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:3px 3px 0 var(--accent);">🔒 Proプランで解放</button>
+        </div>
+      </div>
+    </div>
+    <div class="result-section">
+      <div class="result-section-title">■ 最優先アクション</div>
+      <div style="position:relative;margin-top:8px;">
+        <div style="filter:blur(4px);user-select:none;pointer-events:none;background:#fff8f6;border:1.5px solid #f0c4b8;border-radius:6px;padding:16px 20px;font-size:14px;font-weight:700;line-height:1.8;">⚡ 今すぐ着手すべき最優先の改善アクションがここに表示されます</div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+          <button onclick="scrollToPlans()" style="background:var(--ink);color:white;border:none;border-radius:4px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:3px 3px 0 var(--accent);">🔒 Proプランで解放</button>
         </div>
       </div>
     </div>
@@ -1384,17 +1418,13 @@ function renderDiagResult(d) {
     ? d.titleSuggestions.map((t,i)=>`<div class="proposal-item"><div class="proposal-label">タイトル案 ${i+1}</div>${t}</div>`).join('')
     : `
       <div class="proposal-item"><div class="proposal-label">タイトル案 1</div>${d.titleSuggestions[0] || ''}</div>
-      <div class="lock-section" style="margin-top:12px;">
-        <div class="lock-blur">
-          <div class="proposal-item" style="margin-bottom:10px;"><div class="proposal-label">タイトル案 2</div>さらに別アングルからの訴求タイトル案がここに表示されます。ターゲット層と差別化ポイントを組み合わせた案です。</div>
-          <div class="proposal-item"><div class="proposal-label">タイトル案 3</div>3つ目のタイトル案。異なる訴求軸で作成した、市場競争力の高い候補です。</div>
+      <div style="position:relative;margin-top:8px;">
+        <div style="filter:blur(4px);user-select:none;pointer-events:none;display:flex;flex-direction:column;gap:8px;">
+          <div class="proposal-item"><div class="proposal-label">タイトル案 2</div>別アングルからの訴求タイトル案。ターゲット層と差別化ポイントを組み合わせた案です。</div>
+          <div class="proposal-item"><div class="proposal-label">タイトル案 3</div>異なる訴求軸で作成した、市場競争力の高い候補です。</div>
         </div>
-        <div class="lock-overlay">
-          <div class="lock-card" style="padding:20px 24px;">
-            <div style="font-size:14px;font-weight:900;margin-bottom:6px;">🔒 タイトル案②③はProで解放</div>
-            <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">より多角的な選択肢で最適な1案を選べます</div>
-            <button class="lock-cta" onclick="scrollToPlans()">Proにアップグレード →</button>
-          </div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+          <button onclick="scrollToPlans()" style="background:var(--ink);color:white;border:none;border-radius:4px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:3px 3px 0 var(--accent);">🔒 Proプランで解放</button>
         </div>
       </div>
     `;
@@ -1450,7 +1480,17 @@ function renderDiagResult(d) {
       <div class="result-section">
         <div class="result-section-title">■ 改善提案</div>
         <div class="proposal-list">
-          ${d.proposals.map((p,i)=>`<div class="proposal-item"><div class="proposal-label">PROPOSAL ${i+1}</div>${p}</div>`).join('')}
+          <div class="proposal-item"><div class="proposal-label">PROPOSAL 1</div>${d.proposals[0] || ''}</div>
+          ${isPro ? d.proposals.slice(1).map((p,i)=>`<div class="proposal-item"><div class="proposal-label">PROPOSAL ${i+2}</div>${p}</div>`).join('') : `
+          <div style="position:relative;margin-top:8px;">
+            <div style="filter:blur(4px);user-select:none;pointer-events:none;display:flex;flex-direction:column;gap:8px;">
+              <div class="proposal-item"><div class="proposal-label">PROPOSAL 2</div>さらに具体的な改善提案がここに表示されます。訴求軸の見直しと差別化ポイントの強化について詳しく記載されています。</div>
+              <div class="proposal-item"><div class="proposal-label">PROPOSAL 3</div>3つ目の改善提案。応募動機を高めるための構成変更と表現の改善案です。</div>
+            </div>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+              <button onclick="scrollToPlans()" style="background:var(--ink);color:white;border:none;border-radius:4px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:3px 3px 0 var(--accent);">🔒 Proプランで解放</button>
+            </div>
+          </div>`}
         </div>
       </div>
       <div class="result-section">
@@ -1458,16 +1498,6 @@ function renderDiagResult(d) {
         <div class="proposal-list">${titleHtml}</div>
       </div>
       ${lockedHtml}
-      ${isPro && d.contentAnalysis ? `
-      <div class="result-section">
-        <div class="result-section-title">■ 仕事内容の改善提案</div>
-        <p style="font-size:13px;line-height:1.9;color:var(--ink);">${d.contentAnalysis}</p>
-      </div>` : ''}
-      ${isPro && d.benefitsAnalysis ? `
-      <div class="result-section">
-        <div class="result-section-title">■ 福利厚生・PRポイントの改善提案</div>
-        <p style="font-size:13px;line-height:1.9;color:var(--ink);">${d.benefitsAnalysis}</p>
-      </div>` : ''}
       <div class="result-section original-section">
         <div class="result-section-title">■ 診断対象の求人票（入力内容）</div>
         <div class="original-content">
