@@ -588,50 +588,22 @@
       <h2 class="section-h2" style="margin-bottom:16px;">採用要件分析</h2>
       <p style="font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.8;">自社の魅力・強み・課題をAIが整理します。10のカテゴリに回答するだけで、求人票に使える強みが見えてきます。</p>
 
-      <!-- Proロック -->
-      <div id="analysis-lock">
-        <div style="background:#fff8f6;border:1.5px solid #f0c4b8;border-radius:8px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;">
-          <div>
-            <div style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:0.1em;margin-bottom:8px;">STANDARD PLAN REQUIRED</div>
-            <div style="font-size:16px;font-weight:900;margin-bottom:6px;">採用要件分析はスタンダードプランで利用できます</div>
-            <p style="font-size:13px;color:var(--muted);line-height:1.7;">自社の強み・魅力・課題をAIが体系的に整理。求人票作成の土台になります。</p>
-          </div>
-          <button class="lock-cta" onclick="scrollToPlans()">プランを見る →</button>
+      <!-- 常にロック表示（index.htmlでは使用不可） -->
+      <div style="background:#fff8f6;border:1.5px solid #f0c4b8;border-radius:8px;padding:40px 32px;text-align:center;">
+        <div style="font-size:40px;margin-bottom:16px;">🔒</div>
+        <div style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:0.1em;margin-bottom:12px;">STANDARD PLAN REQUIRED</div>
+        <div style="font-size:20px;font-weight:900;margin-bottom:12px;">採用要件分析はスタンダードプランの機能です</div>
+        <p style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:8px;">10カテゴリのステッパー形式で自社の強み・魅力を整理。<br>求人票作成の土台になる分析が行えます。</p>
+        <div style="display:flex;flex-direction:column;gap:8px;max-width:360px;margin:24px auto;">
+          <div style="font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px;"><span style="color:var(--score-green);font-weight:700;">✓</span> 10カテゴリのステッパー形式入力</div>
+          <div style="font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px;"><span style="color:var(--score-green);font-weight:700;">✓</span> 自社の強み・魅力・課題をAIが抽出</div>
+          <div style="font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px;"><span style="color:var(--score-green);font-weight:700;">✓</span> 採用キャッチコピー・ターゲット像まで生成</div>
+          <div style="font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px;"><span style="color:var(--score-green);font-weight:700;">✓</span> 結果から求人票の下書きをAIが自動生成</div>
         </div>
-      </div>
-
-      <!-- ステッパー本体（Pro解放後） -->
-      <div id="analysis-body" style="display:none;">
-
-        <!-- プログレスバー -->
-        <div style="margin-bottom:32px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:var(--accent);" id="analysis-step-label">STEP 1 / 10</span>
-            <span style="font-size:12px;color:var(--muted);" id="analysis-step-name">事業・存在意義</span>
-          </div>
-          <div style="height:4px;background:var(--border);border-radius:2px;">
-            <div id="analysis-progress" style="height:100%;background:var(--accent);border-radius:2px;transition:width .4s ease;width:10%;"></div>
-          </div>
+        <div style="margin-top:28px;display:flex;flex-direction:column;align-items:center;gap:12px;">
+          <button onclick="scrollToPlans()" style="background:var(--accent);color:white;border:none;border-radius:4px;padding:16px 40px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:4px 4px 0 var(--ink);">スタンダードプランを見る →</button>
+          <a href="pro.html" style="font-size:13px;color:var(--muted);text-decoration:underline;">すでに契約済みの方はこちら（ログイン）</a>
         </div>
-
-        <!-- ステップコンテンツ -->
-        <div id="analysis-steps-wrap"></div>
-
-        <!-- ナビゲーションボタン -->
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:32px;">
-          <button id="analysis-prev-btn" onclick="analysisPrev()" style="background:none;border:1.5px solid var(--border);border-radius:4px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;color:var(--muted);display:none;">← 前へ</button>
-          <div style="flex:1;"></div>
-          <button id="analysis-next-btn" onclick="analysisNext()" style="background:var(--ink);color:white;border:none;border-radius:4px;padding:12px 32px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:3px 3px 0 var(--accent);">次へ →</button>
-        </div>
-
-        <!-- ローディング -->
-        <div class="diag-loading" id="analysis-loading">
-          <div class="loading-spinner"></div>
-          <p class="loading-text">自社の強み・魅力・課題を分析中です…</p>
-        </div>
-
-        <!-- 結果 -->
-        <div id="analysis-result"></div>
       </div>
     </div>
   </div>
@@ -693,15 +665,100 @@
         <!-- STEP 1: 求人情報 -->
         <div style="background:var(--paper);border:1.5px solid var(--border);border-radius:8px;padding:32px;margin-bottom:24px;">
           <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.12em;color:var(--accent);font-weight:700;margin-bottom:20px;">STEP 1 — 自社求人情報</div>
+
+          <!-- 職種 -->
           <div class="grid-2" style="margin-bottom:16px;">
-            <div><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">職種 <span style="color:var(--score-red);">*</span></label><input type="text" class="form-input" id="bm-shokushu" placeholder="例：営業マネージャー"></div>
-            <div><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">勤務地 <span style="color:var(--score-red);">*</span></label><input type="text" class="form-input" id="bm-kinmu" placeholder="例：東京・リモート可"></div>
+            <div>
+              <label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">職種 <span style="color:var(--score-red);">*</span></label>
+              <select class="form-select" id="bm-shokushu-select" onchange="handleShokushuChange(this.value)">
+                <option value="">選択してください</option>
+                <optgroup label="営業・販売">
+                  <option>営業（法人）</option><option>営業（個人）</option><option>営業マネージャー</option><option>インサイドセールス</option><option>カスタマーサクセス</option><option>販売スタッフ</option>
+                </optgroup>
+                <optgroup label="エンジニア・技術">
+                  <option>エンジニア（バックエンド）</option><option>エンジニア（フロントエンド）</option><option>エンジニア（フルスタック）</option><option>インフラ・クラウドエンジニア</option><option>データエンジニア</option><option>AIエンジニア</option><option>モバイルエンジニア</option><option>エンジニアリングマネージャー</option>
+                </optgroup>
+                <optgroup label="マーケティング・クリエイティブ">
+                  <option>マーケター</option><option>デジタルマーケター</option><option>コンテンツマーケター</option><option>デザイナー（UI/UX）</option><option>グラフィックデザイナー</option><option>ディレクター</option>
+                </optgroup>
+                <optgroup label="管理・コーポレート">
+                  <option>人事・採用担当</option><option>経理・財務</option><option>法務</option><option>広報・PR</option><option>総務・労務</option><option>経営企画</option><option>事業開発</option>
+                </optgroup>
+                <optgroup label="カスタマー・オペレーション">
+                  <option>カスタマーサポート</option><option>コールセンター</option><option>事務・アシスタント</option><option>プロジェクトマネージャー</option>
+                </optgroup>
+                <optgroup label="専門職">
+                  <option>コンサルタント</option><option>医療・看護職</option><option>介護職</option><option>教育・講師</option><option>研究・開発</option>
+                </optgroup>
+                <option value="other">その他（直接入力）</option>
+              </select>
+              <input type="text" class="form-input" id="bm-shokushu-other" placeholder="職種名を入力してください" style="display:none;margin-top:8px;">
+              <input type="hidden" id="bm-shokushu">
+            </div>
+            <div>
+              <label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">勤務地 <span style="color:var(--score-red);">*</span></label>
+              <select class="form-select" id="bm-kinmu-select" onchange="handleKinmuChange(this.value)">
+                <option value="">選択してください</option>
+                <optgroup label="関東">
+                  <option>東京</option><option>神奈川（横浜）</option><option>埼玉</option><option>千葉</option>
+                </optgroup>
+                <optgroup label="近畿">
+                  <option>大阪</option><option>兵庫（神戸）</option><option>京都</option>
+                </optgroup>
+                <optgroup label="その他地域">
+                  <option>愛知（名古屋）</option><option>北海道（札幌）</option><option>宮城（仙台）</option><option>広島</option><option>福岡</option><option>沖縄</option>
+                </optgroup>
+                <option>全国各地</option>
+                <option value="other">その他（直接入力）</option>
+              </select>
+              <input type="text" class="form-input" id="bm-kinmu-other" placeholder="勤務地を入力してください" style="display:none;margin-top:8px;">
+              <input type="hidden" id="bm-kinmu">
+            </div>
           </div>
-          <div class="grid-3" style="margin-bottom:16px;">
-            <div><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">雇用形態</label><select class="form-select" id="bm-koyo"><option>正社員</option><option>契約社員</option><option>業務委託</option><option>アルバイト・パート</option></select></div>
-            <div><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">年収（最低）</label><input type="text" class="form-input" id="bm-nmin" placeholder="例：400万円"></div>
-            <div><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">年収（最高）</label><input type="text" class="form-input" id="bm-nmax" placeholder="例：700万円"></div>
+
+          <!-- 雇用形態・勤務形態 -->
+          <div class="grid-2" style="margin-bottom:16px;">
+            <div>
+              <label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">雇用形態</label>
+              <select class="form-select" id="bm-koyo">
+                <option>正社員</option><option>契約社員</option><option>業務委託</option><option>アルバイト・パート</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">勤務形態</label>
+              <select class="form-select" id="bm-kinmukeitai">
+                <option value="">選択してください</option>
+                <option>出社型</option>
+                <option>ハイブリッド型（週数日リモート）</option>
+                <option>フルリモート型</option>
+              </select>
+            </div>
           </div>
+
+          <!-- 年収 -->
+          <div class="grid-2" style="margin-bottom:16px;">
+            <div>
+              <label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">年収（最低）</label>
+              <select class="form-select" id="bm-nmin">
+                <option value="">選択してください</option>
+                <option>200万円</option><option>250万円</option><option>300万円</option><option>350万円</option>
+                <option>400万円</option><option>450万円</option><option>500万円</option><option>550万円</option>
+                <option>600万円</option><option>650万円</option><option>700万円</option><option>750万円</option>
+                <option>800万円</option><option>900万円</option><option>1,000万円</option><option>1,200万円以上</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">年収（最高）</label>
+              <select class="form-select" id="bm-nmax">
+                <option value="">選択してください</option>
+                <option>300万円</option><option>350万円</option><option>400万円</option><option>450万円</option>
+                <option>500万円</option><option>550万円</option><option>600万円</option><option>650万円</option>
+                <option>700万円</option><option>750万円</option><option>800万円</option><option>900万円</option>
+                <option>1,000万円</option><option>1,200万円</option><option>1,500万円</option><option>1,500万円以上</option>
+              </select>
+            </div>
+          </div>
+
           <div style="margin-bottom:16px;"><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">現在の求人タイトル</label><input type="text" class="form-input" id="bm-title" placeholder="例：営業マネージャー募集｜年収600万〜"></div>
           <div><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">ターゲット・現在の訴求ポイント</label><textarea class="form-textarea" id="bm-appeal" style="min-height:80px;" placeholder="例：フルリモート可、残業少なめ、成果主義"></textarea></div>
         </div>
@@ -1070,18 +1127,58 @@ function activatePro() {
   isPro = true;
   document.getElementById('navMypage').textContent = '👤 マイページ（Pro）';
   document.getElementById('bm-lock').style.display = 'none';
-  document.getElementById('analysis-lock').style.display = 'none';
-  document.getElementById('analysis-body').style.display = 'block';
   document.getElementById('hist-lock-section').style.display = 'none';
   document.getElementById('hist-list-section').style.display = 'block';
   document.querySelectorAll('.app-tab-badge:not(.free-badge)').forEach(b => { b.style.background = '#1a7a3c'; });
   renderMyPage();
-  initAnalysisSteps();
-  showTab('analysis');
+  showTab('benchmark');
 }
 
 function scrollToPlans() {
   document.getElementById('plans').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ══════════════════════════════════
+   職種・勤務地プルダウン連動
+══════════════════════════════════ */
+function handleShokushuChange(val) {
+  const other = document.getElementById('bm-shokushu-other');
+  const hidden = document.getElementById('bm-shokushu');
+  if (val === 'other') {
+    other.style.display = 'block';
+    other.oninput = () => { hidden.value = other.value; checkBmValid(); };
+    hidden.value = '';
+  } else {
+    other.style.display = 'none';
+    hidden.value = val;
+  }
+  checkBmValid();
+}
+
+function handleKinmuChange(val) {
+  const other = document.getElementById('bm-kinmu-other');
+  const hidden = document.getElementById('bm-kinmu');
+  if (val === 'other') {
+    other.style.display = 'block';
+    other.oninput = () => { hidden.value = other.value; checkBmValid(); };
+    hidden.value = '';
+  } else {
+    other.style.display = 'none';
+    hidden.value = val;
+  }
+  checkBmValid();
+}
+
+function checkBmValid() {
+  const sh = document.getElementById('bm-shokushu')?.value.trim() || '';
+  const ki = document.getElementById('bm-kinmu')?.value.trim() || '';
+  const bmBtn = document.getElementById('bmBtn');
+  if (!bmBtn) return;
+  const ok = sh.length > 0 && ki.length > 0;
+  bmBtn.disabled = !ok;
+  bmBtn.style.opacity = ok ? '1' : '0.45';
+  bmBtn.style.cursor = ok ? 'pointer' : 'not-allowed';
+  bmBtn.textContent = ok ? '📊 AIで競合分析をスタートする' : '📊 職種と勤務地を選択してください';
 }
 
 /* ══════════════════════════════════
@@ -1102,22 +1199,6 @@ function initValidation() {
   ['jobTitle','jobContent','jobOther'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('input', checkDiag);
-  });
-
-  // 競合分析バリデーション
-  const bmBtn = document.getElementById('bmBtn');
-  const checkBm = () => {
-    const sh = document.getElementById('bm-shokushu')?.value.trim() || '';
-    const ki = document.getElementById('bm-kinmu')?.value.trim() || '';
-    const ok = sh.length > 0 && ki.length > 0;
-    bmBtn.disabled = !ok;
-    bmBtn.style.opacity = ok ? '1' : '0.45';
-    bmBtn.style.cursor = ok ? 'pointer' : 'not-allowed';
-    bmBtn.textContent = ok ? '📊 AIで競合分析をスタートする' : '📊 職種と勤務地を入力してください';
-  };
-  ['bm-shokushu','bm-kinmu'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('input', checkBm);
   });
 }
 initValidation();
@@ -1222,7 +1303,6 @@ function renderAnalysisStep() {
   document.getElementById('analysis-step-name').textContent = step.title;
   document.getElementById('analysis-progress').style.width = pct + '%';
 
-  // 前へ・次へボタン
   const prevBtn = document.getElementById('analysis-prev-btn');
   const nextBtn = document.getElementById('analysis-next-btn');
   prevBtn.style.display = analysisStep > 0 ? 'block' : 'none';
@@ -1230,28 +1310,65 @@ function renderAnalysisStep() {
   nextBtn.textContent = isLast ? '✨ 分析する' : '次へ →';
   nextBtn.style.background = isLast ? 'var(--accent)' : 'var(--ink)';
 
-  // ステップHTML
   const wrap = document.getElementById('analysis-steps-wrap');
+
   wrap.innerHTML = `
     <div style="background:white;border:1.5px solid var(--border);border-radius:8px;padding:32px;margin-bottom:20px;">
       <div style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:0.12em;margin-bottom:8px;">${step.id.toUpperCase()}</div>
       <h3 style="font-size:20px;font-weight:900;margin-bottom:6px;">${step.title}</h3>
       <p style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.7;">${step.desc}</p>
-      ${step.questions.map(q => `
-        <div style="margin-bottom:20px;">
-          <label style="font-size:13px;font-weight:700;display:block;margin-bottom:8px;">${q.label}</label>
-          <select class="form-textarea" id="ans-${q.key}" style="min-height:auto;padding:12px 14px;resize:none;" onchange="saveAnalysisAnswer('${q.key}', this.value)">
-            <option value="">選択してください</option>
-            ${q.options.map(o => `<option value="${o}" ${analysisAnswers[q.key] === o ? 'selected' : ''}>${o}</option>`).join('')}
-          </select>
-        </div>
-      `).join('')}
-      <div style="margin-bottom:0;">
-        <label style="font-size:13px;font-weight:700;display:block;margin-bottom:8px;">自由記述（任意）</label>
-        <textarea class="form-textarea" id="ans-${step.id}-free" style="min-height:80px;" placeholder="上記以外に伝えたいことを自由にご記入ください" onchange="saveAnalysisAnswer('${step.id}_free', this.value)">${analysisAnswers[step.id + '_free'] || ''}</textarea>
+      ${step.questions.map(q => {
+        const savedArr = Array.isArray(analysisAnswers[q.key]) ? analysisAnswers[q.key] : (analysisAnswers[q.key] ? [analysisAnswers[q.key]] : []);
+        const opts = q.options.filter(o => o !== 'その他');
+        return `
+        <div style="margin-bottom:24px;" id="qblock-${q.key}">
+          <label style="font-size:13px;font-weight:700;display:block;margin-bottom:4px;">${q.label}</label>
+          <p style="font-size:11px;color:var(--muted);margin-bottom:10px;">複数選択可。当てはまるものをすべて選んでください。</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+            ${opts.map(o => {
+              const on = savedArr.includes(o);
+              return `<button type="button" onclick="togglePill('${q.key}', '${o.replace(/'/g,"\\'")}', this)"
+                style="padding:8px 16px;border-radius:100px;border:1.5px solid ${on ? 'var(--accent)' : 'var(--border)'};
+                background:${on ? '#fff8f6' : 'white'};color:${on ? 'var(--accent)' : 'var(--ink)'};
+                font-size:13px;font-weight:${on ? '700' : '400'};cursor:pointer;
+                font-family:'Noto Sans JP',sans-serif;transition:all .15s;">${on ? '✓ ' : ''}${o}</button>`;
+            }).join('')}
+          </div>
+          <input type="text" class="form-input" id="other-${q.key}"
+            placeholder="その他・選択肢にない場合はこちらに入力"
+            value="${analysisAnswers[q.key + '_other'] || ''}"
+            oninput="analysisAnswers['${q.key}_other']=this.value"
+            style="font-size:13px;">
+        </div>`;
+      }).join('')}
+      <div style="margin-top:8px;padding-top:20px;border-top:1px solid var(--border);">
+        <label style="font-size:13px;font-weight:700;display:block;margin-bottom:8px;">補足・自由記述（任意）</label>
+        <textarea class="form-textarea" id="ans-${step.id}-free" style="min-height:80px;"
+          placeholder="上記以外に伝えたいことを自由にご記入ください"
+          oninput="analysisAnswers['${step.id}_free']=this.value">${analysisAnswers[step.id + '_free'] || ''}</textarea>
       </div>
     </div>
   `;
+}
+
+function togglePill(key, value, btn) {
+  if (!Array.isArray(analysisAnswers[key])) analysisAnswers[key] = [];
+  const idx = analysisAnswers[key].indexOf(value);
+  if (idx === -1) {
+    analysisAnswers[key].push(value);
+    btn.style.borderColor = 'var(--accent)';
+    btn.style.background = '#fff8f6';
+    btn.style.color = 'var(--accent)';
+    btn.style.fontWeight = '700';
+    btn.textContent = '✓ ' + value;
+  } else {
+    analysisAnswers[key].splice(idx, 1);
+    btn.style.borderColor = 'var(--border)';
+    btn.style.background = 'white';
+    btn.style.color = 'var(--ink)';
+    btn.style.fontWeight = '400';
+    btn.textContent = value;
+  }
 }
 
 function saveAnalysisAnswer(key, value) {
@@ -1263,10 +1380,12 @@ function analysisNext() {
   // 自由記述の値も保存
   const freeEl = document.getElementById(`ans-${step.id}-free`);
   if (freeEl) analysisAnswers[step.id + '_free'] = freeEl.value;
-  // 各質問の選択値を保存
+  // その他テキスト入力を保存
   step.questions.forEach(q => {
-    const el = document.getElementById(`ans-${q.key}`);
-    if (el) analysisAnswers[q.key] = el.value;
+    const otherEl = document.getElementById(`other-${q.key}`);
+    if (otherEl) analysisAnswers[q.key + '_other'] = otherEl.value;
+    // チェックボックスが未初期化の場合は空配列に
+    if (!analysisAnswers[q.key]) analysisAnswers[q.key] = [];
   });
 
   if (analysisStep < ANALYSIS_STEPS.length - 1) {
@@ -1302,9 +1421,13 @@ async function runAnalysis() {
   ANALYSIS_STEPS.forEach(step => {
     answerText += `\n【${step.title}】\n`;
     step.questions.forEach(q => {
-      if (analysisAnswers[q.key]) answerText += `・${q.label}：${analysisAnswers[q.key]}\n`;
+      const vals = analysisAnswers[q.key];
+      const arr = Array.isArray(vals) ? vals : [vals].filter(Boolean);
+      const otherVal = analysisAnswers[q.key + '_other'];
+      const allVals = [...arr, ...(otherVal ? [`その他：${otherVal}`] : [])];
+      if (allVals.length) answerText += `・${q.label}：${allVals.join('、')}\n`;
     });
-    if (analysisAnswers[step.id + '_free']) answerText += `・自由記述：${analysisAnswers[step.id + '_free']}\n`;
+    if (analysisAnswers[step.id + '_free']) answerText += `・補足：${analysisAnswers[step.id + '_free']}\n`;
   });
 
   const prompt = `あなたは採用コンサルタントです。以下の企業の採用要件分析の回答をもとに、JSONのみ出力してください。マークダウン不要。
@@ -2172,7 +2295,8 @@ ${kaishaInfo}
 【自社求人情報】
 職種：${sh} / 勤務地：${ki}
 雇用：${document.getElementById('bm-koyo').value}
-年収：${document.getElementById('bm-nmin').value.trim()}〜${document.getElementById('bm-nmax').value.trim()}
+勤務形態：${document.getElementById('bm-kinmukeitai').value || '未選択'}
+年収：${document.getElementById('bm-nmin').value || '未入力'}〜${document.getElementById('bm-nmax').value || '未入力'}
 タイトル：${document.getElementById('bm-title').value.trim() || '未入力'}
 訴求：${document.getElementById('bm-appeal').value.trim() || '未入力'}
 
