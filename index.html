@@ -504,6 +504,12 @@
       <span class="app-tab-desc">求人票をAIが採点</span>
       <span class="app-tab-badge free-badge">FREE</span>
     </div>
+    <div class="app-tab" onclick="showTab('analysis')" id="tab-btn-analysis">
+      <span class="app-tab-icon">💡</span>
+      <span class="app-tab-label">採用要件分析</span>
+      <span class="app-tab-desc">自社の強み・魅力を発掘</span>
+      <span class="app-tab-badge">PRO</span>
+    </div>
     <div class="app-tab" onclick="showTab('benchmark')" id="tab-btn-benchmark">
       <span class="app-tab-icon">📊</span>
       <span class="app-tab-label">競合分析</span>
@@ -565,13 +571,68 @@
           <textarea class="form-textarea" id="jobOther" style="min-height:120px;" placeholder="例）月給25万円〜、社保完備、交通費全額支給、離職率5%以下の安定企業"></textarea>
         </div>
         <p class="form-note">※ 入力内容はAI診断にのみ使用します。外部への送信・保存はされません。<br>※ 無料プランではスコア・課題・タイトル改善案①のみ表示。全項目はスタンダードプランで解放されます。</p>
-        <button class="submit-btn" id="diagBtn" onclick="runDiagnosis()">🔍 今すぐ無料診断する</button>
+        <button class="submit-btn" id="diagBtn" onclick="runDiagnosis()" disabled style="opacity:0.45;cursor:not-allowed;">🔍 タイトルまたは仕事内容を入力してください</button>
       </div>
       <div class="diag-loading" id="diagLoading">
         <div class="loading-spinner"></div>
         <p class="loading-text">求人票を分析中です。少々お待ちください…</p>
       </div>
       <div class="diag-result" id="diagResult"></div>
+    </div>
+  </div>
+
+  <!-- ── TAB: 採用要件分析 ── -->
+  <div class="tab-page" id="tab-analysis">
+    <div class="tab-inner">
+      <div class="section-label">RECRUITMENT ANALYSIS</div>
+      <h2 class="section-h2" style="margin-bottom:16px;">採用要件分析</h2>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.8;">自社の魅力・強み・課題をAIが整理します。10のカテゴリに回答するだけで、求人票に使える強みが見えてきます。</p>
+
+      <!-- Proロック -->
+      <div id="analysis-lock">
+        <div style="background:#fff8f6;border:1.5px solid #f0c4b8;border-radius:8px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+          <div>
+            <div style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:0.1em;margin-bottom:8px;">STANDARD PLAN REQUIRED</div>
+            <div style="font-size:16px;font-weight:900;margin-bottom:6px;">採用要件分析はスタンダードプランで利用できます</div>
+            <p style="font-size:13px;color:var(--muted);line-height:1.7;">自社の強み・魅力・課題をAIが体系的に整理。求人票作成の土台になります。</p>
+          </div>
+          <button class="lock-cta" onclick="scrollToPlans()">プランを見る →</button>
+        </div>
+      </div>
+
+      <!-- ステッパー本体（Pro解放後） -->
+      <div id="analysis-body" style="display:none;">
+
+        <!-- プログレスバー -->
+        <div style="margin-bottom:32px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:var(--accent);" id="analysis-step-label">STEP 1 / 10</span>
+            <span style="font-size:12px;color:var(--muted);" id="analysis-step-name">事業・存在意義</span>
+          </div>
+          <div style="height:4px;background:var(--border);border-radius:2px;">
+            <div id="analysis-progress" style="height:100%;background:var(--accent);border-radius:2px;transition:width .4s ease;width:10%;"></div>
+          </div>
+        </div>
+
+        <!-- ステップコンテンツ -->
+        <div id="analysis-steps-wrap"></div>
+
+        <!-- ナビゲーションボタン -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:32px;">
+          <button id="analysis-prev-btn" onclick="analysisPrev()" style="background:none;border:1.5px solid var(--border);border-radius:4px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;color:var(--muted);display:none;">← 前へ</button>
+          <div style="flex:1;"></div>
+          <button id="analysis-next-btn" onclick="analysisNext()" style="background:var(--ink);color:white;border:none;border-radius:4px;padding:12px 32px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:3px 3px 0 var(--accent);">次へ →</button>
+        </div>
+
+        <!-- ローディング -->
+        <div class="diag-loading" id="analysis-loading">
+          <div class="loading-spinner"></div>
+          <p class="loading-text">自社の強み・魅力・課題を分析中です…</p>
+        </div>
+
+        <!-- 結果 -->
+        <div id="analysis-result"></div>
+      </div>
     </div>
   </div>
 
@@ -728,7 +789,7 @@
         <!-- 補足 -->
         <div style="margin-bottom:8px;"><label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">補足・AIへの追加指示（任意）</label><textarea class="form-textarea" id="bm-note" style="min-height:70px;" placeholder="例：応募数が減っている原因を知りたい / 20〜30代前半への訴求を強化したい"></textarea></div>
 
-        <button class="submit-btn" id="bmBtn" onclick="runBenchmark()">📊 AIで競合分析をスタートする</button>
+        <button class="submit-btn" id="bmBtn" onclick="runBenchmark()" disabled style="opacity:0.45;cursor:not-allowed;">📊 職種と勤務地を入力してください</button>
       </div>
 
       <div class="diag-loading" id="bmLoading">
@@ -997,7 +1058,7 @@ function showTab(id) {
   document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.app-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
-  const idx = { improve: 0, benchmark: 1, history: 2 };
+  const idx = { improve: 0, analysis: 1, benchmark: 2, history: 3 };
   document.querySelectorAll('.app-tab')[idx[id]].classList.add('active');
   document.getElementById('app-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -1009,15 +1070,363 @@ function activatePro() {
   isPro = true;
   document.getElementById('navMypage').textContent = '👤 マイページ（Pro）';
   document.getElementById('bm-lock').style.display = 'none';
+  document.getElementById('analysis-lock').style.display = 'none';
+  document.getElementById('analysis-body').style.display = 'block';
   document.getElementById('hist-lock-section').style.display = 'none';
   document.getElementById('hist-list-section').style.display = 'block';
   document.querySelectorAll('.app-tab-badge:not(.free-badge)').forEach(b => { b.style.background = '#1a7a3c'; });
   renderMyPage();
-  showTab('benchmark');
+  initAnalysisSteps();
+  showTab('analysis');
 }
 
 function scrollToPlans() {
   document.getElementById('plans').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ══════════════════════════════════
+   VALIDATION
+══════════════════════════════════ */
+function initValidation() {
+  // 診断バリデーション
+  const diagBtn = document.getElementById('diagBtn');
+  const checkDiag = () => {
+    const t = document.getElementById('jobTitle').value.trim();
+    const c = document.getElementById('jobContent').value.trim();
+    const ok = t.length > 0 || c.length > 0;
+    diagBtn.disabled = !ok;
+    diagBtn.style.opacity = ok ? '1' : '0.45';
+    diagBtn.style.cursor = ok ? 'pointer' : 'not-allowed';
+    diagBtn.textContent = ok ? '🔍 今すぐ無料診断する' : '🔍 タイトルまたは仕事内容を入力してください';
+  };
+  ['jobTitle','jobContent','jobOther'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', checkDiag);
+  });
+
+  // 競合分析バリデーション
+  const bmBtn = document.getElementById('bmBtn');
+  const checkBm = () => {
+    const sh = document.getElementById('bm-shokushu')?.value.trim() || '';
+    const ki = document.getElementById('bm-kinmu')?.value.trim() || '';
+    const ok = sh.length > 0 && ki.length > 0;
+    bmBtn.disabled = !ok;
+    bmBtn.style.opacity = ok ? '1' : '0.45';
+    bmBtn.style.cursor = ok ? 'pointer' : 'not-allowed';
+    bmBtn.textContent = ok ? '📊 AIで競合分析をスタートする' : '📊 職種と勤務地を入力してください';
+  };
+  ['bm-shokushu','bm-kinmu'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', checkBm);
+  });
+}
+initValidation();
+
+/* ══════════════════════════════════
+   採用要件分析（ステッパー）
+══════════════════════════════════ */
+const ANALYSIS_STEPS = [
+  {
+    id: 'biz', title: '① 事業・存在意義', desc: '会社の方向性や共感ポイントを整理します',
+    questions: [
+      { key: 'biz_what', label: '何をやっている会社ですか？', type: 'select', options: ['SaaS・クラウドサービスの開発・提供','人材紹介・採用支援サービス','Web・アプリの受託開発','コンサルティング・BPO','製造業・ものづくり','小売・EC・流通','医療・介護・福祉','教育・研修サービス','建設・不動産','金融・保険','広告・マーケティング','その他'] },
+      { key: 'biz_why', label: 'なぜその事業をやっていますか？（創業背景・想い）', type: 'select', options: ['社会課題を解決したい','業界の非効率を変えたい','創業者の原体験から生まれた','市場ニーズに気づいたから','技術・専門性を活かしたい','その他'] },
+      { key: 'biz_future', label: '将来どうなりたいですか？', type: 'select', options: ['業界シェアNo.1を目指す','グローバル展開を目指す','IPO・上場を目指している','社会インフラになることを目指す','特定分野の専門家集団になる','ニッチトップを目指す','その他'] },
+    ]
+  },
+  {
+    id: 'work', title: '② 仕事の中身（リアル）', desc: 'ギャップ防止のため、リアルな仕事像を整理します',
+    questions: [
+      { key: 'work_content', label: '主な仕事内容は何ですか？', type: 'select', options: ['新規顧客への営業・提案','既存顧客のフォロー・拡大','プロダクト開発・エンジニアリング','マーケティング・集客','カスタマーサクセス・サポート','採用・人事・組織づくり','経営企画・事業開発','管理部門（経理・法務等）','現場作業・製造・施工','その他'] },
+      { key: 'work_flow', label: '1日の仕事の流れのイメージは？', type: 'select', options: ['MTGが多めで議論・判断が中心','一人で集中して作業する時間が長い','顧客・現場に出ている時間が長い','チームで協力しながら進める','数字・データを分析・管理する','クリエイティブな制作・設計が中心','その他'] },
+      { key: 'work_joy', label: '仕事の中でメンバーが嬉しいと感じる瞬間は？', type: 'select', options: ['顧客から感謝された瞬間','目標・数字を達成した瞬間','自分のアイデアが形になった瞬間','チームで難題を乗り越えた瞬間','自分の成長を実感したとき','社会への影響・インパクトを感じたとき','その他'] },
+    ]
+  },
+  {
+    id: 'merit', title: '③ 働くメリット（ベネフィット）', desc: '応募理由につながるメリットを整理します',
+    questions: [
+      { key: 'merit_salary', label: '給与・年収のレンジは？', type: 'select', options: ['300万円未満','300〜400万円','400〜500万円','500〜600万円','600〜800万円','800〜1,000万円','1,000万円以上','スキル・経験による（要相談）'] },
+      { key: 'merit_skill', label: 'どんなスキルが身につきますか？', type: 'select', options: ['営業・提案スキル','エンジニアリング・技術力','マーケティング・集客スキル','マネジメント・組織運営','データ分析・BI','プロジェクトマネジメント','業界専門知識','グローバル・語学スキル','その他'] },
+      { key: 'merit_career', label: 'キャリアパスのイメージは？', type: 'select', options: ['マネージャー・管理職へのパスがある','スペシャリスト・エキスパートとして深化','起業・独立を支援する文化がある','社内異動・職種転換の機会がある','グローバルポジションへの道がある','未経験から育てる文化がある','その他'] },
+    ]
+  },
+  {
+    id: 'env', title: '④ 働く環境', desc: '求職者の安心材料になる環境情報を整理します',
+    questions: [
+      { key: 'env_team', label: 'チームの規模・構成は？', type: 'select', options: ['5名以下の小さなチーム','6〜15名程度','16〜30名程度','31名以上の大きなチーム','部門をまたいで協力する形','基本的に一人で動く','プロジェクトごとに変わる'] },
+      { key: 'env_age', label: '平均的な年齢層は？', type: 'select', options: ['20代が中心（平均28歳前後）','20〜30代がメイン（平均32歳前後）','30代が中心（平均35歳前後）','幅広い年齢層（20〜50代）','40代以上が多め'] },
+      { key: 'env_culture', label: '職場の雰囲気は？', type: 'select', options: ['スピード感があり活気がある','自分のペースで集中して働ける','フラットで意見を言いやすい','チームワークを大切にする','成果主義・実力主義','アットホームで人間関係が温かい','プロフェッショナル志向が強い','その他'] },
+    ]
+  },
+  {
+    id: 'cond', title: '⑤ 制度・条件', desc: '求職者が比較する最低限の条件を整理します',
+    questions: [
+      { key: 'cond_benefit', label: '主な福利厚生は？（代表的なもの）', type: 'select', options: ['社会保険完備（当然）＋特に特徴なし','住宅手当・家賃補助あり','食事補助・社食あり','書籍・勉強代の会社負担','副業OK','リモートワーク制度あり','育児・介護休暇が充実','社員旅行・イベントあり','ストックオプションあり','その他'] },
+      { key: 'cond_vacation', label: '休暇制度は？', type: 'select', options: ['年間休日120日以上','完全週休2日（土日祝）','有給取得率80%以上','夏季・年末年始休暇あり','特別休暇（誕生日等）あり','フレックス・有給取得しやすい環境','業界標準程度','その他'] },
+      { key: 'cond_time', label: '勤務時間・残業は？', type: 'select', options: ['残業ほぼなし（月10時間未満）','月平均20時間程度','月平均30時間程度','繁忙期あり（時期による）','フレックスタイム制','裁量労働制','リモート・時短勤務可','その他'] },
+    ]
+  },
+  {
+    id: 'strength', title: '⑥ 強み（差別化の核）', desc: '競合に勝つための差別化ポイントを整理します',
+    questions: [
+      { key: 'str_diff', label: '他社と最も違う点は何ですか？', type: 'select', options: ['独自の技術・プロダクト','圧倒的なスピード・実行力','業界最大規模のデータ・ネットワーク','特定分野の深い専門性','顧客への密着度・サポート力','価格競争力','ブランド力・知名度','柔軟なカスタマイズ対応','その他'] },
+      { key: 'str_why', label: '顧客から選ばれている理由は？', type: 'select', options: ['品質・精度が高い','対応が早い・丁寧','コストパフォーマンスが高い','担当者との信頼関係','実績・事例が豊富','業界知識・専門性','独自性・他にない提供価値','その他'] },
+      { key: 'str_result', label: '実績・数字で表せるものは？', type: 'select', options: ['導入社数・顧客数（100社以上等）','継続率・リピート率（90%以上等）','業界シェア・順位','成長率（前年比○○%等）','受賞歴・認定','メディア掲載実績','まだ数字で示せるものが少ない','その他'] },
+    ]
+  },
+  {
+    id: 'weak', title: '⑦ 弱み（信頼＋ミスマッチ防止）', desc: '正直に伝えることで信頼感と適切なマッチングを生みます',
+    questions: [
+      { key: 'weak_hard', label: '大変なこと・しんどいことは？', type: 'select', options: ['変化のスピードが速くついていくのが大変','まだ制度・仕組みが整っていない','結果へのプレッシャーが強い','業務範囲が広く何でもやる必要がある','顧客対応でストレスを感じることがある','長時間労働になる時期がある','その他'] },
+      { key: 'weak_notfit', label: '向いていない人のタイプは？', type: 'select', options: ['指示を待ちたい人','安定・変化のない環境を好む人','細かいルールや管理が苦手な人','スピードより丁寧さを重視する人','チームより一人作業が好きな人','結果より過程を大切にしたい人','その他'] },
+    ]
+  },
+  {
+    id: 'person', title: '⑧ 求める人物像', desc: 'ターゲットを明確にして刺さる求人にします',
+    questions: [
+      { key: 'per_fit', label: 'どんな人が合いますか？', type: 'select', options: ['自分で考え動ける自律型の人','チームで協力しながら進める人','スピード感を楽しめる人','地道にコツコツ積み上げられる人','変化を楽しみ柔軟に動ける人','高い目標を持ちチャレンジできる人','その他'] },
+      { key: 'per_active', label: '活躍している人の特徴は？', type: 'select', options: ['素直で学習意欲が高い','行動力・実行力がある','コミュニケーション能力が高い','論理的思考・分析力がある','専門性・技術力が高い','リーダーシップがある','顧客志向が強い','その他'] },
+    ]
+  },
+  {
+    id: 'growth', title: '⑨ 成長・将来性', desc: '長期的な魅力を整理します',
+    questions: [
+      { key: 'gro_company', label: '会社の伸びしろ・成長性は？', type: 'select', options: ['急成長中（年率30%以上）','安定成長（年率10〜30%）','新規事業・新市場に挑戦中','既存事業で業界トップを目指している','M&A・資本提携を積極的に進めている','海外展開を進めている','成熟市場だが安定している','その他'] },
+      { key: 'gro_personal', label: '個人の成長機会は？', type: 'select', options: ['若手でも裁量を持てる環境','研修・スキルアップ制度が充実','社外コミュニティ・勉強会参加を推奨','優秀なメンバーから学べる環境','難易度の高い仕事・プロジェクトを経験できる','昇進・昇格が早い','その他'] },
+    ]
+  },
+  {
+    id: 'culture', title: '⑩ 社風・価値観', desc: '感情に刺さる文化を言語化します',
+    questions: [
+      { key: 'cul_people', label: 'どんな人が多いですか？', type: 'select', options: ['優秀でストイックな人が多い','フレンドリーで助け合う文化','多様なバックグラウンドを持つ人が多い','挑戦好きで行動力のある人が多い','専門性・プロ意識が高い人が多い','温かく穏やかな雰囲気の人が多い','その他'] },
+      { key: 'cul_value', label: '会社として大切にしている価値観は？', type: 'select', options: ['スピードと実行力','誠実さ・信頼','チャレンジ精神','顧客第一主義','多様性の尊重','長期的な視点','社会貢献・インパクト','その他'] },
+    ]
+  }
+];
+
+let analysisStep = 0;
+let analysisAnswers = {};
+
+function initAnalysisSteps() {
+  analysisStep = 0;
+  analysisAnswers = {};
+  renderAnalysisStep();
+}
+
+function renderAnalysisStep() {
+  const step = ANALYSIS_STEPS[analysisStep];
+  const total = ANALYSIS_STEPS.length;
+  const pct = Math.round(((analysisStep + 1) / total) * 100);
+
+  document.getElementById('analysis-step-label').textContent = `STEP ${analysisStep + 1} / ${total}`;
+  document.getElementById('analysis-step-name').textContent = step.title;
+  document.getElementById('analysis-progress').style.width = pct + '%';
+
+  // 前へ・次へボタン
+  const prevBtn = document.getElementById('analysis-prev-btn');
+  const nextBtn = document.getElementById('analysis-next-btn');
+  prevBtn.style.display = analysisStep > 0 ? 'block' : 'none';
+  const isLast = analysisStep === total - 1;
+  nextBtn.textContent = isLast ? '✨ 分析する' : '次へ →';
+  nextBtn.style.background = isLast ? 'var(--accent)' : 'var(--ink)';
+
+  // ステップHTML
+  const wrap = document.getElementById('analysis-steps-wrap');
+  wrap.innerHTML = `
+    <div style="background:white;border:1.5px solid var(--border);border-radius:8px;padding:32px;margin-bottom:20px;">
+      <div style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:0.12em;margin-bottom:8px;">${step.id.toUpperCase()}</div>
+      <h3 style="font-size:20px;font-weight:900;margin-bottom:6px;">${step.title}</h3>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.7;">${step.desc}</p>
+      ${step.questions.map(q => `
+        <div style="margin-bottom:20px;">
+          <label style="font-size:13px;font-weight:700;display:block;margin-bottom:8px;">${q.label}</label>
+          <select class="form-textarea" id="ans-${q.key}" style="min-height:auto;padding:12px 14px;resize:none;" onchange="saveAnalysisAnswer('${q.key}', this.value)">
+            <option value="">選択してください</option>
+            ${q.options.map(o => `<option value="${o}" ${analysisAnswers[q.key] === o ? 'selected' : ''}>${o}</option>`).join('')}
+          </select>
+        </div>
+      `).join('')}
+      <div style="margin-bottom:0;">
+        <label style="font-size:13px;font-weight:700;display:block;margin-bottom:8px;">自由記述（任意）</label>
+        <textarea class="form-textarea" id="ans-${step.id}-free" style="min-height:80px;" placeholder="上記以外に伝えたいことを自由にご記入ください" onchange="saveAnalysisAnswer('${step.id}_free', this.value)">${analysisAnswers[step.id + '_free'] || ''}</textarea>
+      </div>
+    </div>
+  `;
+}
+
+function saveAnalysisAnswer(key, value) {
+  analysisAnswers[key] = value;
+}
+
+function analysisNext() {
+  const step = ANALYSIS_STEPS[analysisStep];
+  // 自由記述の値も保存
+  const freeEl = document.getElementById(`ans-${step.id}-free`);
+  if (freeEl) analysisAnswers[step.id + '_free'] = freeEl.value;
+  // 各質問の選択値を保存
+  step.questions.forEach(q => {
+    const el = document.getElementById(`ans-${q.key}`);
+    if (el) analysisAnswers[q.key] = el.value;
+  });
+
+  if (analysisStep < ANALYSIS_STEPS.length - 1) {
+    analysisStep++;
+    renderAnalysisStep();
+    document.getElementById('analysis-body').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else {
+    runAnalysis();
+  }
+}
+
+function analysisPrev() {
+  if (analysisStep > 0) {
+    analysisStep--;
+    renderAnalysisStep();
+    document.getElementById('analysis-body').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+async function runAnalysis() {
+  const loading = document.getElementById('analysis-loading');
+  const result = document.getElementById('analysis-result');
+  const nextBtn = document.getElementById('analysis-next-btn');
+  const prevBtn = document.getElementById('analysis-prev-btn');
+
+  loading.classList.add('active');
+  nextBtn.disabled = true;
+  prevBtn.disabled = true;
+  result.innerHTML = '';
+
+  // 回答をテキスト化
+  let answerText = '';
+  ANALYSIS_STEPS.forEach(step => {
+    answerText += `\n【${step.title}】\n`;
+    step.questions.forEach(q => {
+      if (analysisAnswers[q.key]) answerText += `・${q.label}：${analysisAnswers[q.key]}\n`;
+    });
+    if (analysisAnswers[step.id + '_free']) answerText += `・自由記述：${analysisAnswers[step.id + '_free']}\n`;
+  });
+
+  const prompt = `あなたは採用コンサルタントです。以下の企業の採用要件分析の回答をもとに、JSONのみ出力してください。マークダウン不要。
+
+回答内容：
+${answerText}
+
+以下のJSON形式で返答：
+{
+  "strengths": ["自社の強み・差別化ポイント①（求人票に使えるレベルで具体的に）", "強み②", "強み③"],
+  "appeals": ["求職者への訴求ポイント①（どんな人に刺さるか含めて）", "訴求②", "訴求③"],
+  "issues": ["採用上の課題・改善点①（具体的に）", "課題②"],
+  "target": "ターゲット人物像（具体的に1〜2文で）",
+  "catchcopy": "この会社を一言で表すキャッチコピー（求人タイトルに使えるレベルで）",
+  "summary": "総合的な採用戦略コメント（採用担当者へのアドバイス・150字以内）"
+}`;
+
+  try {
+    const res = await fetch('/.netlify/functions/diagnose', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jobText: answerText, isAnalysis: true, customPrompt: prompt })
+    });
+    if (!res.ok) throw new Error(res.status);
+    const raw = await res.text();
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const d = JSON.parse(clean);
+    renderAnalysisResult(d, isPro);
+  } catch(e) {
+    result.innerHTML = `<div style="padding:20px;background:#fff8f6;border:1px solid #f0c4b8;border-radius:8px;color:#c93030;font-size:14px;">分析中にエラーが発生しました。再度お試しください。</div>`;
+  } finally {
+    loading.classList.remove('active');
+    nextBtn.disabled = false;
+    prevBtn.disabled = false;
+  }
+}
+
+function renderAnalysisResult(d, fullAccess) {
+  const result = document.getElementById('analysis-result');
+  const blurStyle = 'filter:blur(5px);user-select:none;pointer-events:none;';
+
+  const strengthsHtml = d.strengths.map((s,i) => `
+    <div style="display:flex;gap:12px;padding:12px 16px;background:var(--paper);border:1.5px solid var(--border);border-radius:6px;margin-bottom:8px;">
+      <span style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--score-green);background:#e4f5eb;padding:3px 8px;border-radius:2px;flex-shrink:0;height:fit-content;">強み${i+1}</span>
+      <span style="font-size:13px;line-height:1.8;">${s}</span>
+    </div>`).join('');
+
+  const appealsHtml = d.appeals.map((a,i) => `
+    <div style="display:flex;gap:12px;padding:12px 16px;background:var(--paper);border:1.5px solid var(--border);border-radius:6px;margin-bottom:8px;">
+      <span style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:#1a4fd4;background:#e8f0ff;padding:3px 8px;border-radius:2px;flex-shrink:0;height:fit-content;">訴求${i+1}</span>
+      <span style="font-size:13px;line-height:1.8;">${a}</span>
+    </div>`).join('');
+
+  const issuesHtml = fullAccess ? d.issues.map(issue => `
+    <div class="issue-item"><span>⚠️</span><span>${issue}</span></div>`).join('') : `
+    <div style="position:relative;padding:20px;">
+      <div style="${blurStyle}"><div class="issue-item"><span>⚠️</span><span>採用課題の詳細分析がここに表示されます</span></div><div class="issue-item"><span>⚠️</span><span>改善に向けた具体的なアドバイスがここに表示されます</span></div></div>
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;"><button onclick="scrollToPlans()" style="background:var(--ink);color:white;border:none;border-radius:4px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:3px 3px 0 var(--accent);">🔒 スタンダードプランで解放</button></div>
+    </div>`;
+
+  const advancedHtml = fullAccess ? `
+    <div class="result-section">
+      <div class="result-section-title">■ ターゲット人物像</div>
+      <p style="font-size:13px;line-height:1.9;">${d.target}</p>
+    </div>
+    <div class="result-section">
+      <div class="result-section-title">■ 採用キャッチコピー案</div>
+      <div style="background:var(--ink);color:white;border-radius:6px;padding:16px 20px;font-size:16px;font-weight:700;line-height:1.6;">💡 ${d.catchcopy}</div>
+    </div>
+    <div class="result-section">
+      <div class="result-section-title">■ 採用戦略コメント</div>
+      <p style="font-size:13px;line-height:1.9;">${d.summary}</p>
+    </div>` : `
+    <div class="result-section" style="position:relative;">
+      <div class="result-section-title">■ ターゲット人物像・キャッチコピー・採用戦略コメント</div>
+      <div style="${blurStyle};padding:12px 0;"><p style="font-size:13px;line-height:1.9;">ターゲット人物像・キャッチコピー・採用戦略コメントがここに表示されます。スタンダードプランで全ての分析結果が確認できます。</p></div>
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;"><button onclick="scrollToPlans()" style="background:var(--ink);color:white;border:none;border-radius:4px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:3px 3px 0 var(--accent);">🔒 スタンダードプランで解放</button></div>
+    </div>`;
+
+  result.innerHTML = `
+    <div style="margin-top:32px;">
+      <div class="result-header">
+        <div>
+          <div class="result-title-label">RECRUITMENT ANALYSIS RESULT</div>
+          <div style="font-size:22px;font-weight:900;color:white;margin-top:4px;">採用要件分析 完了</div>
+        </div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);">${new Date().toLocaleDateString('ja-JP')}</div>
+      </div>
+      <div class="result-body">
+        <div class="result-section">
+          <div class="result-section-title">■ 自社の強み・差別化ポイント</div>
+          ${strengthsHtml}
+        </div>
+        <div class="result-section">
+          <div class="result-section-title">■ 求職者への訴求ポイント</div>
+          ${appealsHtml}
+        </div>
+        <div class="result-section">
+          <div class="result-section-title">■ 採用上の課題</div>
+          <div class="issue-list">${issuesHtml}</div>
+        </div>
+        ${advancedHtml}
+      </div>
+      ${!fullAccess ? `
+      <div style="margin-top:24px;background:var(--ink);border-radius:8px;overflow:hidden;">
+        <div style="background:var(--accent);padding:10px 24px;"><span style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.12em;color:white;">🔒 STANDARD PLAN</span></div>
+        <div style="padding:24px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;">
+          <div>
+            <div style="font-size:16px;font-weight:900;color:white;margin-bottom:10px;">ターゲット像・キャッチコピー・戦略コメントはスタンダードで解放</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.7);">分析結果をもとに求人票の下書きもAIが自動生成します</div>
+          </div>
+          <div style="text-align:center;flex-shrink:0;">
+            <div style="font-family:'DM Serif Display',serif;font-size:36px;color:white;line-height:1;margin-bottom:4px;">¥9,800</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:16px;">月額 / 税込</div>
+            <button onclick="scrollToPlans()" style="background:var(--accent);color:white;border:none;border-radius:4px;padding:14px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;box-shadow:4px 4px 0 rgba(255,255,255,0.2);">スタンダードプランを見る →</button>
+            <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:10px;">いつでも解約可能</div>
+          </div>
+        </div>
+      </div>` : ''}
+    </div>`;
+
+  result.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 /* ══════════════════════════════════
@@ -1781,9 +2190,19 @@ ${document.getElementById('bm-note').value.trim() ? '【補足】' + document.ge
   "market_salary": "給与レンジの市場傾向（平均・上位・下位を具体的数字で）",
   "market_title": "タイトルでよく使われるキーワード傾向（具体的に）",
   "market_appeal": "訴求軸の傾向（安定・成長・高収入・働きやすさなど具体的に）",
+  "market_salary_data": {
+    "annual_median": "市場年収中央値（例：520万円）",
+    "annual_lower": "年収下位25%目安（例：380万円）",
+    "annual_upper": "年収上位25%目安（例：720万円）",
+    "monthly_median": "市場月給中央値（例：30万円）",
+    "monthly_lower": "月給下位25%目安（例：22万円）",
+    "monthly_upper": "月給上位25%目安（例：45万円）",
+    "comment": "自社の給与設定への一言コメント（市場比較含む・50字以内）"
+  },
   "comp_common": "上位求人に共通する特徴（具体的に3点）",
-  "comp_diff": "各競合の差別化ポイント（具体名または抽象名で具体的に記述）",
+  "comp_diff": "各競合の差別化ポイント（競合名または抽象名＋特徴を具体的に記述）",
   "comp_strategy": "勝っている企業の戦略まとめ",
+  "comp_names": ["競合1の企業名または'競合A'", "競合2の企業名または'競合B'"],
   "self_strength": "自社の強み（会社規模・業界・PRポイントを踏まえて2〜3点、具体的に）",
   "self_weakness": "自社の弱み・改善必須ポイント（2〜3点、具体的に）",
   "gap": "競合との差分（数字・具体例を含めて）",
@@ -1793,10 +2212,11 @@ ${document.getElementById('bm-note').value.trim() ? '【補足】' + document.ge
   "salary_advice": "給与・条件の改善提案（具体的に）",
   "appeal_advice": "訴求ポイントの改善提案（具体的に）",
   "target_advice": "ターゲットに刺さる打ち出し方（具体的に）",
+  "structure_advice": "求人票の構成・見せ方の改善提案（具体的に）",
   "priority": "最優先アクション（1つに絞って）"
 }
 
-採用現場で成果が出るレベルで、厳しめに評価してください。`;
+採用現場で成果が出るレベルで、厳しめに評価してください。※年収・月給データはAIによる推定値です。`;
 
   try {
     const r = await fetch('/.netlify/functions/benchmark', {
@@ -1855,8 +2275,39 @@ function renderBmResult(d, sh, ki, compNum, isAuto) {
         </div>
       </div>
 
+      ${d.market_salary_data ? `
+      <div class="result-section" style="background:white;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+          <div class="result-section-title" style="margin-bottom:0;">■ 市場年収・月給データ（${sh} / ${ki}）</div>
+          <div style="font-size:11px;color:var(--muted);background:var(--paper);border:1px solid var(--border);border-radius:100px;padding:3px 10px;">※ AIによる推定値・参考情報です</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;flex-wrap:wrap;">
+          <div>
+            <div style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);margin-bottom:12px;letter-spacing:0.1em;">ANNUAL SALARY</div>
+            <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;">
+              <div style="text-align:center;"><div style="font-size:11px;color:var(--muted);margin-bottom:3px;">下位25%</div><div style="font-family:'DM Serif Display',serif;font-size:18px;color:var(--muted);">おおよそ ${d.market_salary_data.annual_lower}</div></div>
+              <div style="text-align:center;"><div style="font-size:11px;color:var(--accent);font-weight:700;margin-bottom:3px;">中央値</div><div style="font-family:'DM Serif Display',serif;font-size:26px;color:var(--ink);">おおよそ ${d.market_salary_data.annual_median}</div></div>
+              <div style="text-align:center;"><div style="font-size:11px;color:var(--muted);margin-bottom:3px;">上位25%</div><div style="font-family:'DM Serif Display',serif;font-size:18px;color:var(--muted);">おおよそ ${d.market_salary_data.annual_upper}</div></div>
+            </div>
+          </div>
+          <div>
+            <div style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);margin-bottom:12px;letter-spacing:0.1em;">MONTHLY SALARY</div>
+            <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;">
+              <div style="text-align:center;"><div style="font-size:11px;color:var(--muted);margin-bottom:3px;">下位25%</div><div style="font-family:'DM Serif Display',serif;font-size:18px;color:var(--muted);">おおよそ ${d.market_salary_data.monthly_lower}</div></div>
+              <div style="text-align:center;"><div style="font-size:11px;color:var(--accent);font-weight:700;margin-bottom:3px;">中央値</div><div style="font-family:'DM Serif Display',serif;font-size:26px;color:var(--ink);">おおよそ ${d.market_salary_data.monthly_median}</div></div>
+              <div style="text-align:center;"><div style="font-size:11px;color:var(--muted);margin-bottom:3px;">上位25%</div><div style="font-family:'DM Serif Display',serif;font-size:18px;color:var(--muted);">おおよそ ${d.market_salary_data.monthly_upper}</div></div>
+            </div>
+          </div>
+        </div>
+        <div style="background:var(--paper);border-radius:6px;padding:12px 16px;margin-top:16px;">
+          <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px;">AIコメント</div>
+          <p style="font-size:13px;line-height:1.7;">${d.market_salary_data.comment}</p>
+          <p style="font-size:11px;color:var(--muted);margin-top:6px;">※ 実際の数値とは異なる場合があります。厚生労働省「賃金構造基本統計調査」等の公的データも合わせてご確認ください。</p>
+        </div>
+      </div>` : ''}
+
       <div class="result-section">
-        <div class="result-section-title">■ 競合分析</div>
+        <div class="result-section-title">■ 競合分析${d.comp_names && d.comp_names.length ? `（${d.comp_names.join('・')}）` : ''}</div>
         <div style="display:flex;flex-direction:column;gap:14px;">
           <div><span class="bm-tag bm-tag-warn">上位共通点</span><p style="font-size:13px;line-height:1.8;margin-top:6px;">${d.comp_common}</p></div>
           <div><span class="bm-tag bm-tag-warn">各社差別化</span><p style="font-size:13px;line-height:1.8;margin-top:6px;">${d.comp_diff}</p></div>
@@ -1902,6 +2353,12 @@ function renderBmResult(d, sh, ki, compNum, isAuto) {
         <div class="result-section-title">■ ターゲットへの打ち出し方</div>
         <p style="font-size:13px;line-height:1.9;">${d.target_advice}</p>
       </div>
+
+      ${d.structure_advice ? `
+      <div class="result-section">
+        <div class="result-section-title">■ 求人票の構成・見せ方の改善提案</div>
+        <p style="font-size:13px;line-height:1.9;">${d.structure_advice}</p>
+      </div>` : ''}
 
       <div class="result-section">
         <div class="result-section-title">■ 最優先アクション</div>
