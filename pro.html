@@ -440,6 +440,30 @@ textarea::placeholder,input::placeholder{color:#bbb;font-size:13px;}
         <div class="mpc"><div class="mpl" style="color:var(--sr);">WORST</div><div class="mpn" style="color:var(--sr);" id="sw">—</div><div class="mpd">最低スコア</div></div>
       </div>
 
+      <!-- AIアドバイスサマリー -->
+      <div class="cd" style="margin-bottom:18px;">
+        <div class="cdh" style="justify-content:space-between;">
+          <div class="cdhl"><div class="ci">🤖</div><div><div class="ct">AIアドバイスサマリー</div><div class="cs">過去の分析を横断した総合アドバイス</div></div></div>
+          <button onclick="runAiSummary()" id="ai-summary-btn" style="background:var(--accent);color:white;border:none;border-radius:4px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;">AIに分析させる</button>
+        </div>
+        <div class="cdb" id="mp-ai-summary"><p style="color:var(--muted);font-size:13px;text-align:center;padding:16px 0;">「AIに分析させる」ボタンで過去の全分析を横断した総合アドバイスを生成します</p></div>
+      </div>
+
+      <!-- 求人票バージョン管理 -->
+      <div class="cd" style="margin-bottom:18px;">
+        <div class="cdh"><div class="cdhl"><div class="ci">🔄</div><div><div class="ct">求人票バージョン比較</div><div class="cs">改善前後のスコア変化を確認</div></div></div></div>
+        <div class="cdb" id="mp-versions"><p style="color:var(--muted);font-size:13px;text-align:center;padding:16px 0;">診断を2回以上実行するとバージョン比較が表示されます</p></div>
+      </div>
+
+      <!-- 競合ウォッチリスト -->
+      <div class="cd" style="margin-bottom:18px;">
+        <div class="cdh" style="justify-content:space-between;">
+          <div class="cdhl"><div class="ci">👁️</div><div><div class="ct">競合ウォッチリスト</div><div class="cs">自社ポジションの変化を追跡</div></div></div>
+          <span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);" id="watch-count">0社</span>
+        </div>
+        <div class="cdb" id="mp-watchlist"><p style="color:var(--muted);font-size:13px;text-align:center;padding:16px 0;">競合分析を実行すると自動で追加されます</p></div>
+      </div>
+
       <!-- 進捗トラッカー -->
       <div class="cd" style="margin-bottom:18px;">
         <div class="cdh"><div class="cdhl"><div class="ci">🗺️</div><div><div class="ct">採用フロー進捗</div><div class="cs">完了したステップが自動で更新されます</div></div></div></div>
@@ -458,7 +482,7 @@ textarea::placeholder,input::placeholder{color:#bbb;font-size:13px;}
         <div class="cdb" id="mp-best-card"><p style="color:var(--muted);font-size:13px;text-align:center;padding:16px 0;">診断を実行するとここに表示されます</p></div>
       </div>
 
-      <!-- タイトル改善履歴の比較 -->
+      <!-- タイトル改善案バンク -->
       <div class="cd" style="margin-bottom:18px;">
         <div class="cdh"><div class="cdhl"><div class="ci">✏️</div><div><div class="ct">タイトル改善案バンク</div><div class="cs">クリックでコピー · スコア順に表示</div></div></div></div>
         <div class="cdb"><div id="mtb"><p style="color:var(--muted);font-size:13px;text-align:center;padding:14px 0;">タイトル案はまだありません</p></div></div>
@@ -891,10 +915,144 @@ function renderMP(){
   }
 
   renderChart(it);renderTitles(it);
+
+  // ② 求人票バージョン比較
+  const diagItems=it.filter(i=>i.type==='improve'&&i.detail);
+  const verEl=document.getElementById('mp-versions');
+  if(verEl){
+    if(diagItems.length>=2){
+      const sorted=[...diagItems].sort((a,b)=>new Date(a.date)-new Date(b.date));
+      verEl.innerHTML=`<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead><tr style="background:var(--paper);">
+          <th style="padding:10px 14px;text-align:left;font-weight:700;border-bottom:1.5px solid var(--border);">求人票</th>
+          <th style="padding:10px 14px;text-align:center;font-weight:700;border-bottom:1.5px solid var(--border);">スコア</th>
+          <th style="padding:10px 14px;text-align:center;font-weight:700;border-bottom:1.5px solid var(--border);">タイトル</th>
+          <th style="padding:10px 14px;text-align:center;font-weight:700;border-bottom:1.5px solid var(--border);">わかりやすさ</th>
+          <th style="padding:10px 14px;text-align:center;font-weight:700;border-bottom:1.5px solid var(--border);">差別化</th>
+          <th style="padding:10px 14px;text-align:center;font-weight:700;border-bottom:1.5px solid var(--border);">応募動機</th>
+          <th style="padding:10px 14px;text-align:left;font-weight:700;border-bottom:1.5px solid var(--border);">日付</th>
+        </tr></thead>
+        <tbody>${sorted.map((h,i)=>{
+          const d=h.detail;const prev=i>0?sorted[i-1]:null;
+          const diff=prev?h.score-prev.score:null;
+          const diffHtml=diff!==null?`<span style="font-size:11px;color:${diff>0?'var(--sg)':diff<0?'var(--sr)':'var(--muted)'};margin-left:4px;">${diff>0?'+':''}${diff}</span>`:'';
+          return`<tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${h.label}</td>
+            <td style="padding:10px 14px;text-align:center;"><span style="font-family:'Space Mono',monospace;font-weight:700;color:${scc(h.score)};">${h.score}</span>${diffHtml}</td>
+            <td style="padding:10px 14px;text-align:center;color:${col(d.scores?.title||0,25)};">${d.scores?.title||'—'}</td>
+            <td style="padding:10px 14px;text-align:center;color:${col(d.scores?.clarity||0,25)};">${d.scores?.clarity||'—'}</td>
+            <td style="padding:10px 14px;text-align:center;color:${col(d.scores?.differentiation||0,25)};">${d.scores?.differentiation||'—'}</td>
+            <td style="padding:10px 14px;text-align:center;color:${col(d.scores?.motivation||0,25)};">${d.scores?.motivation||'—'}</td>
+            <td style="padding:10px 14px;font-size:12px;color:var(--muted);">${h.date}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table></div>`;
+    } else {
+      verEl.innerHTML='<p style="color:var(--muted);font-size:13px;text-align:center;padding:16px 0;">診断を2回以上実行するとバージョン比較が表示されます</p>';
+    }
+  }
+
+  // ③ 競合ウォッチリスト
+  const bmItems=it.filter(i=>i.type==='benchmark');
+  const watchEl=document.getElementById('mp-watchlist');
+  const watchCount=document.getElementById('watch-count');
+  if(watchEl){
+    if(bmItems.length){
+      const groups={};
+      bmItems.forEach(h=>{const key=h.label.split('/')[0].trim();if(!groups[key])groups[key]=[];groups[key].push(h);});
+      const keys=Object.keys(groups);
+      if(watchCount)watchCount.textContent=keys.length+'社系統';
+      watchEl.innerHTML='<div style="display:flex;flex-direction:column;gap:10px;">'+keys.map(k=>{
+        const items=groups[k].sort((a,b)=>new Date(b.date)-new Date(a.date));
+        const latest=items[0];const prev=items[1];
+        const diff=prev?latest.score-prev.score:null;
+        const sc2=scc(latest.score);const bg2=scb(latest.score);
+        return`<div style="display:flex;align-items:center;gap:14px;padding:12px 16px;background:var(--paper);border:1.5px solid var(--border);border-radius:6px;">
+          <div style="width:48px;height:48px;border-radius:50%;border:2.5px solid ${sc2};background:${bg2};display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;">
+            <span style="font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:${sc2};line-height:1;">${latest.score}</span>
+            <span style="font-size:9px;color:var(--muted);">/100</span>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:14px;font-weight:700;margin-bottom:2px;">${k}</div>
+            <div style="font-size:12px;color:var(--muted);">最終: ${latest.date} · ${items.length}回分析</div>
+          </div>
+          ${diff!==null?`<div style="text-align:center;flex-shrink:0;"><div style="font-size:11px;color:var(--muted);margin-bottom:2px;">前回比</div><div style="font-size:16px;font-weight:700;color:${diff>0?'var(--sg)':diff<0?'var(--sr)':'var(--muted)'};">${diff>0?'+':''}${diff}</div></div>`:''}
+        </div>`;
+      }).join('')+'</div>';
+    } else {
+      if(watchCount)watchCount.textContent='0社';
+      watchEl.innerHTML='<p style="color:var(--muted);font-size:13px;text-align:center;padding:16px 0;">競合分析を実行すると自動で追加されます</p>';
+    }
+  }
+
+  // AIサマリーキャッシュ表示
+  try{const cached=localStorage.getItem('ai_summary_cache');if(cached)renderAiSummaryResult(JSON.parse(cached));}catch(e){}
+
   const ml=document.getElementById('mhl');
   document.getElementById('mc2').textContent=it.length+'件';
   if(!it.length){ml.innerHTML='<p style="text-align:center;padding:36px 0;color:var(--muted);font-size:13px;">まだ分析履歴がありません。</p>';return;}
   ml.innerHTML=it.map(h=>`<div class="hi" onclick="showD(${h.id})"><div class="hbg" style="border-color:${scc(h.score)};color:${scc(h.score)};background:${scb(h.score)};">${h.score}</div><div class="hin"><div class="hit">${h.type==='benchmark'?'📊':'🔍'} ${h.label}</div><div class="him">${h.date} · ${h.type==='benchmark'?'競合分析':'診断'}</div></div><span style="font-size:12px;color:var(--muted);">詳細 ›</span></div>`).join('');
+}
+
+/* AI サマリー */
+async function runAiSummary(){
+  const it=lh();
+  if(it.length<2){alert('分析を2回以上実行してからお試しください。');return;}
+  const btn=document.getElementById('ai-summary-btn');
+  const el=document.getElementById('mp-ai-summary');
+  btn.disabled=true;btn.textContent='分析中...';
+  el.innerHTML='<div style="text-align:center;padding:24px;"><div class="sp" style="margin:0 auto 12px;"></div><p style="font-size:13px;color:var(--muted);">過去の分析を横断して総合アドバイスを生成中…</p></div>';
+  let txt='';
+  it.slice(0,10).forEach(h=>{
+    txt+=`\n[${h.type==='benchmark'?'競合分析':'診断'} ${h.date}] ${h.label} スコア:${h.score}点`;
+    if(h.detail){
+      if(h.detail.issues)txt+=`\n課題：${h.detail.issues.slice(0,2).join('、')}`;
+      if(h.detail.priorityAction)txt+=`\n最優先：${h.detail.priorityAction}`;
+      if(h.detail.self_weakness)txt+=`\n弱み：${h.detail.self_weakness}`;
+    }
+  });
+  const prompt=`採用コンサルタントとして、以下の分析履歴を横断して総合アドバイスをJSONのみで出力してください。マークダウン不要。\n分析履歴：${txt}\n{"trend":"スコアの推移傾向と分析","strength":"一貫した強み（複数の分析から）","persistent_issues":"繰り返し出ている課題・改善されていない点","next_actions":["最優先アクション①","②","③"],"monthly_advice":"今月の採用戦略アドバイス（150字以内）"}`;
+  try{
+    const res=await fetch('/.netlify/functions/diagnose',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jobText:'',isAnalysis:true,customPrompt:prompt})});
+    if(!res.ok)throw new Error(res.status);
+    const d=JSON.parse((await res.text()).replace(/```json|```/g,'').trim());
+    localStorage.setItem('ai_summary_cache',JSON.stringify(d));
+    renderAiSummaryResult(d);
+  }catch(e){
+    el.innerHTML='<p style="color:var(--sr);font-size:13px;text-align:center;padding:16px 0;">エラーが発生しました。再度お試しください。</p>';
+  }finally{btn.disabled=false;btn.textContent='AIに分析させる';}
+}
+
+function renderAiSummaryResult(d){
+  const el=document.getElementById('mp-ai-summary');
+  if(!el||!d)return;
+  el.innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="background:#e8f0ff;border-radius:6px;padding:14px 16px;">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:#1a4fd4;margin-bottom:6px;">📊 TREND</div>
+        <p style="font-size:13px;line-height:1.8;">${d.trend||''}</p>
+      </div>
+      <div style="background:#e4f5eb;border-radius:6px;padding:14px 16px;">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--sg);margin-bottom:6px;">✓ STRENGTH</div>
+        <p style="font-size:13px;line-height:1.8;">${d.strength||''}</p>
+      </div>
+      <div style="background:#fff8f6;border:1px solid #f0c4b8;border-radius:6px;padding:14px 16px;">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--accent);margin-bottom:6px;">⚠ PERSISTENT ISSUES</div>
+        <p style="font-size:13px;line-height:1.8;">${d.persistent_issues||''}</p>
+      </div>
+      <div style="background:var(--paper);border-radius:6px;padding:14px 16px;">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--ink);margin-bottom:10px;">🎯 NEXT ACTIONS</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">${(d.next_actions||[]).map((a,i)=>`
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;background:var(--accent);color:white;padding:2px 7px;border-radius:2px;flex-shrink:0;margin-top:2px;">${i+1}</span>
+            <span style="font-size:13px;line-height:1.7;">${a}</span>
+          </div>`).join('')}</div>
+      </div>
+      <div style="background:var(--ink);border-radius:6px;padding:16px 18px;">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:rgba(255,255,255,0.45);margin-bottom:8px;">💬 MONTHLY ADVICE</div>
+        <p style="font-size:14px;line-height:1.8;color:white;font-weight:500;">${d.monthly_advice||''}</p>
+      </div>
+    </div>`;
 }
 
 function renderChart(it){
