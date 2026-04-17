@@ -3,9 +3,17 @@ exports.handler = async (event) => {
     return { statusCode: 405, body: "Method Not Allowed" };
   }
 
-  const { jobText } = JSON.parse(event.body);
+  const body = JSON.parse(event.body);
+  const { jobText, isAnalysis, customPrompt } = body;
 
-  const prompt = `あなたは採用・求人票の専門家です。以下の求人票を採点し、JSONのみを返してください。前置きや説明は不要です。
+  let prompt;
+
+  if (isAnalysis && customPrompt) {
+    // 採用要件分析モード
+    prompt = customPrompt;
+  } else {
+    // 通常の求人票診断モード
+    prompt = `あなたは採用・求人票の専門家です。以下の求人票を採点し、JSONのみを返してください。前置きや説明は不要です。
 
 採点基準：
 ①タイトル訴求（0〜25点）：職種明確か/具体性（数字・内容）あるか/ベネフィットあるか/誰向けか明確か/検索ワードあるか（各5点）。減点：抽象ワードのみ−5、35文字以上−3、記号羅列−2
@@ -21,6 +29,7 @@ exports.handler = async (event) => {
 
 求人票：
 ${jobText}`;
+  }
 
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
@@ -53,3 +62,4 @@ ${jobText}`;
     };
   }
 };
+
