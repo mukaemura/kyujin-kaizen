@@ -222,11 +222,12 @@ textarea::placeholder,input::placeholder{color:#bbb;font-size:13px;}
   <nav class="dn">
     <a href="index.html" class="dl">採用戦略<span>クラウドAI</span></a>
     <div class="dts">
-      <a class="dt on" id="dt0" onclick="showPg('d')">🔍 診断</a>
-      <a class="dt" id="dt1" onclick="showPg('a')">💡 採用要件分析</a>
+      <a class="dt on" id="dt0" onclick="showPg('home')">🏠 ホーム</a>
+      <a class="dt" id="dt1" onclick="showPg('a')">💡 要件分析</a>
       <a class="dt" id="dt2" onclick="showPg('c')">✍️ 求人作成</a>
-      <a class="dt" id="dt3" onclick="showPg('b')">📊 競合分析</a>
-      <a class="dt" id="dt4" onclick="showPg('m')">👤 マイページ</a>
+      <a class="dt" id="dt3" onclick="showPg('d')">🔍 診断</a>
+      <a class="dt" id="dt4" onclick="showPg('b')">📊 競合分析</a>
+      <a class="dt" id="dt5" onclick="showPg('m')">👤 マイページ</a>
     </div>
     <div class="dr">
       <span class="pb">PRO PLAN</span>
@@ -236,8 +237,40 @@ textarea::placeholder,input::placeholder{color:#bbb;font-size:13px;}
   </nav>
   <div class="dbd">
 
-    <!-- 診断 -->
-    <div class="pg on" id="pg-d">
+    <!-- ホームダッシュボード -->
+    <div class="pg on" id="pg-home">
+      <div style="margin-bottom:32px;">
+        <div class="sl">DASHBOARD</div>
+        <h2 class="sh2" id="db-greeting">おかえりなさい</h2>
+        <p style="font-size:14px;color:var(--muted);line-height:1.8;">採用戦略クラウドAIへようこそ。下のフローに沿って進めると、応募につながる求人票が完成します。</p>
+      </div>
+
+      <!-- フロー進捗 -->
+      <div class="cd" style="margin-bottom:24px;">
+        <div class="cdh"><div class="cdhl"><div class="ci">🗺️</div><div><div class="ct">採用フロー — 今日はどこから始めますか？</div></div></div></div>
+        <div class="cdb" style="padding:28px;">
+          <div id="flow-steps" style="display:flex;flex-direction:column;gap:12px;"></div>
+        </div>
+      </div>
+
+      <!-- サマリーカード -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;">
+        <div class="mpc"><div class="mpl">TOTAL</div><div class="mpn" id="db-total">0</div><div class="mpd">分析回数</div></div>
+        <div class="mpc"><div class="mpl">AVG SCORE</div><div class="mpn" id="db-avg">—</div><div class="mpd">平均スコア</div></div>
+        <div class="mpc"><div class="mpl" style="color:var(--sg);">BEST</div><div class="mpn" style="color:var(--sg);" id="db-best">—</div><div class="mpd">最高スコア</div></div>
+        <div class="mpc"><div class="mpl" style="color:var(--accent);">LATEST</div><div class="mpn" id="db-latest" style="font-size:20px;">—</div><div class="mpd">最新スコア</div></div>
+      </div>
+
+      <!-- 最新履歴 -->
+      <div class="cd">
+        <div class="cdh" style="justify-content:space-between;">
+          <div class="cdhl"><div class="ci">📋</div><div><div class="ct">最近の分析</div></div></div>
+          <button onclick="showPg('m')" style="background:none;border:1px solid var(--border);border-radius:4px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;color:var(--muted);">すべて見る →</button>
+        </div>
+        <div class="cdb" style="padding:0 26px;" id="db-recent"></div>
+      </div>
+    </div>
+    <div class="pg" id="pg-d">
       <div class="sl">FREE DIAGNOSIS — PRO</div><h2 class="sh2">求人票を診断する</h2>
       <div class="cd">
         <div class="cdh"><div class="cdhl"><div class="ci">📝</div><div><div class="ct">求人票を入力</div><div class="cs">3項目に分けると精度が上がります</div></div></div></div>
@@ -293,8 +326,8 @@ textarea::placeholder,input::placeholder{color:#bbb;font-size:13px;}
             <div><label>雇用形態</label><select id="jc-koyo"><option>正社員</option><option>契約社員</option><option>業務委託</option><option>アルバイト・パート</option></select></div>
           </div>
           <div class="g2" style="margin-bottom:13px;">
-            <div><label>年収（最低）</label><input type="text" id="jc-nmin" placeholder="例：400万円"></div>
-            <div><label>年収（最高）</label><input type="text" id="jc-nmax" placeholder="例：700万円"></div>
+            <div><label>年収（最低）</label><select id="jc-nmin" style="width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:6px;font-family:'Noto Sans JP',sans-serif;font-size:14px;background:white;outline:none;"><option value="">選択してください</option><option>200万円</option><option>250万円</option><option>300万円</option><option>350万円</option><option>400万円</option><option>450万円</option><option>500万円</option><option>550万円</option><option>600万円</option><option>650万円</option><option>700万円</option><option>750万円</option><option>800万円</option><option>900万円</option><option>1,000万円</option><option>1,200万円以上</option></select></div>
+            <div><label>年収（最高）</label><select id="jc-nmax" style="width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:6px;font-family:'Noto Sans JP',sans-serif;font-size:14px;background:white;outline:none;"><option value="">選択してください</option><option>300万円</option><option>350万円</option><option>400万円</option><option>450万円</option><option>500万円</option><option>550万円</option><option>600万円</option><option>650万円</option><option>700万円</option><option>750万円</option><option>800万円</option><option>900万円</option><option>1,000万円</option><option>1,200万円</option><option>1,500万円</option><option>1,500万円以上</option></select></div>
           </div>
           <div style="margin-bottom:13px;"><label>採用要件分析の結果（自動入力・編集可）</label><textarea id="jc-analysis-data" style="min-height:100px;" placeholder="採用要件分析を完了すると自動で入力されます。手動で入力することもできます。"></textarea></div>
           <div><label>その他・追加情報（任意）</label><textarea id="jc-note" style="min-height:68px;" placeholder="例：未経験歓迎、在宅勤務可、資格取得支援あり"></textarea></div>
@@ -398,24 +431,45 @@ textarea::placeholder,input::placeholder{color:#bbb;font-size:13px;}
         <div><div class="sl">MY PAGE</div><h2 class="sh2" style="margin-bottom:0;">マイページ</h2></div>
         <button onclick="clrH()" style="background:none;border:1.5px solid var(--border);border-radius:4px;padding:8px 14px;font-size:12px;color:var(--muted);cursor:pointer;font-family:'Noto Sans JP',sans-serif;">履歴をリセット</button>
       </div>
+
+      <!-- サマリー4枚 -->
       <div class="mpg">
         <div class="mpc"><div class="mpl">TOTAL</div><div class="mpn" id="st">0</div><div class="mpd">分析回数</div></div>
         <div class="mpc"><div class="mpl">AVG SCORE</div><div class="mpn" id="sa">—</div><div class="mpd">平均スコア</div></div>
         <div class="mpc"><div class="mpl" style="color:var(--sg);">BEST</div><div class="mpn" style="color:var(--sg);" id="sb">—</div><div class="mpd">最高スコア</div></div>
         <div class="mpc"><div class="mpl" style="color:var(--sr);">WORST</div><div class="mpn" style="color:var(--sr);" id="sw">—</div><div class="mpd">最低スコア</div></div>
       </div>
+
+      <!-- 進捗トラッカー -->
+      <div class="cd" style="margin-bottom:18px;">
+        <div class="cdh"><div class="cdhl"><div class="ci">🗺️</div><div><div class="ct">採用フロー進捗</div><div class="cs">完了したステップが自動で更新されます</div></div></div></div>
+        <div class="cdb"><div id="mp-flow" style="display:flex;gap:8px;flex-wrap:wrap;"></div></div>
+      </div>
+
+      <!-- スコア推移グラフ -->
       <div class="cd" style="margin-bottom:18px;">
         <div class="cdh"><div class="cdhl"><div class="ci">📈</div><div><div class="ct">スコア推移</div></div></div></div>
         <div class="cdb" style="position:relative;height:160px;"><canvas id="mc" style="width:100%;height:160px;"></canvas><div id="me" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;">分析を実行するとグラフが表示されます</div></div>
       </div>
+
+      <!-- ベスト求人ハイライト（ピン機能） -->
       <div class="cd" style="margin-bottom:18px;">
-        <div class="cdh"><div class="cdhl"><div class="ci">✏️</div><div><div class="ct">改善タイトル案バンク</div><div class="cs">クリックでコピーできます</div></div></div></div>
+        <div class="cdh"><div class="cdhl"><div class="ci">⭐</div><div><div class="ct">ベスト求人ハイライト</div><div class="cs">最高スコアの診断結果を即呼び出し</div></div></div></div>
+        <div class="cdb" id="mp-best-card"><p style="color:var(--muted);font-size:13px;text-align:center;padding:16px 0;">診断を実行するとここに表示されます</p></div>
+      </div>
+
+      <!-- タイトル改善履歴の比較 -->
+      <div class="cd" style="margin-bottom:18px;">
+        <div class="cdh"><div class="cdhl"><div class="ci">✏️</div><div><div class="ct">タイトル改善案バンク</div><div class="cs">クリックでコピー · スコア順に表示</div></div></div></div>
         <div class="cdb"><div id="mtb"><p style="color:var(--muted);font-size:13px;text-align:center;padding:14px 0;">タイトル案はまだありません</p></div></div>
       </div>
+
+      <!-- 分析履歴 -->
       <div class="cd">
         <div class="cdh" style="justify-content:space-between;"><div class="cdhl"><div class="ci">📁</div><div><div class="ct">分析履歴</div></div></div><span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);" id="mc2">0件</span></div>
         <div class="cdb" style="padding:0 26px;"><div id="mhl"><p style="text-align:center;padding:36px 0;color:var(--muted);font-size:13px;">まだ分析履歴がありません。<br>診断または競合分析を実行すると、ここに記録されます。</p></div></div>
       </div>
+
       <div id="mdt" style="display:none;margin-top:18px;" class="cd">
         <div class="cdh" style="background:var(--ink);justify-content:space-between;">
           <span style="font-family:'Space Mono',monospace;font-size:11px;color:rgba(255,255,255,0.45);font-weight:700;">DETAIL VIEW</span>
@@ -452,7 +506,54 @@ function enterDB(email){
   document.getElementById('ls').style.display='none';
   document.getElementById('db').style.display='block';
   document.getElementById('ueb').textContent=email;
-  renderMP();
+  const hour=new Date().getHours();
+  const greet=hour<12?'おはようございます':hour<18?'こんにちは':'こんばんは';
+  document.getElementById('db-greeting').textContent=greet+'、'+email.split('@')[0]+'さん';
+  renderDashboard();
+}
+
+function renderDashboard(){
+  const it=lh();
+  // サマリー
+  document.getElementById('db-total').textContent=it.length;
+  if(it.length){
+    const sc=it.map(i=>i.score);
+    document.getElementById('db-avg').textContent=Math.round(sc.reduce((a,b)=>a+b,0)/sc.length);
+    document.getElementById('db-best').textContent=Math.max(...sc);
+    document.getElementById('db-latest').textContent=it[0].score;
+  }
+  // フロー進捗
+  const hasAnalysis=it.some(i=>i.type==='analysis');
+  const hasCreate=it.some(i=>i.type==='create');
+  const hasDiag=it.some(i=>i.type==='improve');
+  const hasBm=it.some(i=>i.type==='benchmark');
+  const FLOW=[
+    {id:'a',icon:'💡',label:'① 魅力発掘',sub:'採用要件分析',done:hasAnalysis,btn:'採用要件分析を始める'},
+    {id:'c',icon:'✍️',label:'② 求人作成',sub:'分析結果からAI生成',done:hasCreate,btn:'求人票を作成する'},
+    {id:'d',icon:'🔍',label:'③ 診断',sub:'求人票をスコア採点',done:hasDiag,btn:'求人票を診断する'},
+    {id:'b',icon:'📊',label:'④ 競合比較',sub:'市場での立ち位置確認',done:hasBm,btn:'競合分析をする'},
+  ];
+  const flowEl=document.getElementById('flow-steps');
+  if(flowEl) flowEl.innerHTML=FLOW.map((f,i)=>`
+    <div style="display:flex;align-items:center;gap:16px;padding:14px 16px;border-radius:8px;border:1.5px solid ${f.done?'var(--sg)':'var(--border)'};background:${f.done?'#e4f5eb':'white'};transition:all .2s;">
+      <div style="width:40px;height:40px;border-radius:50%;background:${f.done?'var(--sg)':'var(--border)'};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">${f.done?'✓':f.icon}</div>
+      <div style="flex:1;">
+        <div style="font-size:11px;font-family:'Space Mono',monospace;font-weight:700;color:${f.done?'var(--sg)':'var(--muted)'};margin-bottom:2px;">${f.label}</div>
+        <div style="font-size:13px;font-weight:700;color:${f.done?'var(--sg)':'var(--ink)'};">${f.sub}</div>
+      </div>
+      ${!f.done?`<button onclick="showPg('${f.id}')" style="background:var(--accent);color:white;border:none;border-radius:4px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;white-space:nowrap;flex-shrink:0;">${f.btn}</button>`:`<span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--sg);font-weight:700;">DONE</span>`}
+    </div>`).join('');
+  // 最近の履歴（最新5件）
+  const recent=document.getElementById('db-recent');
+  if(recent){
+    if(!it.length){recent.innerHTML='<p style="text-align:center;padding:32px 0;color:var(--muted);font-size:13px;">まだ分析履歴がありません</p>';return;}
+    recent.innerHTML=it.slice(0,5).map(h=>`
+      <div class="hi" onclick="showD(${h.id})">
+        <div class="hbg" style="border-color:${scc(h.score)};color:${scc(h.score)};background:${scb(h.score)};">${h.score}</div>
+        <div class="hin"><div class="hit">${h.type==='benchmark'?'📊':'🔍'} ${h.label}</div><div class="him">${h.date}</div></div>
+        <span style="font-size:12px;color:var(--muted);">詳細 ›</span>
+      </div>`).join('');
+  }
 }
 function doLogout(){
   document.getElementById('db').style.display='none';
@@ -467,9 +568,10 @@ function showPg(id){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.dt').forEach(t=>t.classList.remove('on'));
   document.getElementById('pg-'+id).classList.add('on');
-  const idx={d:0,a:1,c:2,b:3,m:4}[id];
-  document.querySelectorAll('.dt')[idx].classList.add('on');
+  const idx={home:0,a:1,c:2,d:3,b:4,m:5}[id];
+  if(idx!==undefined) document.querySelectorAll('.dt')[idx].classList.add('on');
   if(id==='m')renderMP();
+  if(id==='home')renderDashboard();
   if(id==='a'&&!proAnalysisInit){initProAnalysis();proAnalysisInit=true;}
 }
 
@@ -744,6 +846,50 @@ function renderMP(){
   document.getElementById('st').textContent=it.length;
   if(it.length){const sc=it.map(i=>i.score);document.getElementById('sa').textContent=Math.round(sc.reduce((a,b)=>a+b,0)/sc.length);document.getElementById('sb').textContent=Math.max(...sc);document.getElementById('sw').textContent=Math.min(...sc);}
   else{['sa','sb','sw'].forEach(id=>document.getElementById(id).textContent='—');}
+
+  // 進捗トラッカー
+  const hasAnalysis=it.some(i=>i.type==='analysis'||i.type==='improve');
+  const hasCreate=it.some(i=>i.type==='create');
+  const hasDiag=it.some(i=>i.type==='improve');
+  const hasBm=it.some(i=>i.type==='benchmark');
+  const flowEl=document.getElementById('mp-flow');
+  if(flowEl){
+    const FLOW=[
+      {label:'① 魅力発掘',done:hasAnalysis,pg:'a'},{label:'② 求人作成',done:hasCreate,pg:'c'},
+      {label:'③ 診断',done:hasDiag,pg:'d'},{label:'④ 競合比較',done:hasBm,pg:'b'},
+    ];
+    flowEl.innerHTML=FLOW.map(f=>`
+      <div onclick="${f.done?'':'showPg(\''+f.pg+'\')'}" style="display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:6px;border:1.5px solid ${f.done?'var(--sg)':'var(--border)'};background:${f.done?'#e4f5eb':'white'};cursor:${f.done?'default':'pointer'};transition:all .2s;">
+        <span style="font-size:16px;">${f.done?'✅':'⬜'}</span>
+        <span style="font-size:13px;font-weight:${f.done?'700':'400'};color:${f.done?'var(--sg)':'var(--ink)'};">${f.label}</span>
+      </div>`).join('');
+  }
+
+  // ベスト求人ハイライト
+  const bestEl=document.getElementById('mp-best-card');
+  if(bestEl){
+    const diagItems=it.filter(i=>i.type==='improve'&&i.detail);
+    if(diagItems.length){
+      const best=diagItems.reduce((a,b)=>a.score>b.score?a:b);
+      const sc=scc(best.score);const bg=scb(best.score);
+      bestEl.innerHTML=`
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+          <div style="width:60px;height:60px;border-radius:50%;border:3px solid ${sc};background:${bg};display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;">
+            <span style="font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:${sc};line-height:1;">${best.score}</span>
+            <span style="font-size:10px;color:var(--muted);">/100</span>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:900;margin-bottom:3px;">${best.label}</div>
+            <div style="font-size:12px;color:var(--muted);">${best.date}</div>
+            ${best.detail.titleSuggestions?`<div style="margin-top:8px;font-size:12px;color:var(--muted);">タイトル案: <span style="color:var(--ink);font-weight:700;">${best.detail.titleSuggestions[0]||''}</span></div>`:''}
+          </div>
+          <button onclick="showD(${best.id})" style="background:var(--ink);color:white;border:none;border-radius:4px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;white-space:nowrap;">詳細を見る</button>
+        </div>`;
+    } else {
+      bestEl.innerHTML='<p style="color:var(--muted);font-size:13px;text-align:center;padding:16px 0;">診断を実行するとここに表示されます</p>';
+    }
+  }
+
   renderChart(it);renderTitles(it);
   const ml=document.getElementById('mhl');
   document.getElementById('mc2').textContent=it.length+'件';
@@ -874,7 +1020,24 @@ function renderDiag(d,title){
       <div class="rsc"><div class="rst">■ 改善優先順位</div><div class="pil">${sorted.map((x,i)=>`<div class="pii"><div class="pir">${i+1}</div><div class="pin">${x.label}</div><div class="pis" style="color:${col(x.score,25)};">${x.score}点</div>${bdg(x.score)}</div>`).join('')}</div></div>
       <div class="rsc"><div class="rst">■ 主な課題</div><div class="il">${d.issues.map(i=>`<div class="ii"><span>⚠️</span><span>${i}</span></div>`).join('')}</div></div>
       <div class="rsc"><div class="rst">■ 改善提案（全${d.proposals.length}件）</div><div class="pl">${d.proposals.map((p,i)=>`<div class="pi"><div class="plb">PROPOSAL ${i+1}</div>${p}</div>`).join('')}</div></div>
-      <div class="rsc"><div class="rst">■ タイトル改善案（全3案）</div><div class="pl">${d.titleSuggestions.map((t,i)=>`<div class="pi"><div class="plb">タイトル案 ${i+1}</div>${t}</div>`).join('')}</div></div>
+      <div class="rsc"><div class="rst">■ タイトル改善案（全3案）</div><div class="pl">${d.titleSuggestions.map((t,i)=>`<div class="pi" style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;"><div><div class="plb">タイトル案 ${i+1}</div>${t}</div><button onclick="navigator.clipboard.writeText('${t.replace(/'/g,"\\'")}').then(()=>{this.textContent='COPIED!';setTimeout(()=>this.textContent='COPY',1500)})" style="background:none;border:1px solid var(--border);border-radius:4px;padding:4px 10px;font-size:11px;font-family:'Space Mono',monospace;cursor:pointer;color:var(--muted);flex-shrink:0;">COPY</button></div>`).join('')}</div></div>
+      ${d.marketSalary?`
+      <div class="rsc">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
+          <div class="rst" style="margin-bottom:0;">■ 市場年収データ（推定）</div>
+          <span style="font-size:11px;color:var(--muted);background:var(--paper);border:1px solid var(--border);border-radius:100px;padding:3px 10px;">※ AIによる推定値・参考情報</span>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:20px;flex-wrap:wrap;margin-bottom:14px;">
+          <div style="text-align:center;"><div style="font-size:11px;color:var(--muted);margin-bottom:3px;">下位25%</div><div style="font-family:'DM Serif Display',serif;font-size:18px;color:var(--muted);">おおよそ ${d.marketSalary.lower}</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;color:var(--accent);font-weight:700;margin-bottom:3px;">中央値</div><div style="font-family:'DM Serif Display',serif;font-size:28px;color:var(--ink);">おおよそ ${d.marketSalary.median}</div></div>
+          <div style="text-align:center;"><div style="font-size:11px;color:var(--muted);margin-bottom:3px;">上位25%</div><div style="font-family:'DM Serif Display',serif;font-size:18px;color:var(--muted);">おおよそ ${d.marketSalary.upper}</div></div>
+        </div>
+        <div style="background:var(--paper);border-radius:6px;padding:11px 14px;">
+          <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px;">AIコメント</div>
+          <p style="font-size:13px;line-height:1.7;">${d.marketSalary.comment}</p>
+          <p style="font-size:11px;color:var(--muted);margin-top:5px;">※ 実際の数値とは異なる場合があります。公的データも合わせてご確認ください。</p>
+        </div>
+      </div>`:''}
       ${d.salaryAdvice?`<div class="rsc"><div class="rst">■ 給与・条件の改善提案</div><p style="font-size:13px;line-height:1.9;">${d.salaryAdvice}</p></div>`:''}
       ${d.targetAdvice?`<div class="rsc"><div class="rst">■ ターゲット設定の改善提案</div><p style="font-size:13px;line-height:1.9;">${d.targetAdvice}</p></div>`:''}
       ${d.contentAnalysis?`<div class="rsc"><div class="rst">■ 仕事内容の改善提案</div><p style="font-size:13px;line-height:1.9;">${d.contentAnalysis}</p></div>`:''}
