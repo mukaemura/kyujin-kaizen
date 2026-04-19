@@ -352,7 +352,31 @@
   .print-header p { font-size: 11px; color: var(--muted); }
 
   /* ── Responsive ── */
-  @media (max-width: 900px) {
+  /* ── News Dashboard ── */
+  .news-filter-btn { padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:white;color:var(--muted);cursor:pointer;font-size:12px;font-weight:700;font-family:'Noto Sans JP',sans-serif;transition:all .15s; }
+  .news-filter-btn.active { background:var(--ink);color:white;border-color:var(--ink); }
+  .news-badge { display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:4px;white-space:nowrap;font-family:'Space Mono',monospace;letter-spacing:0.04em; }
+  .news-badge-critical { background:#fff0eb;color:var(--accent); }
+  .news-badge-trend { background:#fff8e0;color:#c89a00; }
+  .news-badge-law { background:#e8f0ff;color:#1a4fd4; }
+  .news-badge-media { background:#e4f5eb;color:var(--score-green); }
+  .news-card { background:white;border:1.5px solid var(--border);border-radius:8px;padding:20px;transition:border-color .2s; }
+  .news-card:hover { border-color:var(--accent); }
+  .news-card-title { font-size:15px;font-weight:700;line-height:1.5;margin-bottom:10px;color:var(--ink); }
+  .news-card-summary { font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:14px; }
+  .news-points { background:var(--paper);border-radius:6px;padding:12px 14px;margin-bottom:14px; }
+  .news-point { display:flex;gap:8px;font-size:12px;color:var(--muted);line-height:1.6;padding:2px 0; }
+  .news-point::before { content:'▸';color:var(--accent);flex-shrink:0;margin-top:1px; }
+  .news-action { display:flex;gap:10px;padding:12px 14px;background:#fff8f6;border:1.5px solid #f0c4b8;border-radius:6px;align-items:flex-start; }
+  .news-action-icon { font-size:14px;flex-shrink:0;margin-top:1px; }
+  .news-action-text { font-size:12px;color:var(--ink);line-height:1.7; }
+  .news-top-card { border:2px solid var(--accent);border-radius:8px;background:white;padding:24px;position:relative;overflow:hidden; }
+  .news-top-label { font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:0.12em;margin-bottom:10px; }
+  .news-top-title { font-size:20px;font-weight:900;line-height:1.4;margin-bottom:12px;color:var(--ink); }
+  .news-top-summary { font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:16px; }
+  .trend-item-card { background:rgba(255,255,255,0.1);border-radius:6px;padding:10px 14px; }
+  .trend-item-title { font-size:12px;font-weight:700;color:white;margin-bottom:4px; }
+  .trend-item-desc { font-size:11px;color:rgba(255,255,255,0.6);line-height:1.5; }
     nav { padding: 14px 20px; } .nav-links { display: none; }
     .hero { grid-template-columns: 1fr; min-height: auto; }
     .hero-left { padding: 60px 24px 40px; } .hero-right { padding: 0 24px 60px; }
@@ -521,6 +545,12 @@
       <span class="app-tab-label">マイページ</span>
       <span class="app-tab-desc">履歴・スコア推移</span>
       <span class="app-tab-badge">PRO</span>
+    </div>
+    <div class="app-tab" onclick="showTab('news')" id="tab-btn-news">
+      <span class="app-tab-icon">📰</span>
+      <span class="app-tab-label">採用ニュース</span>
+      <span class="app-tab-desc">毎朝7時更新</span>
+      <span class="app-tab-badge free-badge" style="background:#1a7a3c;">NEW</span>
     </div>
   </div>
 
@@ -950,9 +980,66 @@
       </div>
     </div>
   </div>
-</div>
 
-<!-- ── Plans ── -->
+  <!-- ── TAB: 採用ニュースダッシュボード ── -->
+  <div class="tab-page" id="tab-news">
+    <div class="tab-inner">
+
+      <!-- ヘッダー -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:28px;">
+        <div>
+          <div class="section-label">RECRUITMENT NEWS DASHBOARD</div>
+          <h2 class="section-h2" style="margin-bottom:6px;">採用ニュースダッシュボード</h2>
+          <p style="font-size:13px;color:var(--muted);line-height:1.8;">採用担当者の意思決定に使える情報を、毎朝AIが収集・整理してお届けします。<br>今日のトレンドを把握して、採用戦略に活かしてください。</p>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="background:var(--score-green);color:white;border-radius:4px;padding:4px 12px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;margin-bottom:8px;">毎朝 7:00 自動更新</div>
+          <div style="font-size:11px;color:var(--muted);" id="news-updated-at">読み込み中...</div>
+          <button onclick="loadNews(true)" style="margin-top:8px;background:none;border:1.5px solid var(--border);border-radius:4px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;color:var(--muted);">手動更新</button>
+        </div>
+      </div>
+
+      <!-- ローディング -->
+      <div id="news-loading" style="text-align:center;padding:60px 0;">
+        <div class="loading-spinner"></div>
+        <p style="font-size:14px;color:var(--muted);margin-top:16px;">今日の採用ニュースを生成中です（約20秒かかります）…</p>
+      </div>
+
+      <!-- エラー -->
+      <div id="news-error" style="display:none;padding:24px;background:#fff8f6;border:1.5px solid #f0c4b8;border-radius:8px;color:var(--accent);font-size:14px;text-align:center;">
+        ニュースの取得に失敗しました。しばらく待ってから「手動更新」をお試しください。
+      </div>
+
+      <!-- コンテンツ -->
+      <div id="news-content" style="display:none;">
+
+        <!-- トレンドサマリー -->
+        <div id="news-trend-box" style="background:var(--ink);border-radius:8px;padding:20px 24px;margin-bottom:24px;">
+          <div style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:0.12em;margin-bottom:8px;">TODAY'S TREND SUMMARY</div>
+          <p style="font-size:15px;font-weight:700;color:white;line-height:1.8;margin-bottom:16px;" id="news-trend-text"></p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;" id="news-trend-items"></div>
+        </div>
+
+        <!-- 本日の最重要ニュース -->
+        <div id="news-top" style="margin-bottom:24px;"></div>
+
+        <!-- フィルター -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;" id="news-filters">
+          <button class="news-filter-btn active" data-filter="all" onclick="filterNews('all')">すべて</button>
+          <button class="news-filter-btn" data-filter="critical" onclick="filterNews('critical')">重要</button>
+          <button class="news-filter-btn" data-filter="trend" onclick="filterNews('trend')">トレンド</button>
+          <button class="news-filter-btn" data-filter="law" onclick="filterNews('law')">法改正</button>
+          <button class="news-filter-btn" data-filter="media" onclick="filterNews('media')">媒体動向</button>
+        </div>
+
+        <!-- ニュースグリッド -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;" id="news-grid"></div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
 <section class="plans-section" id="plans">
   <div class="section-label">PLANS</div>
   <h2 class="section-h2">まずは無料で<br>診断してみてください。</h2>
@@ -1115,9 +1202,10 @@ function showTab(id) {
   document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.app-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
-  const idx = { improve: 0, analysis: 1, benchmark: 2, history: 3 };
+  const idx = { improve: 0, analysis: 1, benchmark: 2, history: 3, news: 4 };
   document.querySelectorAll('.app-tab')[idx[id]].classList.add('active');
   document.getElementById('app-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (id === 'news' && !newsLoaded) loadNews();
 }
 
 /* ══════════════════════════════════
@@ -1136,6 +1224,136 @@ function activatePro() {
 
 function scrollToPlans() {
   document.getElementById('plans').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ══════════════════════════════════
+   採用ニュースダッシュボード
+══════════════════════════════════ */
+let newsLoaded = false;
+let allNewsData = [];
+let currentFilter = 'all';
+
+const NEWS_BADGE = {
+  critical: { cls: 'news-badge-critical', label: '重要' },
+  trend:    { cls: 'news-badge-trend',    label: 'トレンド' },
+  law:      { cls: 'news-badge-law',      label: '法改正' },
+  media:    { cls: 'news-badge-media',    label: '媒体動向' },
+};
+
+async function loadNews(forceRefresh = false) {
+  newsLoaded = true;
+  document.getElementById('news-loading').style.display = 'block';
+  document.getElementById('news-content').style.display = 'none';
+  document.getElementById('news-error').style.display = 'none';
+
+  // ローカルキャッシュ確認（同日なら再利用）
+  if (!forceRefresh) {
+    try {
+      const cached = JSON.parse(localStorage.getItem('news_cache_v1') || 'null');
+      if (cached) {
+        const cachedDate = new Date(cached.generatedAt);
+        const now = new Date();
+        const jst = (t) => new Date(t.getTime() + 9 * 60 * 60 * 1000);
+        const same = jst(cachedDate).toDateString() === jst(now).toDateString();
+        if (same) {
+          renderNews(cached);
+          return;
+        }
+      }
+    } catch(e) {}
+  }
+
+  try {
+    const res = await fetch('/.netlify/functions/news');
+    if (!res.ok) throw new Error(res.status);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    localStorage.setItem('news_cache_v1', JSON.stringify(data));
+    renderNews(data);
+  } catch(e) {
+    document.getElementById('news-loading').style.display = 'none';
+    document.getElementById('news-error').style.display = 'block';
+  }
+}
+
+function renderNews(data) {
+  allNewsData = data.news || [];
+
+  // 更新時刻表示
+  if (data.generatedAt) {
+    const d = new Date(new Date(data.generatedAt).getTime() + 9 * 60 * 60 * 1000);
+    document.getElementById('news-updated-at').textContent =
+      `${d.getMonth()+1}月${d.getDate()}日 ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} 更新`;
+  }
+
+  // トレンドサマリー
+  if (data.todayTrend) {
+    document.getElementById('news-trend-text').textContent = data.todayTrend;
+  }
+  if (data.trendItems) {
+    document.getElementById('news-trend-items').innerHTML = data.trendItems.map(t => `
+      <div class="trend-item-card">
+        <div class="trend-item-title">${t.title}</div>
+        <div class="trend-item-desc">${t.desc}</div>
+      </div>`).join('');
+  }
+
+  // 最重要ニュース
+  const top = data.topNews;
+  if (top) {
+    const b = NEWS_BADGE[top.type] || NEWS_BADGE.critical;
+    document.getElementById('news-top').innerHTML = `
+      <div class="news-top-card">
+        <div class="news-top-label">本日の最重要ニュース</div>
+        <div class="news-top-title">${top.title}</div>
+        <div style="margin-bottom:12px;"><span class="news-badge ${b.cls}">${b.label}</span> <span style="font-size:12px;color:var(--muted);">影響：${top.target}</span></div>
+        <div class="news-top-summary">${top.summary}</div>
+        <div class="news-action">
+          <div class="news-action-icon">⚡</div>
+          <div class="news-action-text"><strong>今すぐ取るべきアクション：</strong>${top.action}</div>
+        </div>
+      </div>`;
+  }
+
+  // ニュースグリッド描画
+  renderNewsGrid();
+
+  document.getElementById('news-loading').style.display = 'none';
+  document.getElementById('news-content').style.display = 'block';
+}
+
+function renderNewsGrid() {
+  const filtered = currentFilter === 'all'
+    ? allNewsData
+    : allNewsData.filter(n => n.type === currentFilter);
+
+  document.getElementById('news-grid').innerHTML = filtered.map(n => {
+    const b = NEWS_BADGE[n.type] || NEWS_BADGE.trend;
+    return `
+      <div class="news-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px;">
+          <div class="news-card-title">${n.title}</div>
+          <span class="news-badge ${b.cls}" style="flex-shrink:0;">${b.label}</span>
+        </div>
+        <div class="news-card-summary">${n.summary}</div>
+        <div class="news-points">
+          ${(n.points || []).map(p => `<div class="news-point">${p}</div>`).join('')}
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">影響を受ける企業：<strong style="color:var(--ink);">${n.target}</strong></div>
+        <div class="news-action">
+          <div class="news-action-icon">⚡</div>
+          <div class="news-action-text"><strong>アクション：</strong>${n.action}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function filterNews(filter) {
+  currentFilter = filter;
+  document.querySelectorAll('.news-filter-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.filter === filter);
+  });
+  renderNewsGrid();
 }
 
 /* ══════════════════════════════════
