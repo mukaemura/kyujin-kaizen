@@ -1,0 +1,7 @@
+[build]
+  functions = "netlify/functions"
+
+# 採用ニュースを毎朝7:00 JST（UTC 22:00）に自動生成
+[[scheduled_functions]]
+  function = "news"
+  schedule = "0 22 * * *"
